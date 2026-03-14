@@ -41,6 +41,11 @@ def init_db():
                 timestamp REAL
             )
         """)
+        # Migration: add currency_key column for old databases
+        try:
+            db.execute("ALTER TABLE accounts ADD COLUMN currency_key TEXT DEFAULT 'eggs.2026'")
+        except Exception:
+            pass  # column already exists
         db.commit()
 
 init_db()
