@@ -21,6 +21,15 @@ def get_db():
 
 def init_db():
     with get_db() as db:
+        # Drop old table if it has wrong schema (missing currency_key)
+        try:
+            cols = [r[1] for r in db.execute("PRAGMA table_info(accounts)").fetchall()]
+            if "currency_key" not in cols:
+                print("[DB] Old schema detected — dropping and recreating accounts table")
+                db.execute("DROP TABLE IF EXISTS accounts")
+        except Exception:
+            pass
+
         db.execute("""
             CREATE TABLE IF NOT EXISTS accounts (
                 username TEXT PRIMARY KEY,
@@ -41,11 +50,6 @@ def init_db():
                 timestamp REAL
             )
         """)
-        # Migration: add currency_key column for old databases
-        try:
-            db.execute("ALTER TABLE accounts ADD COLUMN currency_key TEXT DEFAULT 'eggs.2026'")
-        except Exception:
-            pass  # column already exists
         db.commit()
 
 init_db()
