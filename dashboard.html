@@ -158,6 +158,7 @@ let allAccounts = [];
 async function fetchAccounts() {
   try {
     const r = await fetch(SERVER + "/dashboard/accounts");
+    if(r.status === 401) { window.location.href = "/login"; return; }
     allAccounts = await r.json();
     renderAll();
   } catch(e) {
@@ -240,6 +241,7 @@ function makeAccountCard(acc) {
         <span>${fmtCurr(acc.currency)} eggs</span>
         <span>${acc.pet_count} pets</span>
         <span>${acc.cocoadile_count} crocs</span>
+        <button class="btn" style="font-size:10px;padding:2px 7px" onclick="event.stopPropagation();sendJump('${acc.username}')">jump</button>
       </div>
     </div>
     <div class="acc-body" onclick="event.stopPropagation()">
@@ -530,6 +532,13 @@ function applyGlobalTarget() {
   if(!val) return;
   document.querySelectorAll("input[id^='target-']").forEach(i => i.value = val);
   showToast("Trade target set to '" + val + "' — click save on each account or use bulk save");
+}
+
+async function sendJump(username) {
+  try {
+    await fetch(SERVER + "/dashboard/jump/" + username, { method: "POST" });
+    showToast("Jump queued for " + username + " (fires within 30s)");
+  } catch(e) { showToast("Failed", true); }
 }
 
 async function refresh() {

@@ -1,18 +1,18 @@
 """
 Adopt Me Farm Dashboard Server
 Deploy to Railway: https://railway.app
-Just upload this file + requirements.txt, Railway handles the rest.
-Your URL will be: https://yourapp.railway.app
 """
 
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, session, redirect, url_for
 from flask_cors import CORS
 import sqlite3, json, time, os
 
 app = Flask(__name__, static_folder=".")
 CORS(app)
+app.secret_key = "farm_secret_xk29zq"  # used for session cookies
 
 DB = "farm.db"
+DASHBOARD_PASSWORD = "testvps12345"
 
 def get_db():
     conn = sqlite3.connect(DB)
@@ -45,7 +45,6 @@ def init_db():
 
 init_db()
 
-# Default config for new accounts
 DEFAULT_CONFIG = {
     "trade_target": "23nuns",
     "trade_legendaries": True,
@@ -57,18 +56,95 @@ DEFAULT_CONFIG = {
     "trade_food": False,
     "trade_pet_wear": False,
     "trade_cocoadiles": True,
-    "auto_buy": [],  # list of {name, remote, category, item_id, max_count}
+    "auto_buy": [],
     "scan_interval": 5,
     "join_wait": 30
 }
 
+def is_authed():
+    return session.get("authed") is True
+
 # ============================================================
-# ACCOUNT ENDPOINTS (called by Lua script)
+# LOGIN
+# ============================================================
+
+@app.route("/login", methods=["GET"])
+def login_page():
+    return """<!DOCTYPE html>
+<html>
+<head>
+<title>Farm Dashboard — Login</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0f0f0f;color:#e8e8e8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh}
+.box{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:14px;padding:36px 32px;width:320px}
+h2{font-size:18px;margin-bottom:6px}
+.sub{font-size:13px;color:#888;margin-bottom:24px}
+input{width:100%;padding:8px 12px;border-radius:8px;border:1px solid #2a2a2a;background:#222;color:#e8e8e8;font-size:14px;outline:none;margin-bottom:12px}
+input:focus{border-color:#1D9E75}
+button{width:100%;padding:9px;border-radius:8px;border:none;background:#1D9E75;color:white;font-size:14px;font-weight:600;cursor:pointer}
+button:hover{background:#0F6E56}
+.err{color:#f87171;font-size:13px;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="box">
+  <h2>🐾 farm dashboard</h2>
+  <div class="sub">enter password to continue</div>
+  <form method="POST" action="/login">
+    <input type="password" name="password" placeholder="password" autofocus>
+    <button type="submit">login</button>
+  </form>
+</div>
+</body>
+</html>"""
+
+@app.route("/login", methods=["POST"])
+def login():
+    if request.form.get("password") == DASHBOARD_PASSWORD:
+        session["authed"] = True
+        return redirect("/")
+    return """<!DOCTYPE html>
+<html>
+<head>
+<title>Farm Dashboard — Login</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0f0f0f;color:#e8e8e8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh}
+.box{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:14px;padding:36px 32px;width:320px}
+h2{font-size:18px;margin-bottom:6px}
+.sub{font-size:13px;color:#888;margin-bottom:24px}
+input{width:100%;padding:8px 12px;border-radius:8px;border:1px solid #2a2a2a;background:#222;color:#e8e8e8;font-size:14px;outline:none;margin-bottom:12px}
+input:focus{border-color:#1D9E75}
+button{width:100%;padding:9px;border-radius:8px;border:none;background:#1D9E75;color:white;font-size:14px;font-weight:600;cursor:pointer}
+button:hover{background:#0F6E56}
+.err{color:#f87171;font-size:13px;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="box">
+  <h2>🐾 farm dashboard</h2>
+  <div class="sub">enter password to continue</div>
+  <div class="err">wrong password</div>
+  <form method="POST" action="/login">
+    <input type="password" name="password" placeholder="password" autofocus>
+    <button type="submit">login</button>
+  </form>
+</div>
+</body>
+</html>"""
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/login")
+
+# ============================================================
+# ACCOUNT ENDPOINTS (called by Lua script — no auth needed)
 # ============================================================
 
 @app.route("/ping", methods=["POST"])
 def ping():
-    """Called by script every 2 mins — updates inventory + currency"""
     data = request.json or {}
     username = data.get("username")
     if not username:
@@ -103,7 +179,6 @@ def ping():
 
 @app.route("/log", methods=["POST"])
 def log():
-    """Script sends activity logs here"""
     data = request.json or {}
     username = data.get("username")
     message = data.get("message")
@@ -113,9 +188,7 @@ def log():
     with get_db() as db:
         db.execute("INSERT INTO logs (username, message, timestamp) VALUES (?, ?, ?)",
                    (username, message, time.time()))
-        # Also update last_action
         db.execute("UPDATE accounts SET last_action=? WHERE username=?", (message, username))
-        # Keep only last 50 logs per account
         db.execute("""
             DELETE FROM logs WHERE username=? AND id NOT IN (
                 SELECT id FROM logs WHERE username=? ORDER BY timestamp DESC LIMIT 50
@@ -128,7 +201,6 @@ def log():
 
 @app.route("/config/<username>", methods=["GET"])
 def get_config(username):
-    """Script polls this every 30s to get latest config"""
     with get_db() as db:
         row = db.execute("SELECT config FROM accounts WHERE username=?", (username,)).fetchone()
         if not row:
@@ -137,12 +209,14 @@ def get_config(username):
 
 
 # ============================================================
-# DASHBOARD ENDPOINTS (called by the webpage)
+# DASHBOARD ENDPOINTS (password protected)
 # ============================================================
 
 @app.route("/dashboard/accounts", methods=["GET"])
 def dashboard_accounts():
-    """Returns all accounts with online status"""
+    if not is_authed():
+        return jsonify({"error": "unauthorized"}), 401
+
     with get_db() as db:
         rows = db.execute("""
             SELECT username, display_name, last_ping, inventory, currency, currency_key, last_action, config
@@ -154,9 +228,8 @@ def dashboard_accounts():
     for row in rows:
         inv = json.loads(row["inventory"] or "{}")
         cfg = json.loads(row["config"] or "{}")
-        online = (now - (row["last_ping"] or 0)) < 180  # online if pinged within 3 mins
+        online = (now - (row["last_ping"] or 0)) < 180
 
-        # Count pets by type
         pets = inv.get("pets", {})
         leg_count = sum(1 for p in pets.values() if isinstance(p, dict) and p.get("rarity") == "legendary")
         croc_count = sum(1 for p in pets.values() if isinstance(p, dict) and "cocoadile" in str(p.get("kind", "")))
@@ -181,6 +254,9 @@ def dashboard_accounts():
 
 @app.route("/dashboard/logs/<username>", methods=["GET"])
 def dashboard_logs(username):
+    if not is_authed():
+        return jsonify({"error": "unauthorized"}), 401
+
     with get_db() as db:
         rows = db.execute("""
             SELECT message, timestamp FROM logs
@@ -191,7 +267,9 @@ def dashboard_logs(username):
 
 @app.route("/dashboard/config/<username>", methods=["POST"])
 def save_config(username):
-    """Dashboard saves config for one account"""
+    if not is_authed():
+        return jsonify({"error": "unauthorized"}), 401
+
     cfg = request.json
     if not cfg:
         return jsonify({"error": "no config"}), 400
@@ -206,7 +284,9 @@ def save_config(username):
 
 @app.route("/dashboard/config/bulk", methods=["POST"])
 def save_config_bulk():
-    """Dashboard saves same config for multiple accounts"""
+    if not is_authed():
+        return jsonify({"error": "unauthorized"}), 401
+
     data = request.json or {}
     usernames = data.get("usernames", [])
     cfg = data.get("config", {})
@@ -220,9 +300,25 @@ def save_config_bulk():
     return jsonify({"ok": True, "updated": len(usernames)})
 
 
+@app.route("/dashboard/jump/<username>", methods=["POST"])
+def jump(username):
+    """Sends a jump command — script picks it up on next config poll (30s)"""
+    with get_db() as db:
+        row = db.execute("SELECT config FROM accounts WHERE username=?", (username,)).fetchone()
+        if not row:
+            return jsonify({"error": "account not found"}), 404
+        cfg = json.loads(row["config"])
+        cfg["jump"] = True
+        db.execute("UPDATE accounts SET config=? WHERE username=?", (json.dumps(cfg), username))
+        db.commit()
+    return jsonify({"ok": True})
+
+
 @app.route("/dashboard/force_trade/<username>", methods=["POST"])
 def force_trade(username):
-    """Queues a force trade command — script picks it up on next config poll"""
+    if not is_authed():
+        return jsonify({"error": "unauthorized"}), 401
+
     with get_db() as db:
         row = db.execute("SELECT config FROM accounts WHERE username=?", (username,)).fetchone()
         if not row:
@@ -235,9 +331,11 @@ def force_trade(username):
     return jsonify({"ok": True})
 
 
-# Serve dashboard HTML
+# Serve dashboard — redirect to login if not authed
 @app.route("/")
 def index():
+    if not is_authed():
+        return redirect("/login")
     return send_from_directory(".", "dashboard.html")
 
 
