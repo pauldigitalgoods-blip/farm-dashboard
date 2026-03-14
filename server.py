@@ -11,7 +11,7 @@ app = Flask(__name__, static_folder=".")
 CORS(app)
 app.secret_key = "farm_secret_xk29zq"  # used for session cookies
 
-DB = "farm.db"
+DB = "/tmp/farm.db"
 DASHBOARD_PASSWORD = "testvps12345"
 
 def get_db():
@@ -179,7 +179,8 @@ def ping():
             json.dumps(data.get("inventory", {})),
             data.get("currency", 0),
             data.get("currency_key", "eggs.2026"),
-            data.get("last_action", "")
+            data.get("last_action", ""),
+            config
         ))
         db.commit()
 
