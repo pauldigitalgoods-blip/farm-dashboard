@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adopt Me Farm Dashboard</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0f0f0f;--bg2:#1a1a1a;--bg3:#222;--border:#2a2a2a;--text:#e8e8e8;--muted:#888;--accent:#1D9E75;--accent2:#0F6E56;--leg:#a78bfa;--mega:#fbbf24;--neon:#34d399;--danger:#f87171;--info:#60a5fa}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;line-height:1.5;min-height:100vh}
+.wrap{max-width:1400px;margin:0 auto;padding:24px}
+h1{font-size:20px;font-weight:600;margin-bottom:4px}
+.sub{color:var(--muted);font-size:13px}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.topbar-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:24px}
+.metric{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.metric-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.metric-value{font-size:26px;font-weight:600;margin-top:4px}
+.metric-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.bulk-bar{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;margin-bottom:16px;flex-wrap:wrap}
+.bulk-label{font-size:13px;color:var(--muted)}
+.sel-count{font-size:13px;font-weight:600;color:var(--accent)}
+.spacer{flex:1}
+.btn{font-size:12px;padding:6px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);cursor:pointer;color:var(--text);transition:background .15s}
+.btn:hover{background:#2e2e2e}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:white}
+.btn.primary:hover{background:var(--accent2)}
+.btn.danger{border-color:#7f1d1d;color:var(--danger)}
+.accounts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;margin-bottom:24px}
+.acc-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .15s}
+.acc-card:hover{border-color:#444}
+.acc-card.selected{border-color:var(--accent)}
+.acc-card.offline{opacity:.6}
+.acc-head{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border)}
+.acc-name{font-size:14px;font-weight:600;display:flex;align-items:center;gap:7px}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot-green{background:#22c55e}
+.dot-gray{background:#555}
+.dot-amber{background:#f59e0b}
+.acc-stats{display:flex;gap:10px;font-size:11px;color:var(--muted)}
+.acc-body{padding:12px 14px}
+.tabs{display:flex;gap:4px;margin-bottom:10px}
+.tab{font-size:12px;padding:4px 10px;border-radius:6px;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .15s}
+.tab.active{background:var(--bg3);color:var(--text);border-color:#444}
+.tab:hover{color:var(--text)}
+.sort-row{display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap}
+.pill{font-size:11px;padding:3px 9px;border-radius:20px;border:1px solid var(--border);background:transparent;cursor:pointer;color:var(--muted);transition:all .15s}
+.pill.active{background:var(--bg3);color:var(--text);border-color:#444}
+.pill:hover{color:var(--text)}
+.pet-list{display:flex;flex-direction:column;gap:3px;max-height:200px;overflow-y:auto}
+.pet-row{display:flex;align-items:center;justify-content:space-between;padding:6px 8px;border-radius:7px;background:var(--bg3)}
+.pet-name{font-size:12px;font-weight:500}
+.pet-sub{font-size:11px;color:var(--muted)}
+.badges{display:flex;gap:3px;flex-wrap:wrap}
+.badge{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600;letter-spacing:.02em}
+.b-leg{background:#2e1065;color:var(--leg)}
+.b-mega{background:#431407;color:var(--mega)}
+.b-neon{background:#022c22;color:var(--neon)}
+.b-egg{background:#1c1c1c;color:var(--muted)}
+.b-rare{background:#1e3a5f;color:var(--info)}
+.b-common{background:#1c1c1c;color:#666}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)}
+.toggle-row:last-child{border-bottom:none}
+.toggle-label{font-size:13px}
+.toggle-sub{font-size:11px;color:var(--muted)}
+.tog{width:36px;height:20px;border-radius:10px;border:none;cursor:pointer;position:relative;transition:background .15s;flex-shrink:0}
+.tog.on{background:var(--accent)}
+.tog.off{background:#333}
+.tog::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:white;top:2px;transition:left .15s}
+.tog.on::after{left:18px}
+.tog.off::after{left:2px}
+.config-section{margin-bottom:12px}
+.config-title{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.log-line{font-size:11px;font-family:'SF Mono',monospace;padding:4px 0;border-bottom:1px solid var(--border);color:var(--muted)}
+.log-line:last-child{border-bottom:none}
+.log-t{color:#444;margin-right:6px}
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:16px}
+.panel-title{font-size:15px;font-weight:600;margin-bottom:14px}
+.pets-master{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px}
+.master-pet{background:var(--bg3);border-radius:8px;padding:8px 10px;display:flex;align-items:center;justify-content:space-between}
+.master-acc{font-size:10px;color:var(--muted);margin-top:1px}
+input[type=text]{font-size:13px;padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text);outline:none;transition:border-color .15s}
+input[type=text]:focus{border-color:var(--accent)}
+.shop-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)}
+.shop-row:last-child{border-bottom:none}
+.shop-name{font-size:13px;font-weight:500}
+.shop-remote{font-size:11px;color:var(--muted);font-family:'SF Mono',monospace;margin-top:2px}
+.empty{color:var(--muted);font-size:13px;text-align:center;padding:20px 0}
+.online-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#22c55e;margin-right:5px;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.tag{font-size:11px;padding:2px 7px;border-radius:4px;background:var(--bg3);color:var(--muted);border:1px solid var(--border)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="topbar">
+  <div>
+    <h1>🐾 farm dashboard</h1>
+    <div class="sub" id="sync-label">connecting...</div>
+  </div>
+  <div class="topbar-right">
+    <span class="tag" id="online-count">0 online</span>
+    <div style="display:flex;align-items:center;gap:6px">
+      <span style="font-size:13px;color:var(--muted)">trade target:</span>
+      <input type="text" id="global-target" value="23nuns" style="width:110px">
+      <button class="btn primary" onclick="applyGlobalTarget()">apply all</button>
+    </div>
+    <button class="btn" onclick="refresh()">↻ refresh</button>
+  </div>
+</div>
+
+<div class="summary" id="summary">
+  <div class="metric"><div class="metric-label">accounts</div><div class="metric-value" id="s-accounts">—</div></div>
+  <div class="metric"><div class="metric-label">total pets</div><div class="metric-value" id="s-pets">—</div></div>
+  <div class="metric"><div class="metric-label">legendaries</div><div class="metric-value" id="s-leg">—</div></div>
+  <div class="metric"><div class="metric-label">eggs currency</div><div class="metric-value" id="s-curr">—</div></div>
+  <div class="metric"><div class="metric-label">cocoadiles</div><div class="metric-value" id="s-croc">—</div></div>
+</div>
+
+<div class="bulk-bar">
+  <span class="bulk-label">select:</span>
+  <button class="btn" onclick="selectAll()">all</button>
+  <button class="btn" onclick="selectNone()">none</button>
+  <button class="btn" onclick="selectOnline()">online only</button>
+  <span class="sel-count" id="sel-count">0 selected</span>
+  <div class="spacer"></div>
+  <button class="btn" onclick="bulkSave()">save config for selected</button>
+  <button class="btn primary" onclick="bulkTrade()">force trade now</button>
+</div>
+
+<div class="accounts-grid" id="accounts-grid">
+  <div class="empty" style="grid-column:1/-1">loading accounts...</div>
+</div>
+
+<div class="panel">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+    <div class="panel-title" style="margin:0">all pets</div>
+    <div class="sort-row" style="margin:0">
+      <button class="pill active" onclick="filterMaster('all',this)">all</button>
+      <button class="pill" onclick="filterMaster('legendary',this)">legendary</button>
+      <button class="pill" onclick="filterMaster('mega',this)">mega</button>
+      <button class="pill" onclick="filterMaster('neon',this)">neon</button>
+      <button class="pill" onclick="filterMaster('egg',this)">eggs</button>
+    </div>
+  </div>
+  <div class="pets-master" id="master-list"><div class="empty">no pets loaded</div></div>
+</div>
+
+</div>
+
+<script>
+const SERVER = "";  // leave empty — dashboard is served from same server
+const selected = new Set();
+let allAccounts = [];
+
+async function fetchAccounts() {
+  try {
+    const r = await fetch(SERVER + "/dashboard/accounts");
+    allAccounts = await r.json();
+    renderAll();
+  } catch(e) {
+    document.getElementById("sync-label").textContent = "connection error — is the server running?";
+  }
+}
+
+function fmtTime(ts) {
+  if(!ts) return "never";
+  const d = new Date(ts * 1000);
+  return d.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
+}
+
+function fmtCurr(n) {
+  if(n >= 1000) return Math.round(n/1000) + "k";
+  return n;
+}
+
+function timeSince(ts) {
+  if(!ts) return "never";
+  const s = Math.floor(Date.now()/1000 - ts);
+  if(s < 60) return s + "s ago";
+  if(s < 3600) return Math.floor(s/60) + "m ago";
+  return Math.floor(s/3600) + "h ago";
+}
+
+function renderAll() {
+  const now = Date.now()/1000;
+  let totalPets=0, totalLeg=0, totalCurr=0, totalCroc=0, onlineCount=0;
+  allAccounts.forEach(a => {
+    totalPets += a.pet_count || 0;
+    totalLeg += a.legendary_count || 0;
+    totalCurr += a.currency || 0;
+    totalCroc += a.cocoadile_count || 0;
+    if(a.online) onlineCount++;
+  });
+
+  document.getElementById("s-accounts").textContent = allAccounts.length;
+  document.getElementById("s-pets").textContent = totalPets;
+  document.getElementById("s-leg").textContent = totalLeg;
+  document.getElementById("s-curr").textContent = fmtCurr(totalCurr);
+  document.getElementById("s-croc").textContent = totalCroc;
+  document.getElementById("online-count").innerHTML = '<span class="online-dot"></span>' + onlineCount + " online";
+  document.getElementById("sync-label").textContent = allAccounts.length + " accounts · synced " + new Date().toLocaleTimeString();
+
+  renderAccounts();
+  renderMasterPets();
+}
+
+function renderAccounts() {
+  const grid = document.getElementById("accounts-grid");
+  if(allAccounts.length === 0) {
+    grid.innerHTML = '<div class="empty" style="grid-column:1/-1">no accounts connected yet — run the Lua client script on your farming accounts</div>';
+    return;
+  }
+  grid.innerHTML = "";
+  allAccounts.forEach(acc => {
+    const card = makeAccountCard(acc);
+    grid.appendChild(card);
+  });
+  document.getElementById("sel-count").textContent = selected.size + " selected";
+}
+
+function makeAccountCard(acc) {
+  const div = document.createElement("div");
+  div.className = "acc-card" + (acc.online ? "" : " offline") + (selected.has(acc.username) ? " selected" : "");
+  div.id = "acc-" + acc.username;
+  div.onclick = (e) => { if(!e.target.closest(".acc-body")) toggleSelect(acc.username); };
+
+  const pets = acc.inventory?.pets || {};
+  const cfg = acc.config || {};
+
+  div.innerHTML = `
+    <div class="acc-head">
+      <div class="acc-name">
+        <span class="dot ${acc.online ? "dot-green" : "dot-gray"}"></span>
+        ${acc.username}
+      </div>
+      <div class="acc-stats">
+        <span>${fmtCurr(acc.currency)} eggs</span>
+        <span>${acc.pet_count} pets</span>
+        <span>${acc.cocoadile_count} crocs</span>
+      </div>
+    </div>
+    <div class="acc-body" onclick="event.stopPropagation()">
+      <div class="tabs">
+        <button class="tab active" onclick="accTab('${acc.username}','pets',this)">pets</button>
+        <button class="tab" onclick="accTab('${acc.username}','config',this)">config</button>
+        <button class="tab" onclick="accTab('${acc.username}','shop',this)">shop</button>
+        <button class="tab" onclick="accTab('${acc.username}','log',this)">log</button>
+      </div>
+      <div id="t-${acc.username}-pets">${makePetTab(acc.username, pets)}</div>
+      <div id="t-${acc.username}-config" style="display:none">${makeConfigTab(acc.username, cfg)}</div>
+      <div id="t-${acc.username}-shop" style="display:none">${makeShopTab(acc.username, cfg)}</div>
+      <div id="t-${acc.username}-log" style="display:none"><div class="empty" id="log-${acc.username}">click to load</div></div>
+    </div>
+  `;
+  return div;
+}
+
+function makePetTab(username, pets) {
+  const rows = Object.values(pets).map(p => {
+    const name = p.id.replace(/_/g," ").replace(/\b\w/g,c=>c.toUpperCase());
+    const types = [];
+    if(p.rarity === "legendary") types.push("legendary");
+    if(p.is_mega) types.push("mega");
+    if(p.is_neon) types.push("neon");
+    if(!p.hatched) types.push("egg");
+    const badgeHtml = [
+      p.rarity==="legendary" ? '<span class="badge b-leg">legendary</span>' : '',
+      p.is_mega ? '<span class="badge b-mega">mega neon</span>' : '',
+      p.is_neon && !p.is_mega ? '<span class="badge b-neon">neon</span>' : '',
+      !p.hatched ? '<span class="badge b-egg">egg</span>' : ''
+    ].join("");
+    return `<div class="pet-row" data-type="${types.join(" ")}">
+      <div><div class="pet-name">${name}</div><div class="pet-sub">age ${p.age}</div></div>
+      <div class="badges">${badgeHtml}</div>
+    </div>`;
+  }).join("");
+
+  return `
+    <div class="sort-row">
+      <button class="pill active" onclick="sortPets('${username}','all',this)">all</button>
+      <button class="pill" onclick="sortPets('${username}','legendary',this)">legendary</button>
+      <button class="pill" onclick="sortPets('${username}','mega',this)">mega</button>
+      <button class="pill" onclick="sortPets('${username}','neon',this)">neon</button>
+      <button class="pill" onclick="sortPets('${username}','egg',this)">eggs</button>
+    </div>
+    <div class="pet-list" id="pl-${username}">
+      ${rows || '<div class="empty">no pets</div>'}
+    </div>`;
+}
+
+function makeConfigTab(username, cfg) {
+  const tog = (key, label, sub) => `
+    <div class="toggle-row">
+      <div><div class="toggle-label">${label}</div>${sub ? `<div class="toggle-sub">${sub}</div>` : ""}</div>
+      <button class="tog ${cfg[key] ? "on" : "off"}" data-key="${key}" data-acc="${username}" onclick="this.classList.toggle('on');this.classList.toggle('off')"></button>
+    </div>`;
+
+  return `
+    <div class="config-section">
+      <div class="config-title">trade — what to send</div>
+      ${tog("trade_legendaries","trade legendaries","")}
+      ${tog("trade_mega_neons","trade mega neons","")}
+      ${tog("trade_neons","trade neons","")}
+      ${tog("trade_full_growns","trade full growns","age 6 pets")}
+      ${tog("trade_newborns","trade newborns","age 1 pets")}
+      ${tog("trade_gifts","trade gifts","")}
+      ${tog("trade_food","trade food items","")}
+      ${tog("trade_pet_wear","trade pet wear","")}
+      ${tog("trade_cocoadiles","trade cocoadiles","")}
+    </div>
+    <div class="config-section">
+      <div class="config-title">trade target</div>
+      <input type="text" id="target-${username}" value="${cfg.trade_target || "23nuns"}" style="width:100%;margin-top:4px">
+    </div>
+    <div style="margin-top:10px">
+      <button class="btn primary" style="width:100%" onclick="saveConfig('${username}')">save config</button>
+    </div>`;
+}
+
+function makeShopTab(username, cfg) {
+  const items = cfg.auto_buy || [];
+  const rows = items.map((item,i) => `
+    <div class="shop-row">
+      <div>
+        <div class="shop-name">${item.name}</div>
+        <div class="shop-remote">${item.remote} · ${item.category} · cost: ${item.cost || "?"}</div>
+      </div>
+      <button class="tog ${item.enabled ? "on" : "off"}" onclick="this.classList.toggle('on');this.classList.toggle('off')"></button>
+    </div>`).join("") || '<div class="empty">no items configured</div>';
+
+  return `
+    <div class="config-title" style="margin-bottom:8px">auto buy items</div>
+    <div id="shoplist-${username}">${rows}</div>
+    <div style="margin-top:10px;display:flex;flex-direction:column;gap:6px">
+      <input type="text" id="buy-name-${username}" placeholder="name (e.g. Cocoadile)">
+      <input type="text" id="buy-remote-${username}" placeholder="remote (e.g. ShopAPI/BuyItem)">
+      <input type="text" id="buy-category-${username}" placeholder="category (e.g. pets)">
+      <input type="text" id="buy-id-${username}" placeholder="item id (e.g. sugarfest_2026_cocoadile)">
+      <input type="text" id="buy-cost-${username}" placeholder="cost per item (e.g. 14000)">
+      <button class="btn" onclick="addShopItem('${username}')">add item</button>
+    </div>`;
+}
+
+async function saveConfig(username) {
+  const card = document.getElementById("acc-" + username);
+  const cfg = {};
+
+  // Get all toggles
+  card.querySelectorAll(".tog[data-key]").forEach(tog => {
+    cfg[tog.dataset.key] = tog.classList.contains("on");
+  });
+
+  // Trade target
+  const targetEl = document.getElementById("target-" + username);
+  if(targetEl) cfg.trade_target = targetEl.value;
+
+  // Auto buy items (keep existing)
+  const acc = allAccounts.find(a => a.username === username);
+  cfg.auto_buy = acc?.config?.auto_buy || [];
+
+  try {
+    await fetch(SERVER + "/dashboard/config/" + username, {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify(cfg)
+    });
+    showToast("Config saved for " + username);
+  } catch(e) {
+    showToast("Save failed", true);
+  }
+}
+
+async function addShopItem(username) {
+  const name = document.getElementById("buy-name-" + username).value;
+  const remote = document.getElementById("buy-remote-" + username).value;
+  const category = document.getElementById("buy-category-" + username).value;
+  const itemId = document.getElementById("buy-id-" + username).value;
+  const cost = parseInt(document.getElementById("buy-cost-" + username).value) || 0;
+
+  if(!name || !remote || !itemId) { showToast("Fill in name, remote and item id", true); return; }
+
+  const acc = allAccounts.find(a => a.username === username);
+  if(!acc) return;
+  const cfg = acc.config || {};
+  cfg.auto_buy = cfg.auto_buy || [];
+  cfg.auto_buy.push({ name, remote, category: category || "pets", item_id: itemId, cost, max_count: 5, enabled: true });
+
+  try {
+    await fetch(SERVER + "/dashboard/config/" + username, {
+      method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(cfg)
+    });
+    showToast("Item added for " + username);
+    await refresh();
+  } catch(e) { showToast("Failed", true); }
+}
+
+async function loadLogs(username) {
+  const el = document.getElementById("log-" + username);
+  if(!el) return;
+  try {
+    const r = await fetch(SERVER + "/dashboard/logs/" + username);
+    const logs = await r.json();
+    if(logs.length === 0) { el.innerHTML = '<div class="empty">no logs yet</div>'; return; }
+    el.innerHTML = logs.map(l => `<div class="log-line"><span class="log-t">${fmtTime(l.timestamp)}</span>${l.message}</div>`).join("");
+  } catch(e) { el.innerHTML = '<div class="empty">failed to load</div>'; }
+}
+
+function accTab(username, tab, btn) {
+  ["pets","config","shop","log"].forEach(t => {
+    const el = document.getElementById("t-" + username + "-" + t);
+    if(el) el.style.display = t === tab ? "block" : "none";
+  });
+  btn.closest(".tabs").querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  if(tab === "log") loadLogs(username);
+}
+
+function sortPets(username, filter, btn) {
+  btn.closest(".sort-row").querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
+  btn.classList.add("active");
+  document.querySelectorAll("#pl-" + username + " .pet-row").forEach(row => {
+    const t = row.dataset.type || "";
+    row.style.display = (filter === "all" || t.includes(filter)) ? "flex" : "none";
+  });
+}
+
+function renderMasterPets() {
+  const list = document.getElementById("master-list");
+  const rows = [];
+  allAccounts.forEach(acc => {
+    const pets = acc.inventory?.pets || {};
+    Object.values(pets).forEach(p => {
+      const name = p.id.replace(/_/g," ").replace(/\b\w/g,c=>c.toUpperCase());
+      const types = [];
+      if(p.rarity === "legendary") types.push("legendary");
+      if(p.is_mega) types.push("mega");
+      if(p.is_neon) types.push("neon");
+      if(!p.hatched) types.push("egg");
+      const badges = [
+        p.rarity === "legendary" ? '<span class="badge b-leg">leg</span>' : '',
+        p.is_mega ? '<span class="badge b-mega">mega</span>' : '',
+        p.is_neon && !p.is_mega ? '<span class="badge b-neon">neon</span>' : '',
+        !p.hatched ? '<span class="badge b-egg">egg</span>' : ''
+      ].join("");
+      rows.push(`<div class="master-pet" data-type="${types.join(" ")}">
+        <div><div class="pet-name" style="font-size:12px;font-weight:500">${name}</div>
+        <div class="master-acc">${acc.username} · age ${p.age}</div></div>
+        <div class="badges">${badges}</div>
+      </div>`);
+    });
+  });
+  list.innerHTML = rows.length ? rows.join("") : '<div class="empty">no pets loaded</div>';
+}
+
+function filterMaster(filter, btn) {
+  btn.closest(".sort-row").querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
+  btn.classList.add("active");
+  document.querySelectorAll("#master-list .master-pet").forEach(row => {
+    const t = row.dataset.type || "";
+    row.style.display = (filter === "all" || t.includes(filter)) ? "flex" : "none";
+  });
+}
+
+function toggleSelect(username) {
+  const card = document.getElementById("acc-" + username);
+  if(selected.has(username)) { selected.delete(username); card?.classList.remove("selected"); }
+  else { selected.add(username); card?.classList.add("selected"); }
+  document.getElementById("sel-count").textContent = selected.size + " selected";
+}
+
+function selectAll() {
+  allAccounts.forEach(a => { selected.add(a.username); document.getElementById("acc-"+a.username)?.classList.add("selected"); });
+  document.getElementById("sel-count").textContent = selected.size + " selected";
+}
+
+function selectNone() {
+  selected.clear();
+  allAccounts.forEach(a => document.getElementById("acc-"+a.username)?.classList.remove("selected"));
+  document.getElementById("sel-count").textContent = "0 selected";
+}
+
+function selectOnline() {
+  selectNone();
+  allAccounts.filter(a => a.online).forEach(a => { selected.add(a.username); document.getElementById("acc-"+a.username)?.classList.add("selected"); });
+  document.getElementById("sel-count").textContent = selected.size + " selected";
+}
+
+async function bulkSave() {
+  if(selected.size === 0) { showToast("Select accounts first", true); return; }
+  const cfg = buildConfigFromUI([...selected][0]);
+  if(!cfg) return;
+  try {
+    await fetch(SERVER + "/dashboard/config/bulk", {
+      method: "POST", headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ usernames: [...selected], config: cfg })
+    });
+    showToast("Config saved for " + selected.size + " accounts");
+  } catch(e) { showToast("Failed", true); }
+}
+
+async function bulkTrade() {
+  if(selected.size === 0) { showToast("Select accounts first", true); return; }
+  for(const username of selected) {
+    try {
+      await fetch(SERVER + "/dashboard/force_trade/" + username, { method: "POST" });
+    } catch(e) {}
+  }
+  showToast("Force trade queued for " + selected.size + " accounts");
+}
+
+function buildConfigFromUI(username) {
+  const card = document.getElementById("acc-" + username);
+  if(!card) return null;
+  const cfg = {};
+  card.querySelectorAll(".tog[data-key]").forEach(tog => {
+    cfg[tog.dataset.key] = tog.classList.contains("on");
+  });
+  const targetEl = document.getElementById("target-" + username);
+  if(targetEl) cfg.trade_target = targetEl.value;
+  const acc = allAccounts.find(a => a.username === username);
+  cfg.auto_buy = acc?.config?.auto_buy || [];
+  return cfg;
+}
+
+function applyGlobalTarget() {
+  const val = document.getElementById("global-target").value.trim();
+  if(!val) return;
+  document.querySelectorAll("input[id^='target-']").forEach(i => i.value = val);
+  showToast("Trade target set to '" + val + "' — click save on each account or use bulk save");
+}
+
+async function refresh() {
+  await fetchAccounts();
+}
+
+function showToast(msg, isError) {
+  const t = document.createElement("div");
+  t.style.cssText = `position:fixed;bottom:20px;right:20px;background:${isError?"#7f1d1d":"#022c22"};color:${isError?var_r:var_g};border:1px solid ${isError?"#f87171":"#34d399"};padding:10px 16px;border-radius:8px;font-size:13px;z-index:9999;transition:opacity .3s`;
+  t.style.color = isError ? "#f87171" : "#34d399";
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => { t.style.opacity = "0"; setTimeout(() => t.remove(), 300); }, 2500);
+}
+
+// Auto refresh every 30s
+setInterval(refresh, 30000);
+fetchAccounts();
+</script>
+</body>
+</html>
