@@ -53,6 +53,16 @@ def init_db():
                 timestamp REAL
             )
         """)
+        # Add any missing columns (safe to run every boot)
+        existing = [r[1] for r in db.execute("PRAGMA table_info(accounts)").fetchall()]
+        for col, typedef in [
+            ("bucks",   "INTEGER DEFAULT 0"),
+            ("candy",   "INTEGER DEFAULT 0"),
+            ("tickets", "INTEGER DEFAULT 0"),
+        ]:
+            if col not in existing:
+                print(f"[DB] Adding column: {col}")
+                db.execute(f"ALTER TABLE accounts ADD COLUMN {col} {typedef}")
         db.commit()
 
 init_db()
