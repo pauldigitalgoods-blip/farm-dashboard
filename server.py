@@ -35,6 +35,10 @@ def init_db():
                 bucks INTEGER DEFAULT 0,
                 candy INTEGER DEFAULT 0,
                 tickets INTEGER DEFAULT 0,
+                current_task TEXT DEFAULT 'idle',
+                current_pet TEXT DEFAULT '',
+                potions INTEGER DEFAULT 0,
+                money_farmed INTEGER DEFAULT 0,
                 last_action TEXT,
                 config TEXT
             )
@@ -162,8 +166,8 @@ def ping():
         config = existing["config"] if existing else json.dumps(DEFAULT_CONFIG)
 
         db.execute("""
-            INSERT INTO accounts (username, display_name, last_ping, inventory, currency, currency_key, bucks, candy, tickets, last_action, config)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO accounts (username, display_name, last_ping, inventory, currency, currency_key, bucks, candy, tickets, current_task, current_pet, potions, money_farmed, last_action, config)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(username) DO UPDATE SET
                 last_ping=excluded.last_ping,
                 inventory=excluded.inventory,
@@ -172,6 +176,10 @@ def ping():
                 bucks=excluded.bucks,
                 candy=excluded.candy,
                 tickets=excluded.tickets,
+                current_task=excluded.current_task,
+                current_pet=excluded.current_pet,
+                potions=excluded.potions,
+                money_farmed=excluded.money_farmed,
                 last_action=excluded.last_action
         """, (
             username,
@@ -183,7 +191,11 @@ def ping():
             data.get("bucks", 0),
             data.get("candy", 0),
             data.get("tickets", 0),
-            data.get("last_action", ""),
+            data.get("current_task", "idle"),
+            data.get("current_pet", ""),
+            data.get("potions", 0),
+            data.get("money_farmed", 0),
+            data.get("last_action", data.get("current_task", "idle")),
             config
         ))
         db.commit()
@@ -233,7 +245,7 @@ def dashboard_accounts():
 
     with get_db() as db:
         rows = db.execute("""
-            SELECT username, display_name, last_ping, inventory, currency, currency_key, bucks, candy, tickets, last_action, config
+            SELECT username, display_name, last_ping, inventory, currency, currency_key, bucks, candy, tickets, current_task, current_pet, potions, money_farmed, last_action, config
             FROM accounts ORDER BY last_ping DESC
         """).fetchall()
 
@@ -259,6 +271,10 @@ def dashboard_accounts():
             "bucks": row["bucks"] if "bucks" in row.keys() else 0,
             "candy": row["candy"] if "candy" in row.keys() else 0,
             "tickets": row["tickets"] if "tickets" in row.keys() else 0,
+            "current_task": row["current_task"] if "current_task" in row.keys() else "idle",
+            "current_pet": row["current_pet"] if "current_pet" in row.keys() else "",
+            "potions": row["potions"] if "potions" in row.keys() else 0,
+            "money_farmed": row["money_farmed"] if "money_farmed" in row.keys() else 0,
             "pet_count": len(pets),
             "legendary_count": leg_count,
             "cocoadile_count": croc_count,
