@@ -255,9 +255,10 @@ function fmtTime(ts) {
   return new Date(ts * 1000).toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
 }
 function fmtCurr(n) {
+  if(!n) return 0;
   if(n >= 1000000) return (n/1000000).toFixed(1) + "m";
-  if(n >= 1000) return Math.round(n/1000) + "k";
-  return n;
+  if(n >= 10000) return Math.round(n/1000) + "k";
+  return n.toLocaleString();
 }
 function timeSince(ts) {
   if(!ts) return "never";
