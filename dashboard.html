@@ -586,11 +586,16 @@ function mkAccRow(acc){
         <div class="drop-sec">
           <div class="drop-sec-h">⚙️ Assign Config</div>
           <div class="drop-sec-b">
-            <select class="inp" id="asgn-${acc.username}" style="width:100%;margin-bottom:8px">
-              <option value="">— None —</option>
-              ${cfgs.map(c=>`<option value="${c.id}" ${cfg?.id===c.id?'selected':''}>${c.name}</option>`).join('')}
-            </select>
-            <button class="btn solid xs" onclick="assignCfg('${acc.username}')" style="width:100%;justify-content:center">Apply Config</button>
+            <div class="dd" id="asgn-dd-${acc.username}" style="width:100%;margin-bottom:8px">
+              <button class="btn ghost" style="width:100%;justify-content:space-between" onclick="toggleDD('asgn-dd-${acc.username}')">
+                <span id="asgn-lbl-${acc.username}">${cfg?cfg.name:'— None —'}</span><span>▾</span>
+              </button>
+              <div class="dd-menu" id="asgn-dd-${acc.username}-menu" style="width:100%">
+                <div class="dd-item" onclick="selectCfgForAcc('${acc.username}','',this)">— None —</div>
+                ${cfgs.map(c=>`<div class="dd-item ${cfg?.id===c.id?'on':''}" onclick="selectCfgForAcc('${acc.username}','${c.id}',this)">${c.name}${cfg?.id===c.id?' <span class="dd-chk">✓</span>':''}</div>`).join('')}
+              </div>
+            </div>
+            <button class="btn solid xs" onclick="assignCfg('${acc.username}')" style="width:100%;justify-content:center;margin-top:4px">Apply Config</button>
           </div>
         </div>
       </div>
@@ -600,8 +605,16 @@ function mkAccRow(acc){
 
 function toggleDrop(u){document.getElementById("adrop-"+u)?.classList.toggle("on");}
 
+function selectCfgForAcc(username, cfgId, el){
+  document.getElementById("asgn-lbl-"+username).textContent = cfgId ? (cfgs.find(c=>c.id===cfgId)?.name||'— None —') : '— None —';
+  document.getElementById("asgn-dd-"+username+"-menu").classList.remove('on');
+  // Store selection
+  if(!window._selCfg) window._selCfg = {};
+  window._selCfg[username] = cfgId;
+}
+
 async function assignCfg(username){
-  const sel=document.getElementById("asgn-"+username)?.value;
+  const sel = (window._selCfg||{})[username];
   if(!sel)return;
   const cfg=cfgs.find(c=>c.id===sel);if(!cfg)return;
   cfgs.forEach(c=>{c.assignedTo=(c.assignedTo||[]).filter(u=>u!==username);});
@@ -609,9 +622,10 @@ async function assignCfg(username){
   if(!cfg.assignedTo.includes(username))cfg.assignedTo.push(username);
   localStorage.setItem('am_cfgs',JSON.stringify(cfgs));
   try{
-    await fetch(S+"/dashboard/config/"+username,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(cfg.settings||{})});
+    const settings = cfg.settings || {};
+    await fetch(S+"/dashboard/config/"+username,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(settings)});
     showToast("Config '"+cfg.name+"' applied to "+username);renderAccounts();
-  }catch(e){showToast("Failed",true);}
+  }catch(e){showToast("Failed to push: "+e,true);}
 }
 
 function openCfg(u){
@@ -658,7 +672,7 @@ function renderCfgList(){
 function newCfg(){
   const id='cfg_'+Date.now();
   const cfg={id,name:'New Config',assignedTo:[],settings:{
-    pet_farm:false,baby_farm:true,egg_farm:false,auto_hatch:false,
+    farm_enabled:false,pet_farm:false,baby_farm:true,egg_farm:false,auto_hatch:false,trade_enabled:false,
     trade_legendaries:true,trade_mega_neons:true,trade_neons:false,
     trade_full_growns:true,trade_newborns:false,
     trade_gifts:true,trade_food:false,trade_pet_wear:false,trade_cocoadiles:true,
@@ -690,10 +704,12 @@ function renderEditor(cfg){
         <div class="cfg-panel">
           <div class="cfg-panel-h"><div class="cfg-panel-icon">⚙️</div><div><div class="cfg-panel-title">Farming Mode</div><div class="cfg-panel-sub">What to farm</div></div></div>
           <div>
+            ${tog('farm_enabled','✅','Farm Enabled','Master switch — farm does nothing until this is ON')}
             ${tog('pet_farm','🐾','Pet Farm','Farm and grow pets')}
             ${tog('baby_farm','👶','Baby Farm','Handle baby ailments')}
             ${tog('egg_farm','🍳','Egg Farm','Farm eggs instead')}
             ${tog('auto_hatch','🐣','Auto Hatch','Auto hatch collected eggs')}
+            ${tog('trade_enabled','💱','Trade Enabled','Enable trade bot')}
           </div>
         </div>
         <div class="cfg-panel">
@@ -754,7 +770,26 @@ function saveCfg(id){
   const tgt=document.getElementById("cfg-target");if(tgt)cfg.settings.trade_target=tgt.value;
   const wh=document.getElementById("cfg-wh");if(wh)cfg.settings.webhook=wh.value;
   localStorage.setItem('am_cfgs',JSON.stringify(cfgs));
-  renderCfgList();showToast("Config '"+cfg.name+"' saved");
+  renderCfgList();
+  // Push to all assigned accounts immediately
+  const assigned = cfg.assignedTo || [];
+  if(assigned.length > 0){
+    let pushed = 0;
+    assigned.forEach(async username => {
+      try{
+        await fetch(S+"/dashboard/config/"+username,{
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify(cfg.settings)
+        });
+        pushed++;
+        if(pushed===assigned.length) showToast("Config '"+cfg.name+"' saved + pushed to "+pushed+" account(s)");
+      }catch(e){ showToast("Saved locally but push failed",true); }
+    });
+    if(assigned.length===0) showToast("Config '"+cfg.name+"' saved (no accounts assigned)");
+  } else {
+    showToast("Config '"+cfg.name+"' saved (assign to accounts to push)");
+  }
 }
 
 function addShopItem(cfgId){
