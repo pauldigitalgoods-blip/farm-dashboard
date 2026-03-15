@@ -93,9 +93,8 @@ nav{background:rgba(10,10,10,.92);backdrop-filter:blur(20px);border-bottom:1px s
 .pet-card{background:var(--s3);border:1px solid var(--b1);border-radius:9px;padding:10px 12px;cursor:pointer;transition:border-color .15s;position:relative}
 .pet-card:hover{border-color:var(--b3)}
 .pet-card.expanded{border-color:var(--b3);background:var(--s4)}
-.pet-card-top{display:flex;align-items:flex-start;gap:10px}
-.pet-card-img { width: 52px; height: 52px; object-fit: contain; flex-shrink: 0; image-rendering: auto; }
-.pet-card-img-wrap { width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; background: var(--s4); border-radius: 8px; flex-shrink: 0; font-size: 22px; }
+.pet-card-top{display:flex;align-items:center;gap:10px}
+.pet-avatar { width: 40px; height: 40px; border-radius: 8px; border: 1px solid; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 800; flex-shrink: 0; }
 
 .pet-card-name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
 .badges{display:flex;gap:2px;flex-shrink:0}
@@ -568,7 +567,7 @@ function getActiveAccs(){if(selAccs.has('__all__'))return allAccs;return allAccs
 function setInvTab(t,btn){invTab=t;document.querySelectorAll(".inv-tab").forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderInv();}
 function setInvSort(s,btn){invSort=s;document.getElementById("inv-sort-lbl").textContent=btn.textContent.replace('✓','').trim();document.querySelectorAll("#dd-inv-sort-menu .dd-item").forEach(i=>{i.classList.remove('on');i.querySelector('.dd-chk')?.remove();});btn.classList.add('on');btn.insertAdjacentHTML('beforeend','<span class="dd-chk">✓</span>');document.getElementById("dd-inv-sort-menu").classList.remove('on');renderInv();}
 
-function mkBadges(p){return[p.rarity==="legendary"?'<span class="badge b-leg">leg</span>':'',p.is_mega?'<span class="badge b-mega">mega</span>':'',p.is_neon&&!p.is_mega?'<span class="badge b-neon">neon</span>':'',!p.hatched?'<span class="badge b-egg">egg</span>':''].join('');}
+function mkBadges(p){return[p.rarity==="legendary"?'<span class="badge b-leg">leg</span>':'',p.is_mega?'<span class="badge b-mega">mega</span>':'',p.is_neon&&!p.is_mega?'<span class="badge b-neon">neon</span>':'',p.hatched===false||p.hatched===0?'<span class="badge b-egg">egg</span>':''].join('');}
 
 function renderInv(){
   const accs=getActiveAccs();
@@ -580,7 +579,7 @@ function renderInv(){
       Object.values(acc.inventory?.pets||{}).forEach(p=>{
         const isEgg=!p.hatched;
         if(invTab==='eggs'&&!isEgg)return;
-        if(invTab==='pets'&&isEgg)return;
+        if(invTab==='pets'&&isEgg)return; // skip unhatched in pets tab
         items.push({...p,_acc:acc.username});
       });
     });
