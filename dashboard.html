@@ -317,8 +317,8 @@ function makeAccountCard(acc) {
         ${acc.username}
       </div>
       <div class="acc-meta">
-        <span class="acc-stat" title="eggs currency">🥚<span>${fmtCurr(acc.currency)}</span></span>
-        <span class="acc-stat" title="bucks">💵<span>${fmtCurr(acc.bucks||0)}</span></span>
+        <span class="acc-stat">🥚 <span>${fmtCurr(acc.currency||0)}</span></span>
+        <span class="acc-stat">💵 <span>${fmtCurr(acc.bucks||0)}</span></span>
         <button class="btn sm jump" onclick="event.stopPropagation();sendJump('${acc.username}')">jump</button>
       </div>
     </div>
@@ -468,13 +468,14 @@ function makeInvTab(username, acc) {
     <button class="pill" onclick="sortPets('${username}','egg',this)">eggs</button>
   </div><div class="pet-list" id="pl-${username}">${petRows}</div>`;
 
-  const candy = acc.candy > 0 ? `<div class="curr-chip">🍬 <span class="curr-val">${fmtCurr(acc.candy)}</span><span class="curr-label">candy</span></div>` : '';
+  const chips = [
+    `<div class="curr-chip">🥚 <span class="curr-val">${fmtCurr(acc.currency||0)}</span><span class="curr-label">eggs</span></div>`,
+    `<div class="curr-chip">💵 <span class="curr-val">${fmtCurr(acc.bucks||0)}</span><span class="curr-label">bucks</span></div>`,
+    acc.candy > 0 ? `<div class="curr-chip">🍬 <span class="curr-val">${fmtCurr(acc.candy)}</span><span class="curr-label">candy</span></div>` : '',
+    acc.tickets > 0 ? `<div class="curr-chip">🎟️ <span class="curr-val">${fmtCurr(acc.tickets)}</span><span class="curr-label">tickets</span></div>` : '',
+  ].join('');
 
-  return `<div class="currency-row">
-    <div class="curr-chip">🥚 <span class="curr-val">${fmtCurr(acc.currency||0)}</span><span class="curr-label">eggs</span></div>
-    <div class="curr-chip">💵 <span class="curr-val">${fmtCurr(acc.bucks||0)}</span><span class="curr-label">bucks</span></div>
-    ${candy}
-  </div>`
+  return `<div class="currency-row">${chips}</div>`
   + makeDropdown('dd-pets-'+username, '🐾 pets', Object.keys(pets).length, petContent)
   + makeDropdown('dd-gifts-'+username, '🎁 gifts', Object.keys(gifts).length, giftRows)
   + makeDropdown('dd-wear-'+username, '👒 pet wear', Object.keys(petWear).length, wearRows)

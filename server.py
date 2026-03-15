@@ -40,6 +40,7 @@ def init_db():
                 currency_key TEXT DEFAULT 'eggs_2026',
                 bucks INTEGER DEFAULT 0,
                 candy INTEGER DEFAULT 0,
+                tickets INTEGER DEFAULT 0,
                 last_action TEXT,
                 config TEXT
             )
@@ -166,8 +167,8 @@ def ping():
         config = existing["config"] if existing else json.dumps(DEFAULT_CONFIG)
 
         db.execute("""
-            INSERT INTO accounts (username, display_name, last_ping, inventory, currency, currency_key, bucks, candy, last_action, config)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO accounts (username, display_name, last_ping, inventory, currency, currency_key, bucks, candy, tickets, last_action, config)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(username) DO UPDATE SET
                 last_ping=excluded.last_ping,
                 inventory=excluded.inventory,
@@ -175,6 +176,7 @@ def ping():
                 currency_key=excluded.currency_key,
                 bucks=excluded.bucks,
                 candy=excluded.candy,
+                tickets=excluded.tickets,
                 last_action=excluded.last_action
         """, (
             username,
@@ -185,6 +187,7 @@ def ping():
             data.get("currency_key", "eggs_2026"),
             data.get("bucks", 0),
             data.get("candy", 0),
+            data.get("tickets", 0),
             data.get("last_action", ""),
             config
         ))
@@ -260,6 +263,7 @@ def dashboard_accounts():
             "currency_key": row["currency_key"],
             "bucks": row["bucks"] if "bucks" in row.keys() else 0,
             "candy": row["candy"] if "candy" in row.keys() else 0,
+            "tickets": row["tickets"] if "tickets" in row.keys() else 0,
             "pet_count": len(pets),
             "legendary_count": leg_count,
             "cocoadile_count": croc_count,
