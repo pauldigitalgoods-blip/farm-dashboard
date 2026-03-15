@@ -567,7 +567,7 @@ function getActiveAccs(){if(selAccs.has('__all__'))return allAccs;return allAccs
 function setInvTab(t,btn){invTab=t;document.querySelectorAll(".inv-tab").forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderInv();}
 function setInvSort(s,btn){invSort=s;document.getElementById("inv-sort-lbl").textContent=btn.textContent.replace('✓','').trim();document.querySelectorAll("#dd-inv-sort-menu .dd-item").forEach(i=>{i.classList.remove('on');i.querySelector('.dd-chk')?.remove();});btn.classList.add('on');btn.insertAdjacentHTML('beforeend','<span class="dd-chk">✓</span>');document.getElementById("dd-inv-sort-menu").classList.remove('on');renderInv();}
 
-function mkBadges(p){return[p.rarity==="legendary"?'<span class="badge b-leg">leg</span>':'',p.is_mega?'<span class="badge b-mega">mega</span>':'',p.is_neon&&!p.is_mega?'<span class="badge b-neon">neon</span>':'',(p.hatched===false||p.hatched===0)&&(p.age===0||p.age===1)?'<span class="badge b-egg">egg</span>':""].join('');}
+function mkBadges(p){return[p.rarity==="legendary"?'<span class="badge b-leg">leg</span>':'',p.is_mega?'<span class="badge b-mega">mega</span>':'',p.is_neon&&!p.is_mega?'<span class="badge b-neon">neon</span>':'',p.hatched===false||p.hatched===0?'<span class="badge b-egg">egg</span>':''].join('');}
 
 function renderInv(){
   const accs=getActiveAccs();
@@ -577,7 +577,7 @@ function renderInv(){
   if(invTab==='pets'||invTab==='eggs'){
     accs.forEach(acc=>{
       Object.values(acc.inventory?.pets||{}).forEach(p=>{
-        const isEgg=(p.hatched===false||p.hatched===0)&&(p.age===0||p.age===1);
+        const isEgg=p.hatched===false||p.hatched===0;
         if(invTab==='eggs'&&!isEgg)return;
         if(invTab==='pets'&&isEgg)return; // skip unhatched in pets tab
         items.push({...p,_acc:acc.username});
