@@ -156,6 +156,20 @@ input[type=text]:focus{border-color:var(--accent)}
 
 /* TOAST */
 .toast{position:fixed;bottom:20px;right:20px;padding:10px 16px;border-radius:8px;font-size:12px;z-index:9999;transition:opacity .3s;pointer-events:none}
+
+/* DROPDOWNS */
+.dropdown-section{border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:5px}
+.dropdown-head{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;cursor:pointer;background:var(--bg3);transition:background .15s;user-select:none}
+.dropdown-head:hover{background:var(--bg4)}
+.dropdown-head.disabled{cursor:default;opacity:.4}
+.dropdown-title{font-size:12px;font-weight:600}
+.dropdown-count{font-size:11px;color:var(--muted2);background:var(--bg4);padding:1px 6px;border-radius:10px}
+.dropdown-arrow{font-size:14px;color:var(--muted);transition:transform .15s;display:inline-block}
+.dropdown-body{padding:6px 8px;background:var(--bg2);display:flex;flex-direction:column;gap:2px;max-height:200px;overflow-y:auto}
+.currency-row{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+.curr-chip{display:flex;align-items:center;gap:4px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:4px 9px;font-size:11px}
+.curr-chip .curr-val{font-weight:700;color:var(--text)}
+.curr-chip .curr-label{color:var(--muted)}
 </style>
 </head>
 <body>
@@ -303,19 +317,19 @@ function makeAccountCard(acc) {
         ${acc.username}
       </div>
       <div class="acc-meta">
-        <span class="acc-stat"><span>${fmtCurr(acc.currency)}</span> eggs</span>
-        <span class="acc-stat"><span>${acc.pet_count}</span> pets</span>
+        <span class="acc-stat" title="eggs currency">🥚<span>${fmtCurr(acc.currency)}</span></span>
+        <span class="acc-stat" title="bucks">💵<span>${fmtCurr(acc.bucks||0)}</span></span>
         <button class="btn sm jump" onclick="event.stopPropagation();sendJump('${acc.username}')">jump</button>
       </div>
     </div>
     <div class="acc-body" onclick="event.stopPropagation()">
       <div class="tabs">
-        <button class="tab active" onclick="accTab('${acc.username}','pets',this)">pets</button>
+        <button class="tab active" onclick="accTab('${acc.username}','inv',this)">inv</button>
         <button class="tab" onclick="accTab('${acc.username}','config',this)">config</button>
         <button class="tab" onclick="accTab('${acc.username}','shop',this)">shop</button>
         <button class="tab" onclick="accTab('${acc.username}','log',this)">log</button>
       </div>
-      <div id="t-${acc.username}-pets">${makePetTab(acc.username, pets)}</div>
+      <div id="t-${acc.username}-inv">${makeInvTab(acc.username, acc)}</div>
       <div id="t-${acc.username}-config" style="display:none">${makeConfigTab(acc.username, cfg)}</div>
       <div id="t-${acc.username}-shop" style="display:none">${makeShopTab(acc.username, cfg)}</div>
       <div id="t-${acc.username}-log" style="display:none"><div class="empty" id="log-${acc.username}">click log tab to load</div></div>
@@ -323,46 +337,149 @@ function makeAccountCard(acc) {
   return div;
 }
 
+function makeBadges(p) {
+  return [
+    p.rarity==="legendary" ? '<span class="badge b-leg">leg</span>' : '',
+    p.is_mega ? '<span class="badge b-mega">mega</span>' : '',
+    p.is_neon && !p.is_mega ? '<span class="badge b-neon">neon</span>' : '',
+    !p.hatched ? '<span class="badge b-egg">egg</span>' : ''
+  ].join("");
+}
+
+function makePetRow(p) {
+  const name = fmtId(p.id);
+  const rawId = p.kind || p.id;
+  const types = [];
+  if(p.rarity === "legendary") types.push("legendary");
+  if(p.is_mega) types.push("mega");
+  if(p.is_neon) types.push("neon");
+  if(!p.hatched) types.push("egg");
+  return `<div class="pet-row" data-type="${types.join(" ")}">
+    <div class="pet-info">
+      <div class="pet-name">${name}</div>
+      <div class="pet-id">${rawId}</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:5px;flex-shrink:0">
+      <span class="pet-age">age ${p.age}</span>
+      <div class="badges">${makeBadges(p)}</div>
+    </div>
+  </div>`;
+}
+
+function makeDropdown(id, title, count, contentHtml) {
+  if(count === 0) return `<div class="dropdown-section">
+    <div class="dropdown-head disabled">
+      <span class="dropdown-title">${title}</span>
+      <span class="dropdown-count">0</span>
+    </div>
+  </div>`;
+  return `<div class="dropdown-section">
+    <div class="dropdown-head" onclick="toggleDropdown('${id}')">
+      <span class="dropdown-title">${title}</span>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span class="dropdown-count">${count}</span>
+        <span class="dropdown-arrow" id="arr-${id}">›</span>
+      </div>
+    </div>
+    <div class="dropdown-body" id="${id}" style="display:none">${contentHtml}</div>
+  </div>`;
+}
+
+function toggleDropdown(id) {
+  const el = document.getElementById(id);
+  const arr = document.getElementById("arr-" + id);
+  if(!el) return;
+  const open = el.style.display !== "none";
+  el.style.display = open ? "none" : "block";
+  if(arr) arr.style.transform = open ? "" : "rotate(90deg)";
+}
+
 function makePetTab(username, pets) {
-  const rows = Object.values(pets).map(p => {
-    const name = fmtId(p.id);
-    const rawId = p.kind || p.id;
-    const types = [];
-    if(p.rarity === "legendary") types.push("legendary");
-    if(p.is_mega) types.push("mega");
-    if(p.is_neon) types.push("neon");
-    if(!p.hatched) types.push("egg");
-    const badgeHtml = [
-      p.rarity==="legendary" ? '<span class="badge b-leg">leg</span>' : '',
-      p.is_mega ? '<span class="badge b-mega">mega</span>' : '',
-      p.is_neon && !p.is_mega ? '<span class="badge b-neon">neon</span>' : '',
-      !p.hatched ? '<span class="badge b-egg">egg</span>' : ''
-    ].join("");
-    return `<div class="pet-row" data-type="${types.join(" ")}">
-      <div class="pet-info">
-        <div class="pet-name">${name}</div>
-        <div class="pet-id">${rawId}</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:5px;flex-shrink:0">
-        <span class="pet-age">age ${p.age}</span>
-        <div class="badges">${badgeHtml}</div>
-      </div>
-    </div>`;
-  }).join("");
+  const allPets = Object.values(pets);
+  const petRows = allPets.map(makePetRow).join("") || '<div class="empty">no pets</div>';
 
   return `
-    <div class="pills">
+    <div class="pills" style="margin-bottom:6px">
       <button class="pill active" onclick="sortPets('${username}','all',this)">all</button>
       <button class="pill" onclick="sortPets('${username}','legendary',this)">leg</button>
       <button class="pill" onclick="sortPets('${username}','mega',this)">mega</button>
       <button class="pill" onclick="sortPets('${username}','neon',this)">neon</button>
       <button class="pill" onclick="sortPets('${username}','egg',this)">eggs</button>
     </div>
-    <div class="pet-list" id="pl-${username}">
-      ${rows || '<div class="empty">no pets</div>'}
-    </div>`;
+    <div class="pet-list" id="pl-${username}">${petRows}</div>`;
 }
 
+
+function makeDropdown(id, title, count, contentHtml) {
+  if(count === 0) return `<div class="dropdown-section"><div class="dropdown-head disabled"><span class="dropdown-title">${title}</span><span class="dropdown-count">0</span></div></div>`;
+  return `<div class="dropdown-section">
+    <div class="dropdown-head" onclick="toggleDropdown('${id}')">
+      <span class="dropdown-title">${title}</span>
+      <div style="display:flex;align-items:center;gap:6px"><span class="dropdown-count">${count}</span><span class="dropdown-arrow" id="arr-${id}">›</span></div>
+    </div>
+    <div class="dropdown-body" id="${id}" style="display:none">${contentHtml}</div>
+  </div>`;
+}
+function toggleDropdown(id) {
+  const el = document.getElementById(id);
+  const arr = document.getElementById("arr-" + id);
+  if(!el) return;
+  const open = el.style.display !== "none";
+  el.style.display = open ? "none" : "block";
+  if(arr) arr.style.transform = open ? "" : "rotate(90deg)";
+}
+function makeBadges(p) {
+  return [
+    p.rarity==="legendary" ? '<span class="badge b-leg">leg</span>' : '',
+    p.is_mega ? '<span class="badge b-mega">mega</span>' : '',
+    p.is_neon && !p.is_mega ? '<span class="badge b-neon">neon</span>' : '',
+    !p.hatched ? '<span class="badge b-egg">egg</span>' : ''
+  ].join("");
+}
+function makePetRow(p) {
+  const name = fmtId(p.id);
+  const rawId = p.kind || p.id;
+  const types = [];
+  if(p.rarity === "legendary") types.push("legendary");
+  if(p.is_mega) types.push("mega");
+  if(p.is_neon) types.push("neon");
+  if(!p.hatched) types.push("egg");
+  return `<div class="pet-row" data-type="${types.join(" ")}">
+    <div class="pet-info"><div class="pet-name">${name}</div><div class="pet-id">${rawId}</div></div>
+    <div style="display:flex;align-items:center;gap:5px;flex-shrink:0"><span class="pet-age">age ${p.age}</span><div class="badges">${makeBadges(p)}</div></div>
+  </div>`;
+}
+function makeInvTab(username, acc) {
+  const pets = acc.inventory?.pets || {};
+  const gifts = acc.inventory?.gifts || {};
+  const petWear = acc.inventory?.pet_accessories || {};
+  const food = acc.inventory?.food || {};
+
+  const petRows = Object.values(pets).map(makePetRow).join("") || '<div class="empty">no pets</div>';
+  const giftRows = Object.values(gifts).map(g => `<div class="pet-row"><div class="pet-info"><div class="pet-name">${fmtId(g.id)}</div><div class="pet-id">${g.id}</div></div></div>`).join("") || '<div class="empty">none</div>';
+  const wearRows = Object.values(petWear).map(w => `<div class="pet-row"><div class="pet-info"><div class="pet-name">${fmtId(w.id)}</div><div class="pet-id">${w.id}</div></div></div>`).join("") || '<div class="empty">none</div>';
+  const foodRows = Object.values(food).map(f => `<div class="pet-row"><div class="pet-info"><div class="pet-name">${fmtId(f.kind||f.id)}</div><div class="pet-id">${f.id}</div></div></div>`).join("") || '<div class="empty">none</div>';
+
+  const petContent = `<div class="pills" style="margin-bottom:6px">
+    <button class="pill active" onclick="sortPets('${username}','all',this)">all</button>
+    <button class="pill" onclick="sortPets('${username}','legendary',this)">leg</button>
+    <button class="pill" onclick="sortPets('${username}','mega',this)">mega</button>
+    <button class="pill" onclick="sortPets('${username}','neon',this)">neon</button>
+    <button class="pill" onclick="sortPets('${username}','egg',this)">eggs</button>
+  </div><div class="pet-list" id="pl-${username}">${petRows}</div>`;
+
+  const candy = acc.candy > 0 ? `<div class="curr-chip">🍬 <span class="curr-val">${fmtCurr(acc.candy)}</span><span class="curr-label">candy</span></div>` : '';
+
+  return `<div class="currency-row">
+    <div class="curr-chip">🥚 <span class="curr-val">${fmtCurr(acc.currency||0)}</span><span class="curr-label">eggs</span></div>
+    <div class="curr-chip">💵 <span class="curr-val">${fmtCurr(acc.bucks||0)}</span><span class="curr-label">bucks</span></div>
+    ${candy}
+  </div>`
+  + makeDropdown('dd-pets-'+username, '🐾 pets', Object.keys(pets).length, petContent)
+  + makeDropdown('dd-gifts-'+username, '🎁 gifts', Object.keys(gifts).length, giftRows)
+  + makeDropdown('dd-wear-'+username, '👒 pet wear', Object.keys(petWear).length, wearRows)
+  + makeDropdown('dd-food-'+username, '🍖 food', Object.keys(food).length, foodRows);
+}
 function makeConfigTab(username, cfg) {
   const tog = (key, label, sub) => `
     <div class="toggle-row">
@@ -465,7 +582,7 @@ async function loadLogs(username) {
 }
 
 function accTab(username, tab, btn) {
-  ["pets","config","shop","log"].forEach(t => {
+  ["inv","config","shop","log"].forEach(t => {
     const el = document.getElementById("t-" + username + "-" + t);
     if(el) el.style.display = t === tab ? "block" : "none";
   });

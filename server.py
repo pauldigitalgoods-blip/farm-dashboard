@@ -37,7 +37,9 @@ def init_db():
                 last_ping REAL,
                 inventory TEXT,
                 currency INTEGER DEFAULT 0,
-                currency_key TEXT DEFAULT 'eggs.2026',
+                currency_key TEXT DEFAULT 'eggs_2026',
+                bucks INTEGER DEFAULT 0,
+                candy INTEGER DEFAULT 0,
                 last_action TEXT,
                 config TEXT
             )
@@ -164,13 +166,15 @@ def ping():
         config = existing["config"] if existing else json.dumps(DEFAULT_CONFIG)
 
         db.execute("""
-            INSERT INTO accounts (username, display_name, last_ping, inventory, currency, currency_key, last_action, config)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO accounts (username, display_name, last_ping, inventory, currency, currency_key, bucks, candy, last_action, config)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(username) DO UPDATE SET
                 last_ping=excluded.last_ping,
                 inventory=excluded.inventory,
                 currency=excluded.currency,
                 currency_key=excluded.currency_key,
+                bucks=excluded.bucks,
+                candy=excluded.candy,
                 last_action=excluded.last_action
         """, (
             username,
@@ -178,7 +182,9 @@ def ping():
             time.time(),
             json.dumps(data.get("inventory", {})),
             data.get("currency", 0),
-            data.get("currency_key", "eggs.2026"),
+            data.get("currency_key", "eggs_2026"),
+            data.get("bucks", 0),
+            data.get("candy", 0),
             data.get("last_action", ""),
             config
         ))
@@ -252,6 +258,8 @@ def dashboard_accounts():
             "last_action": row["last_action"],
             "currency": row["currency"],
             "currency_key": row["currency_key"],
+            "bucks": row["bucks"] if "bucks" in row.keys() else 0,
+            "candy": row["candy"] if "candy" in row.keys() else 0,
             "pet_count": len(pets),
             "legendary_count": leg_count,
             "cocoadile_count": croc_count,
