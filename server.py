@@ -21,17 +21,11 @@ def get_db():
 
 def init_db():
     with get_db() as db:
-        # Drop old table if it has wrong schema (missing currency_key)
-        try:
-            cols = [r[1] for r in db.execute("PRAGMA table_info(accounts)").fetchall()]
-            if "currency_key" not in cols:
-                print("[DB] Old schema detected — dropping and recreating accounts table")
-                db.execute("DROP TABLE IF EXISTS accounts")
-        except Exception:
-            pass
-
+        # Always drop and recreate to guarantee correct schema
+        db.execute("DROP TABLE IF EXISTS accounts")
+        db.execute("DROP TABLE IF EXISTS logs")
         db.execute("""
-            CREATE TABLE IF NOT EXISTS accounts (
+            CREATE TABLE accounts (
                 username TEXT PRIMARY KEY,
                 display_name TEXT,
                 last_ping REAL,
@@ -46,24 +40,15 @@ def init_db():
             )
         """)
         db.execute("""
-            CREATE TABLE IF NOT EXISTS logs (
+            CREATE TABLE logs (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT,
                 message TEXT,
                 timestamp REAL
             )
         """)
-        # Add any missing columns (safe to run every boot)
-        existing = [r[1] for r in db.execute("PRAGMA table_info(accounts)").fetchall()]
-        for col, typedef in [
-            ("bucks",   "INTEGER DEFAULT 0"),
-            ("candy",   "INTEGER DEFAULT 0"),
-            ("tickets", "INTEGER DEFAULT 0"),
-        ]:
-            if col not in existing:
-                print(f"[DB] Adding column: {col}")
-                db.execute(f"ALTER TABLE accounts ADD COLUMN {col} {typedef}")
         db.commit()
+        print("[DB] Tables created fresh")
 
 init_db()
 
@@ -248,7 +233,7 @@ def dashboard_accounts():
 
     with get_db() as db:
         rows = db.execute("""
-            SELECT username, display_name, last_ping, inventory, currency, currency_key, last_action, config
+            SELECT username, display_name, last_ping, inventory, currency, currency_key, bucks, candy, tickets, last_action, config
             FROM accounts ORDER BY last_ping DESC
         """).fetchall()
 
