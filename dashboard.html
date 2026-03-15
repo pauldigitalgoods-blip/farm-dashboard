@@ -9,8 +9,8 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0a0a0a; --s1:#0f0f0f; --s2:#141414; --s3:#1a1a1a; --s4:#202020;
-  --b1:#1e1e1e; --b2:#2a2a2a; --b3:#363636;
+  --bg:#080808; --s1:#0d0d0d; --s2:rgba(18,18,18,0.75); --s3:rgba(24,24,24,0.7); --s4:rgba(30,30,30,0.65);
+  --b1:rgba(30,30,30,0.8); --b2:rgba(42,42,42,0.8); --b3:#363636;
   --t1:#f0f0f0; --t2:#a0a0a0; --t3:#505050;
   --w:#ffffff; --r:#ef4444; --a:#f5f5f5;
 }
@@ -21,7 +21,7 @@ body{background:transparent;color:var(--t1);font-family:'Inter',sans-serif;font-
 #glow{pointer-events:none;position:fixed;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.028) 0%,rgba(255,255,255,.008) 40%,transparent 65%);transform:translate(-50%,-50%);z-index:0;transition:left .1s linear,top .1s linear}
 
 /* NAV */
-nav{background:rgba(10,10,10,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--b1);padding:0 28px;height:52px;display:flex;align-items:center;gap:0;position:sticky;top:0;z-index:200}
+nav{background:rgba(8,8,8,0.75);backdrop-filter:blur(24px);border-bottom:1px solid var(--b1);padding:0 28px;height:52px;display:flex;align-items:center;gap:0;position:sticky;top:0;z-index:200}
 .n-logo{font-size:14px;font-weight:800;letter-spacing:-.3px;margin-right:32px;display:flex;align-items:center;gap:8px}
 .n-dot{width:6px;height:6px;border-radius:50%;background:var(--w);animation:ndot 3s infinite}
 @keyframes ndot{0%,100%{opacity:1}50%{opacity:.25}}
@@ -65,7 +65,7 @@ nav{background:rgba(10,10,10,.92);backdrop-filter:blur(20px);border-bottom:1px s
 
 /* STAT CARDS */
 .stats-row{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:24px}
-.stat-card{background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:16px 18px;position:relative;overflow:hidden}
+.stat-card{background:rgba(16,16,16,0.55);border:1px solid rgba(40,40,40,0.6);border-radius:12px;padding:16px 18px;position:relative;overflow:hidden;backdrop-filter:blur(8px)}
 .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--b3)}
 .stat-icon{font-size:16px;margin-bottom:8px}
 .stat-val{font-size:28px;font-weight:800;letter-spacing:-1.5px;line-height:1}
@@ -77,7 +77,7 @@ nav{background:rgba(10,10,10,.92);backdrop-filter:blur(20px);border-bottom:1px s
 .sh-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 
 /* INVENTORY PANEL */
-.inv-panel{background:var(--s2);border:1px solid var(--b1);border-radius:14px;overflow:hidden;margin-bottom:24px}
+.inv-panel{background:rgba(14,14,14,0.6);border:1px solid rgba(35,35,35,0.7);border-radius:14px;overflow:hidden;margin-bottom:24px;backdrop-filter:blur(12px)}
 .inv-panel-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--b1)}
 .inv-panel-title{font-size:13px;font-weight:700}
 .inv-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -90,7 +90,7 @@ nav{background:rgba(10,10,10,.92);backdrop-filter:blur(20px);border-bottom:1px s
 
 /* PET GRID */
 .pet-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px}
-.pet-card{background:var(--s3);border:1px solid var(--b1);border-radius:9px;padding:10px 12px;transition:border-color .15s}
+.pet-card{background:rgba(20,20,20,0.5);border:1px solid rgba(35,35,35,0.6);border-radius:9px;padding:10px 12px;transition:border-color .15s;backdrop-filter:blur(6px)}
 .pet-card:hover{border-color:var(--b3)}
 
 .pet-card-top{display:flex;align-items:center;gap:10px}
@@ -107,7 +107,7 @@ nav{background:rgba(10,10,10,.92);backdrop-filter:blur(20px);border-bottom:1px s
 
 .pet-detail-row{display:flex;justify-content:space-between;padding:2px 0}
 .pet-detail-key{color:var(--t3)}
-.pet-detail-val{font-family:'SF Mono',monospace;color:var(--t1)}
+.pet-detail-val{font-family:'SF Mono',monospace;color:var(--t1);font-size:10px;word-break:break-all;text-align:right;max-width:140px}
 
 /* GIFT / PET WEAR / FOOD rows */
 .item-list{display:flex;flex-direction:column;gap:3px}
@@ -235,6 +235,7 @@ nav{background:rgba(10,10,10,.92);backdrop-filter:blur(20px);border-bottom:1px s
     <div class="inv-panel-head">
       <div class="inv-panel-title">Inventory</div>
       <div class="inv-controls">
+        <input class="inp" id="pet-search" placeholder="Search pets..." oninput="renderInv()" style="width:160px">
         <!-- Account selector -->
         <div class="dd" id="dd-accs">
           <button class="btn ghost xs" onclick="toggleDD('dd-accs')">👤 <span id="acc-sel-lbl">All Accounts</span> ▾</button>
@@ -519,7 +520,17 @@ function getPetImg(id) {
 function fmtN(n){if(!n||n===0)return'0';if(n>=1e6)return(n/1e6).toFixed(1)+'m';if(n>=10000)return Math.round(n/1000)+'k';return n.toLocaleString();}
 function fmtT(ts){if(!ts)return'never';return new Date(ts*1000).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
 function tAgo(ts){if(!ts)return'never';const s=Math.floor(Date.now()/1000-ts);if(s<60)return s+'s ago';if(s<3600)return Math.floor(s/60)+'m ago';return Math.floor(s/3600)+'h ago';}
-function fmtId(id){return(id||'').replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());}
+function fmtId(id) {
+  if(!id) return '';
+  let s = id.toLowerCase();
+  // Strip common year/event prefixes like "endangered_2026_", "sugarfest_2026_", "basic_egg_2022_", "moon_2025_", "pet_recycler_2025_", "beach_2024_"
+  s = s.replace(/^[a-z]+_\d{4}_/, '');        // event_year_ prefix
+  s = s.replace(/^pet_recycler_\d{4}_/, '');   // pet_recycler_year_ prefix
+  s = s.replace(/^basic_egg_\d{4}_/, '');      // basic_egg_year_ prefix
+  s = s.replace(/_\d{4}$/, '');               // trailing _year
+  // Capitalize each word
+  return s.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+}
 
 async function fetchAccs(){
   try{
@@ -574,12 +585,16 @@ function renderInv(){
   const body=document.getElementById("inv-body");
   let items=[];
 
+  const petQ = (document.getElementById('pet-search')?.value||'').toLowerCase();
   if(invTab==='pets'||invTab==='eggs'){
     accs.forEach(acc=>{
       Object.values(acc.inventory?.pets||{}).forEach(p=>{
         const isEgg=p.hatched===false||p.hatched===0;
         if(invTab==='eggs'&&!isEgg)return;
         if(invTab==='pets'&&isEgg)return; // skip unhatched in pets tab
+        const pName = fmtId(p.id).toLowerCase();
+        const pId = (p.kind||p.id||'').toLowerCase();
+        if(petQ && !pName.includes(petQ) && !pId.includes(petQ)) return;
         items.push({...p,_acc:acc.username});
       });
     });
