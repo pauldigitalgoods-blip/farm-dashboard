@@ -4,763 +4,939 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Adopt Me Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --bg: #0d0d0f;
-  --surface: #141416;
-  --card: #1a1a1d;
-  --card2: #1f1f23;
-  --border: #2a2a2f;
-  --border2: #323238;
-  --text: #f0f0f2;
-  --sub: #8888a0;
-  --dim: #444450;
-  --green: #22c55e;
-  --green-bg: #22c55e12;
-  --green-border: #22c55e30;
-  --amber: #f59e0b;
-  --purple: #a855f7;
-  --blue: #3b82f6;
-  --red: #ef4444;
-  --inactive: #6b7280;
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0a; --s1:#0f0f0f; --s2:#141414; --s3:#1a1a1a; --s4:#202020;
+  --b1:#1e1e1e; --b2:#2a2a2a; --b3:#363636;
+  --t1:#f0f0f0; --t2:#a0a0a0; --t3:#505050;
+  --w:#ffffff; --r:#ef4444; --a:#f5f5f5;
 }
-body { background: transparent; color: var(--text); font-family: 'Inter', sans-serif; font-size: 13px; min-height: 100vh; }
-html { background: var(--bg); }
+html{background:var(--bg);overflow-x:hidden}
+body{background:transparent;color:var(--t1);font-family:'Inter',sans-serif;font-size:13px;min-height:100vh}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--b2);border-radius:3px}
 
-/* cursor glow */
-#cursor-glow { pointer-events: none; position: fixed; width: 340px; height: 340px; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0.018) 40%, transparent 70%); transform: translate(-50%, -50%); z-index: 9998; transition: left .08s ease, top .08s ease; }
-::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+#glow{pointer-events:none;position:fixed;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.028) 0%,rgba(255,255,255,.008) 40%,transparent 65%);transform:translate(-50%,-50%);z-index:0;transition:left .1s linear,top .1s linear}
 
 /* NAV */
-.nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 28px; display: flex; align-items: center; justify-content: space-between; height: 52px; position: sticky; top: 0; z-index: 100; }
-.nav-logo { font-size: 15px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 8px; }
-.nav-logo-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); animation: pulse 2s infinite; }
-@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.3} }
-.nav-right { display: flex; align-items: center; gap: 8px; }
-.nav-sync { font-size: 11px; color: var(--sub); }
+nav{background:rgba(10,10,10,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--b1);padding:0 28px;height:52px;display:flex;align-items:center;gap:0;position:sticky;top:0;z-index:200}
+.n-logo{font-size:14px;font-weight:800;letter-spacing:-.3px;margin-right:32px;display:flex;align-items:center;gap:8px}
+.n-dot{width:6px;height:6px;border-radius:50%;background:var(--w);animation:ndot 3s infinite}
+@keyframes ndot{0%,100%{opacity:1}50%{opacity:.25}}
+.n-tabs{display:flex;gap:1px;flex:1}
+.n-tab{font-size:12px;font-weight:500;padding:6px 14px;border-radius:7px;cursor:pointer;color:var(--t3);border:none;background:none;font-family:inherit;transition:all .15s}
+.n-tab:hover{color:var(--t2);background:var(--s3)}
+.n-tab.on{color:var(--t1);background:var(--s3)}
+.n-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.n-sync{font-size:11px;color:var(--t3)}
 
-/* LAYOUT */
-.page { max-width: 1300px; margin: 0 auto; padding: 24px 28px; }
-
-/* TOTAL INVENTORY BLOCK */
-.inventory-block { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px; margin-bottom: 20px; }
-.block-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; color: var(--sub); margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
-.block-label::before { content: ''; width: 3px; height: 12px; background: var(--green); border-radius: 2px; }
-.inv-stats { display: flex; gap: 0; flex-wrap: wrap; justify-content: space-around; width: 100%; }
-.inv-stat { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; padding: 8px 0; }
-.inv-stat-icon { font-size: 20px; margin-bottom: 2px; }
-.inv-stat-val { font-size: 22px; font-weight: 700; color: var(--text); line-height: 1; }
-.inv-stat-val.green { color: var(--green); }
-.inv-stat-val.amber { color: var(--amber); }
-.inv-stat-val.blue { color: var(--blue); }
-.inv-stat-val.purple { color: var(--purple); }
-.inv-stat-label { font-size: 11px; color: var(--sub); }
-.inv-divider { width: 1px; background: var(--border); align-self: stretch; margin: 0; }
-
-/* MANAGE ACCOUNTS */
-.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
-.section-title { font-size: 16px; font-weight: 700; }
-.section-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.search-input { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 7px 12px; color: var(--text); font-family: inherit; font-size: 12px; outline: none; width: 180px; transition: border-color .15s; }
-.search-input::placeholder { color: var(--dim); }
-.search-input:focus { border-color: var(--border2); }
+/* PAGE */
+.page{padding:24px 28px;position:relative;z-index:1}
+.view{display:none}.view.on{display:block}
 
 /* BUTTONS */
-.btn { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500; padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border2); background: var(--card2); cursor: pointer; color: var(--text); transition: all .15s; white-space: nowrap; display: inline-flex; align-items: center; gap: 5px; }
-.btn:hover { background: #28282e; border-color: var(--border2); }
-.btn.green { background: var(--green); border-color: var(--green); color: #000; font-weight: 600; }
-.btn.green:hover { background: #16a34a; }
-.btn.red { background: #ef444410; border-color: #ef444430; color: var(--red); }
-.btn.red:hover { background: #ef444420; }
-.btn.xs { font-size: 11px; padding: 4px 10px; border-radius: 6px; }
-.btn.ghost { background: transparent; border-color: var(--border); color: var(--sub); }
-.btn.ghost:hover { color: var(--text); border-color: var(--border2); }
+.btn{font-family:'Inter',sans-serif;font-size:12px;font-weight:500;padding:6px 13px;border-radius:7px;border:1px solid var(--b2);background:var(--s3);cursor:pointer;color:var(--t1);transition:all .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:5px}
+.btn:hover{background:var(--s4);border-color:var(--b3)}
+.btn.w{background:var(--w);color:#000;border-color:var(--w);font-weight:600}
+.btn.w:hover{background:#e5e5e5}
+.btn.ghost{background:transparent;border-color:var(--b1);color:var(--t2)}
+.btn.ghost:hover{color:var(--t1);border-color:var(--b2)}
+.btn.xs{font-size:11px;padding:4px 10px;border-radius:6px}
+.btn.danger{background:transparent;border-color:#ef444430;color:var(--r)}
+.btn.danger:hover{background:#ef444410}
+
+/* INPUT */
+.inp{background:var(--s2);border:1px solid var(--b1);border-radius:7px;padding:7px 11px;color:var(--t1);font-family:inherit;font-size:12px;outline:none;transition:border-color .15s}
+.inp::placeholder{color:var(--t3)}
+.inp:focus{border-color:var(--b3);background:var(--s3)}
 
 /* DROPDOWN */
-.dropdown { position: relative; }
-.dropdown-menu { position: absolute; top: calc(100% + 4px); left: 0; background: var(--card2); border: 1px solid var(--border2); border-radius: 10px; padding: 6px; min-width: 160px; z-index: 200; display: none; box-shadow: 0 8px 24px #00000060; }
-.dropdown-menu.open { display: block; }
-.dropdown-item { padding: 7px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; transition: background .1s; }
-.dropdown-item:hover { background: var(--border); }
-.dropdown-item.active { color: var(--green); }
-.dropdown-item .check { color: var(--green); font-size: 10px; }
+.dd{position:relative}
+.dd-menu{position:absolute;top:calc(100% + 5px);left:0;background:var(--s3);border:1px solid var(--b2);border-radius:10px;padding:5px;min-width:180px;z-index:300;display:none;box-shadow:0 16px 48px rgba(0,0,0,.6)}
+.dd-menu.on{display:block;animation:fin .12s ease}
+@keyframes fin{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
+.dd-item{padding:8px 10px;border-radius:6px;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:space-between;color:var(--t2);font-weight:500;transition:all .1s}
+.dd-item:hover{background:var(--b1);color:var(--t1)}
+.dd-item.on{color:var(--t1)}
+.dd-chk{font-size:10px;color:var(--t1)}
+.dd-sep{height:1px;background:var(--b1);margin:4px 0}
 
-/* ACCOUNT LIST */
-.account-list { display: flex; flex-direction: column; gap: 8px; }
+/* STAT CARDS */
+.stats-row{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:24px}
+.stat-card{background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:16px 18px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:var(--b3)}
+.stat-icon{font-size:16px;margin-bottom:8px}
+.stat-val{font-size:28px;font-weight:800;letter-spacing:-1.5px;line-height:1}
+.stat-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-top:5px}
 
-/* ACCOUNT ROW */
-.acc-row { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: border-color .15s; }
-.acc-row:hover { border-color: var(--border2); }
-.acc-row.selected { border-color: #22c55e40; background: #22c55e05; }
+/* SECTION */
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px;flex-wrap:wrap}
+.sh-title{font-size:15px;font-weight:700;letter-spacing:-.2px}
+.sh-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 
-.acc-main { display: flex; align-items: center; padding: 12px 16px; gap: 12px; cursor: pointer; }
-.acc-checkbox { width: 16px; height: 16px; border: 1.5px solid var(--border2); border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all .15s; cursor: pointer; }
-.acc-checkbox.checked { background: var(--green); border-color: var(--green); }
-.acc-checkbox.checked::after { content: '✓'; font-size: 10px; color: #000; font-weight: 700; }
+/* INVENTORY PANEL */
+.inv-panel{background:var(--s2);border:1px solid var(--b1);border-radius:14px;overflow:hidden;margin-bottom:24px}
+.inv-panel-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--b1)}
+.inv-panel-title{font-size:13px;font-weight:700}
+.inv-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.inv-tabs{display:flex;gap:2px;background:var(--s3);border-radius:8px;padding:3px}
+.inv-tab{font-size:11px;font-weight:500;padding:5px 12px;border-radius:6px;cursor:pointer;border:none;background:transparent;color:var(--t3);font-family:inherit;transition:all .15s}
+.inv-tab:hover{color:var(--t2)}
+.inv-tab.on{background:var(--s4);color:var(--t1)}
+.inv-body{padding:14px 18px}
+.inv-empty{color:var(--t3);font-size:12px;text-align:center;padding:32px}
 
-.acc-info { flex: 1; min-width: 0; }
-.acc-name-row { display: flex; align-items: center; gap: 8px; }
-.acc-username { font-size: 13px; font-weight: 600; }
-.acc-status { font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 20px; }
-.acc-status.online { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
-.acc-status.offline { background: #6b728010; color: var(--inactive); border: 1px solid #6b728030; }
-.acc-lastseen { font-size: 10px; color: var(--sub); margin-top: 1px; }
+/* PET GRID */
+.pet-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px}
+.pet-card{background:var(--s3);border:1px solid var(--b1);border-radius:9px;padding:10px 12px;cursor:pointer;transition:border-color .15s;position:relative}
+.pet-card:hover{border-color:var(--b3)}
+.pet-card.expanded{border-color:var(--b3);background:var(--s4)}
+.pet-card-top{display:flex;align-items:flex-start;gap:10px}
+.pet-card-img { width: 52px; height: 52px; object-fit: contain; flex-shrink: 0; image-rendering: auto; }
+.pet-card-img-wrap { width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; background: var(--s4); border-radius: 8px; flex-shrink: 0; font-size: 22px; }
 
-.acc-numbers { display: flex; align-items: center; gap: 20px; flex-shrink: 0; }
-.acc-num { text-align: right; }
-.acc-num-val { font-size: 13px; font-weight: 600; color: var(--text); }
-.acc-num-label { font-size: 10px; color: var(--sub); }
+.pet-card-name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+.badges{display:flex;gap:2px;flex-shrink:0}
+.badge{font-size:9px;padding:2px 5px;border-radius:3px;font-weight:600}
+.b-leg{background:#a855f718;color:#c084fc;border:1px solid #a855f730}
+.b-mega{background:#f59e0b18;color:#fbbf24;border:1px solid #f59e0b30}
+.b-neon{background:#ffffff10;color:#d0d0d0;border:1px solid #ffffff20}
+.b-egg{background:var(--s4);color:var(--t3);border:1px solid var(--b1)}
+.pet-card-detail{margin-top:8px;padding-top:8px;border-top:1px solid var(--b1);display:none;font-size:11px;color:var(--t2)}
+.pet-card.expanded .pet-card-detail{display:block}
+.pet-detail-row{display:flex;justify-content:space-between;padding:2px 0}
+.pet-detail-key{color:var(--t3)}
+.pet-detail-val{font-family:'SF Mono',monospace;color:var(--t1)}
 
-.acc-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+/* GIFT / PET WEAR / FOOD rows */
+.item-list{display:flex;flex-direction:column;gap:3px}
+.item-row{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:var(--s3);border:1px solid var(--b1);border-radius:7px}
+.item-name{font-size:12px;font-weight:500}
+.item-id{font-size:10px;color:var(--t3);font-family:'SF Mono',monospace}
+.item-acc{font-size:10px;color:var(--t3)}
 
-/* EXPANDED */
-.acc-expanded { border-top: 1px solid var(--border); display: none; }
-.acc-expanded.open { display: block; }
-.acc-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); padding: 0 16px; }
-.acc-tab { font-size: 12px; font-weight: 500; padding: 10px 14px; cursor: pointer; color: var(--sub); border-bottom: 2px solid transparent; transition: all .15s; background: none; border-top: none; border-left: none; border-right: none; font-family: inherit; }
-.acc-tab:hover { color: var(--text); }
-.acc-tab.active { color: var(--text); border-bottom-color: var(--green); }
+/* ACCOUNTS */
+.acc-list{display:flex;flex-direction:column;gap:6px}
+.acc-row{background:var(--s2);border:1px solid var(--b1);border-radius:12px;overflow:hidden;transition:border-color .15s}
+.acc-row:hover{border-color:var(--b2)}
+.acc-row-main{display:flex;align-items:center;padding:13px 16px;gap:14px;cursor:pointer}
+.acc-status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.acc-status-dot.on{background:#22c55e;box-shadow:0 0 6px #22c55e88}
+.acc-status-dot.off{background:var(--r);opacity:.6}
+.acc-info{flex:1;min-width:0}
+.acc-name{font-size:13px;font-weight:600}
+.acc-meta{font-size:11px;color:var(--t2);margin-top:2px;display:flex;align-items:center;gap:8px}
+.acc-cfg-tag{font-size:10px;background:var(--s3);border:1px solid var(--b2);border-radius:4px;padding:1px 7px;color:var(--t2)}
+.acc-nums{display:flex;align-items:center;gap:24px;flex-shrink:0}
+.acc-num{text-align:center;min-width:50px}
+.acc-num-v{font-size:13px;font-weight:600}
+.acc-num-l{font-size:10px;color:var(--t3);margin-top:1px}
+.acc-btns{display:flex;gap:6px;flex-shrink:0}
 
-.tab-content { padding: 14px 16px; display: none; }
-.tab-content.active { display: block; }
+/* ACCOUNT DROPDOWN */
+.acc-drop{border-top:1px solid var(--b1);display:none;padding:16px}
+.acc-drop.on{display:block}
+.acc-drop-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.drop-section{background:var(--s3);border:1px solid var(--b1);border-radius:10px;overflow:hidden}
+.drop-sec-head{padding:10px 14px;border-bottom:1px solid var(--b1);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);display:flex;align-items:center;gap:6px}
+.drop-sec-body{padding:10px 14px}
+.drop-info-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--b1)}
+.drop-info-row:last-child{border-bottom:none}
+.drop-info-key{font-size:11px;color:var(--t2)}
+.drop-info-val{font-size:11px;font-weight:600;font-family:'SF Mono',monospace}
 
-/* INV TAB */
-.curr-row { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
-.curr-pill { background: var(--card2); border: 1px solid var(--border2); border-radius: 8px; padding: 8px 12px; display: flex; flex-direction: column; align-items: center; gap: 1px; min-width: 80px; }
-.curr-pill-val { font-size: 16px; font-weight: 700; }
-.curr-pill-label { font-size: 10px; color: var(--sub); }
+/* CONFIGS PAGE */
+.cfg-page{display:grid;grid-template-columns:260px 1fr;gap:20px;align-items:start}
+.cfg-list{display:flex;flex-direction:column;gap:6px}
+.cfg-item{background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:12px 14px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:space-between}
+.cfg-item:hover{border-color:var(--b2)}
+.cfg-item.on{border-color:var(--b3);background:var(--s3)}
+.cfg-item-name{font-size:13px;font-weight:600}
+.cfg-item-sub{font-size:10px;color:var(--t3);margin-top:2px}
+.cfg-new{background:var(--s2);border:1px dashed var(--b2);border-radius:10px;padding:12px 14px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:8px;color:var(--t3);font-size:12px;font-weight:500}
+.cfg-new:hover{border-color:var(--b3);color:var(--t2)}
 
-.inv-section { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 6px; }
-.inv-section-head { display: flex; align-items: center; justify-content: space-between; padding: 9px 12px; cursor: pointer; background: var(--card2); user-select: none; transition: background .1s; }
-.inv-section-head:hover { background: #232328; }
-.inv-section-head.empty { cursor: default; opacity: .45; pointer-events: none; }
-.inv-head-left { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; }
-.inv-head-right { display: flex; align-items: center; gap: 6px; }
-.inv-cnt { font-size: 10px; background: var(--border); color: var(--sub); padding: 1px 7px; border-radius: 10px; font-weight: 500; }
-.inv-chevron { color: var(--sub); font-size: 11px; transition: transform .2s; }
-.inv-body { background: var(--card); padding: 6px; max-height: 220px; overflow-y: auto; display: none; }
-.inv-body.open { display: flex; flex-direction: column; gap: 1px; }
+.cfg-editor{background:var(--s2);border:1px solid var(--b1);border-radius:14px;overflow:hidden}
+.cfg-editor-head{padding:16px 20px;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.cfg-name-input{background:var(--s3);border:1px solid var(--b2);border-radius:7px;padding:7px 12px;color:var(--t1);font-family:'Inter',sans-serif;font-size:14px;font-weight:700;outline:none;width:220px}
+.cfg-name-input:focus{border-color:var(--b3)}
+.cfg-panels{padding:16px 20px;display:flex;flex-direction:column;gap:12px}
 
-.pet-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 8px; border-radius: 6px; gap: 8px; }
-.pet-row:hover { background: var(--card2); }
-.pet-left { min-width: 0; flex: 1; }
-.pet-name { font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.pet-id-text { font-size: 10px; color: var(--sub); font-family: 'SF Mono', monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.pet-right { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
-.pet-age { font-size: 10px; color: var(--sub); }
-.badges { display: flex; gap: 2px; }
-.badge { font-size: 9px; padding: 1px 5px; border-radius: 3px; font-weight: 600; }
-.b-leg { background: #a855f715; color: var(--purple); border: 1px solid #a855f730; }
-.b-mega { background: #f59e0b15; color: var(--amber); border: 1px solid #f59e0b30; }
-.b-neon { background: #22c55e15; color: var(--green); border: 1px solid #22c55e30; }
-.b-egg { background: var(--card2); color: var(--sub); border: 1px solid var(--border); }
+.cfg-panel{border:1px solid var(--b1);border-radius:10px;overflow:hidden}
+.cfg-panel-head{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--b1);background:var(--s3)}
+.cfg-panel-icon{font-size:14px;width:28px;height:28px;background:var(--s4);border:1px solid var(--b2);border-radius:7px;display:flex;align-items:center;justify-content:center}
+.cfg-panel-title{font-size:13px;font-weight:700}
+.cfg-panel-sub{font-size:10px;color:var(--t3);margin-top:1px}
+.cfg-row{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;border-bottom:1px solid var(--b1);transition:background .1s}
+.cfg-row:last-child{border-bottom:none}
+.cfg-row:hover{background:var(--s3)}
+.cfg-row-l{display:flex;align-items:center;gap:10px}
+.cfg-row-icon{font-size:12px;width:26px;text-align:center;color:var(--t3);flex-shrink:0}
+.cfg-row-label{font-size:12px;font-weight:600}
+.cfg-row-sub{font-size:10px;color:var(--t3);margin-top:1px}
 
-.filter-pills { display: flex; gap: 4px; margin-bottom: 8px; flex-wrap: wrap; }
-.fpill { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; border: 1px solid var(--border2); background: transparent; cursor: pointer; color: var(--sub); transition: all .15s; font-family: 'Inter', sans-serif; }
-.fpill.active { background: var(--card2); color: var(--text); border-color: var(--border2); }
-.fpill:hover { color: var(--text); }
+/* TOGGLE */
+.tog{width:38px;height:21px;border-radius:11px;border:none;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0}
+.tog.on{background:var(--w)}
+.tog.off{background:var(--b2)}
+.tog::after{content:'';position:absolute;width:17px;height:17px;border-radius:50%;top:2px;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.5)}
+.tog.on::after{left:19px;background:#000}
+.tog.off::after{left:2px;background:#666}
 
-/* CONFIG */
-.config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
-.toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); }
-.toggle-row:last-child { border-bottom: none; }
-.toggle-label { font-size: 12px; font-weight: 500; }
-.toggle-sub { font-size: 10px; color: var(--sub); }
-.tog { width: 32px; height: 18px; border-radius: 9px; border: none; cursor: pointer; position: relative; transition: background .15s; flex-shrink: 0; }
-.tog.on { background: var(--green); }
-.tog.off { background: var(--dim); }
-.tog::after { content: ''; position: absolute; width: 14px; height: 14px; border-radius: 50%; background: white; top: 2px; transition: left .15s; }
-.tog.on::after { left: 16px; }
-.tog.off::after { left: 2px; }
-.target-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
-.target-row label { font-size: 12px; font-weight: 500; color: var(--sub); white-space: nowrap; }
+.cfg-footer{padding:14px 20px;border-top:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between}
+.cfg-footer-note{font-size:11px;color:var(--t3)}
 
-/* LOG */
-.log-list { display: flex; flex-direction: column; gap: 0; max-height: 200px; overflow-y: auto; }
-.log-entry { display: flex; gap: 10px; padding: 5px 0; border-bottom: 1px solid var(--border); }
-.log-entry:last-child { border-bottom: none; }
-.log-time { font-size: 10px; color: var(--dim); font-family: 'SF Mono', monospace; flex-shrink: 0; }
-.log-msg { font-size: 11px; color: var(--sub); }
-
-/* SHOP */
-.shop-list { display: flex; flex-direction: column; gap: 0; }
-.shop-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); gap: 8px; }
-.shop-row:last-child { border-bottom: none; }
-.shop-name { font-size: 12px; font-weight: 600; }
-.shop-meta { font-size: 10px; color: var(--sub); font-family: 'SF Mono', monospace; }
-.shop-add { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
-.shop-add input { grid-column: span 1; }
-.shop-add .full { grid-column: span 2; }
-
-/* BULK BAR */
-.bulk-bar { background: var(--card2); border: 1px solid var(--border2); border-radius: 10px; padding: 10px 16px; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
-.bulk-count { font-size: 12px; font-weight: 600; color: var(--green); min-width: 80px; }
-
-/* ALL PETS */
-.pets-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 6px; }
-.master-pet { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.master-pet:hover { border-color: var(--border2); }
-.master-left { min-width: 0; flex: 1; }
-.master-name { font-size: 11px; font-weight: 600; }
-.master-id { font-size: 9px; color: var(--sub); font-family: 'SF Mono', monospace; }
-.master-acc { font-size: 9px; color: var(--dim); }
-
-/* TABS (page level) */
-.page-tabs { display: flex; gap: 4px; margin-bottom: 20px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 4px; width: fit-content; }
-.page-tab { font-size: 12px; font-weight: 500; padding: 6px 16px; border-radius: 7px; cursor: pointer; border: none; background: transparent; color: var(--sub); font-family: 'Inter', sans-serif; transition: all .15s; }
-.page-tab:hover { color: var(--text); }
-.page-tab.active { background: var(--card2); color: var(--text); box-shadow: 0 1px 3px #0004; }
+/* STATS PAGE */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.chart-card{background:var(--s2);border:1px solid var(--b1);border-radius:14px;padding:20px}
+.chart-title{font-size:13px;font-weight:700;margin-bottom:4px}
+.chart-sub{font-size:11px;color:var(--t3);margin-bottom:16px}
+.chart-wrap{position:relative;height:200px}
+.stat-mini-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.stat-mini{background:var(--s3);border:1px solid var(--b1);border-radius:8px;padding:12px 14px;text-align:center}
+.stat-mini-val{font-size:20px;font-weight:800;letter-spacing:-.5px}
+.stat-mini-lbl{font-size:10px;color:var(--t3);margin-top:3px;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
 
 /* EMPTY */
-.empty { color: var(--sub); font-size: 12px; text-align: center; padding: 20px; }
-
-/* TOAST */
-.toast { position: fixed; bottom: 20px; right: 20px; padding: 10px 16px; border-radius: 8px; font-size: 12px; z-index: 9999; transition: opacity .3s; pointer-events: none; font-weight: 500; }
+.empty{color:var(--t3);font-size:12px;text-align:center;padding:28px}
+.toast{position:fixed;bottom:22px;right:22px;padding:10px 16px;border-radius:9px;font-size:12px;z-index:9999;transition:opacity .3s;pointer-events:none;font-weight:500}
 </style>
 </head>
 <body>
-
-<nav class="nav">
-  <div class="nav-logo">
-    <span class="nav-logo-dot"></span>
-    Adopt Me Dashboard
+<div id="glow"></div>
+<nav>
+  <div class="n-logo"><span class="n-dot"></span>Adopt Me</div>
+  <div class="n-tabs">
+    <button class="n-tab on" onclick="nav('dashboard',this)">Dashboard</button>
+    <button class="n-tab" onclick="nav('accounts',this)">Accounts</button>
+    <button class="n-tab" onclick="nav('configs',this)">Configs</button>
+    <button class="n-tab" onclick="nav('stats',this)">Stats</button>
   </div>
-  <div class="nav-right">
-    <span class="nav-sync" id="sync-label">connecting...</span>
+  <div class="n-right">
+    <span class="n-sync" id="sync-lbl">connecting...</span>
     <button class="btn ghost xs" onclick="refresh()">↺ Refresh</button>
   </div>
 </nav>
-
 <div class="page">
 
-  <!-- TOTAL INVENTORY -->
-  <div class="inventory-block">
-    <div class="block-label">Total Inventory</div>
-    <div class="inv-stats">
-      <div class="inv-stat">
-        <div class="inv-stat-icon">🟢</div>
-        <div class="inv-stat-val green" id="s-online">0</div>
-        <div class="inv-stat-label" id="s-online-frac">0/0 Active</div>
-      </div>
-      <div class="inv-divider"></div>
-      <div class="inv-stat">
-        <div class="inv-stat-icon">💵</div>
-        <div class="inv-stat-val green" id="s-bucks">0</div>
-        <div class="inv-stat-label">Bucks</div>
-      </div>
-      <div class="inv-stat">
-        <div class="inv-stat-icon">🐾</div>
-        <div class="inv-stat-val" id="s-pets">0</div>
-        <div class="inv-stat-label">Pets</div>
-      </div>
-      <div class="inv-stat">
-        <div class="inv-stat-icon">🥚</div>
-        <div class="inv-stat-val amber" id="s-curr">0</div>
-        <div class="inv-stat-label">Event</div>
-      </div>
-      <div class="inv-stat">
-        <div class="inv-stat-icon">⭐</div>
-        <div class="inv-stat-val purple" id="s-leg">0</div>
-        <div class="inv-stat-label">Legendaries</div>
-      </div>
-      <div class="inv-stat">
-        <div class="inv-stat-icon">🎟️</div>
-        <div class="inv-stat-val blue" id="s-tickets">0</div>
-        <div class="inv-stat-label">Tickets</div>
-      </div>
-    </div>
+<!-- ══ DASHBOARD ══ -->
+<div class="view on" id="v-dashboard">
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-icon">🟢</div><div class="stat-val" id="s-online">0</div><div class="stat-lbl" id="s-online-sub">0/0 Active</div></div>
+    <div class="stat-card"><div class="stat-icon">💵</div><div class="stat-val" id="s-bucks">0</div><div class="stat-lbl">Bucks</div></div>
+    <div class="stat-card"><div class="stat-icon">🐾</div><div class="stat-val" id="s-pets">0</div><div class="stat-lbl">Pets</div></div>
+    <div class="stat-card"><div class="stat-icon">🥚</div><div class="stat-val" id="s-curr">0</div><div class="stat-lbl">Event Currency</div></div>
+    <div class="stat-card"><div class="stat-icon">⭐</div><div class="stat-val" id="s-leg">0</div><div class="stat-lbl">Legendaries</div></div>
+    <div class="stat-card"><div class="stat-icon">🎟️</div><div class="stat-val" id="s-tick">0</div><div class="stat-lbl">Tickets</div></div>
   </div>
 
-  <!-- PAGE TABS -->
-  <div class="page-tabs">
-    <button class="page-tab active" onclick="switchTab('accounts', this)">Manage Accounts</button>
-    <button class="page-tab" onclick="switchTab('allpets', this)">All Pets</button>
-  </div>
-
-  <!-- ACCOUNTS TAB -->
-  <div id="tab-accounts">
-    <div class="section-header">
-      <div class="section-title">Manage Accounts</div>
-      <div class="section-controls">
-        <input class="search-input" id="search-input" placeholder="Search accounts..." oninput="filterAccounts()">
-        <div class="dropdown" id="sort-dropdown">
-          <button class="btn ghost" onclick="toggleDropdown('sort-dropdown')">↕ Sort: <span id="sort-label">Name</span></button>
-          <div class="dropdown-menu" id="sort-menu">
-            <div class="dropdown-item active" onclick="setSort('name', this)">Name <span class="check">✓</span></div>
-            <div class="dropdown-item" onclick="setSort('bucks', this)">$ Bucks</div>
-            <div class="dropdown-item" onclick="setSort('currency', this)">🥚 Event</div>
-            <div class="dropdown-item" onclick="setSort('pet_count', this)">🐾 Pets</div>
-            <div class="dropdown-item" onclick="setSort('online', this)">● Online First</div>
+  <div class="inv-panel">
+    <div class="inv-panel-head">
+      <div class="inv-panel-title">Inventory</div>
+      <div class="inv-controls">
+        <!-- Account selector -->
+        <div class="dd" id="dd-accs">
+          <button class="btn ghost xs" onclick="toggleDD('dd-accs')">👤 <span id="acc-sel-lbl">All Accounts</span> ▾</button>
+          <div class="dd-menu" id="dd-accs-menu">
+            <div class="dd-item on" onclick="setAccFilter('all',this)" data-val="all">All Accounts <span class="dd-chk">✓</span></div>
+            <div class="dd-sep"></div>
+            <div id="dd-accs-list"></div>
+            <div class="dd-sep"></div>
+            <button class="btn xs w" onclick="applyAccFilter()" style="width:100%;justify-content:center;margin-top:4px">Apply</button>
           </div>
         </div>
-        <div class="dropdown" id="filter-dropdown">
-          <button class="btn ghost" onclick="toggleDropdown('filter-dropdown')">All Accounts ▾</button>
-          <div class="dropdown-menu" id="filter-menu">
-            <div class="dropdown-item active" onclick="setFilter('all', this)">All Accounts <span class="check">✓</span></div>
-            <div class="dropdown-item" onclick="setFilter('online', this)">Online Only</div>
-            <div class="dropdown-item" onclick="setFilter('offline', this)">Offline Only</div>
+        <!-- Sort -->
+        <div class="dd" id="dd-inv-sort">
+          <button class="btn ghost xs" onclick="toggleDD('dd-inv-sort')">↕ <span id="inv-sort-lbl">Name</span></button>
+          <div class="dd-menu" id="dd-inv-sort-menu">
+            <div class="dd-item on" onclick="setInvSort('name',this)">Name <span class="dd-chk">✓</span></div>
+            <div class="dd-item" onclick="setInvSort('rarity',this)">Rarity</div>
+            <div class="dd-item" onclick="setInvSort('age',this)">Age</div>
           </div>
         </div>
-        <div style="display:flex;align-items:center;gap:6px">
-          <span style="font-size:11px;color:var(--sub)">Target:</span>
-          <input type="text" id="global-target" value="23nuns" class="search-input" style="width:100px">
-          <button class="btn green xs" onclick="applyGlobalTarget()">Apply All</button>
+        <!-- Inv tabs -->
+        <div class="inv-tabs">
+          <button class="inv-tab on" onclick="setInvTab('pets',this)">Pets</button>
+          <button class="inv-tab" onclick="setInvTab('eggs',this)">Eggs</button>
+          <button class="inv-tab" onclick="setInvTab('gifts',this)">Gifts</button>
+          <button class="inv-tab" onclick="setInvTab('wear',this)">Pet Wear</button>
+          <button class="inv-tab" onclick="setInvTab('food',this)">Food</button>
         </div>
       </div>
     </div>
-
-    <!-- BULK BAR -->
-    <div class="bulk-bar" id="bulk-bar" style="display:none">
-      <span class="bulk-count" id="bulk-count">0 selected</span>
-      <button class="btn xs" onclick="selectAll()">Select All</button>
-      <button class="btn xs" onclick="selectNone()">Clear</button>
-      <div style="flex:1"></div>
-      <button class="btn xs green" onclick="bulkTrade()">⚡ Force Trade</button>
-      <button class="btn xs" onclick="bulkSave()">💾 Save Config</button>
-    </div>
-
-    <div class="account-list" id="account-list">
-      <div class="empty">loading accounts...</div>
-    </div>
+    <div class="inv-body" id="inv-body"><div class="inv-empty">loading...</div></div>
   </div>
-
-  <!-- ALL PETS TAB -->
-  <div id="tab-allpets" style="display:none">
-    <div class="section-header">
-      <div class="section-title">All Pets</div>
-      <div class="filter-pills">
-        <button class="fpill active" onclick="filterMaster('all',this)">All</button>
-        <button class="fpill" onclick="filterMaster('legendary',this)">Legendary</button>
-        <button class="fpill" onclick="filterMaster('mega',this)">Mega</button>
-        <button class="fpill" onclick="filterMaster('neon',this)">Neon</button>
-        <button class="fpill" onclick="filterMaster('egg',this)">Eggs</button>
-      </div>
-    </div>
-    <div class="pets-grid" id="master-list"><div class="empty">no pets loaded</div></div>
-  </div>
-
 </div>
 
-<script>
-const SERVER = "";
-const selected = new Set();
-let allAccounts = [];
-let sortBy = 'name';
-let filterBy = 'all';
-
-// ── UTILS ──
-function fmtNum(n) {
-  if(!n||n===0) return '0';
-  if(n>=1000000) return (n/1000000).toFixed(1)+'m';
-  if(n>=10000) return Math.round(n/1000)+'k';
-  return n.toLocaleString();
-}
-function fmtTime(ts) {
-  if(!ts) return 'never';
-  return new Date(ts*1000).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-}
-function timeSince(ts) {
-  if(!ts) return 'never';
-  const s = Math.floor(Date.now()/1000-ts);
-  if(s<60) return s+'s ago';
-  if(s<3600) return Math.floor(s/60)+'m ago';
-  return Math.floor(s/3600)+'h ago';
-}
-function fmtId(id) { return (id||'').replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()); }
-
-// ── FETCH ──
-async function fetchAccounts() {
-  try {
-    const r = await fetch(SERVER+"/dashboard/accounts");
-    if(r.status===401){window.location.href="/login";return;}
-    allAccounts = await r.json();
-    renderAll();
-  } catch(e) {
-    document.getElementById("sync-label").textContent = "connection error";
-  }
-}
-
-// ── RENDER ──
-function renderAll() {
-  let pets=0,leg=0,curr=0,bucks=0,tickets=0,online=0;
-  allAccounts.forEach(a=>{
-    pets+=a.pet_count||0; leg+=a.legendary_count||0;
-    curr+=a.currency||0; bucks+=a.bucks||0;
-    tickets+=a.tickets||0; if(a.online) online++;
-  });
-  const total=allAccounts.length;
-  document.getElementById("s-online").textContent=online;
-  document.getElementById("s-online-frac").textContent=online+"/"+total+" Active";
-  document.getElementById("s-pets").textContent=fmtNum(pets);
-  document.getElementById("s-leg").textContent=fmtNum(leg);
-  document.getElementById("s-curr").textContent=fmtNum(curr);
-  document.getElementById("s-bucks").textContent=fmtNum(bucks);
-  document.getElementById("s-tickets").textContent=fmtNum(tickets);
-  document.getElementById("sync-label").textContent="Synced "+new Date().toLocaleTimeString();
-  renderAccounts();
-  renderMasterPets();
-}
-
-function getSortedFiltered() {
-  const search = document.getElementById("search-input")?.value.toLowerCase()||"";
-  let list = allAccounts.filter(a=>{
-    if(filterBy==='online'&&!a.online) return false;
-    if(filterBy==='offline'&&a.online) return false;
-    if(search&&!a.username.toLowerCase().includes(search)) return false;
-    return true;
-  });
-  list.sort((a,b)=>{
-    if(sortBy==='name') return a.username.localeCompare(b.username);
-    if(sortBy==='online') return (b.online?1:0)-(a.online?1:0);
-    return (b[sortBy]||0)-(a[sortBy]||0);
-  });
-  return list;
-}
-
-function renderAccounts() {
-  const list = document.getElementById("account-list");
-  const accounts = getSortedFiltered();
-  if(accounts.length===0){list.innerHTML='<div class="empty">no accounts found</div>';return;}
-  list.innerHTML="";
-  accounts.forEach(acc=>list.appendChild(makeRow(acc)));
-  updateBulkBar();
-}
-
-function filterAccounts() { renderAccounts(); }
-
-function makeRow(acc) {
-  const div = document.createElement("div");
-  div.className="acc-row"+(selected.has(acc.username)?" selected":"");
-  div.id="row-"+acc.username;
-
-  const pets=acc.inventory?.pets||{};
-  const cfg=acc.config||{};
-  const isChecked=selected.has(acc.username);
-
-  div.innerHTML=`
-    <div class="acc-main" onclick="toggleExpand('${acc.username}')">
-      <div class="acc-checkbox ${isChecked?'checked':''}" onclick="event.stopPropagation();toggleSelect('${acc.username}')"></div>
-      <div class="acc-info">
-        <div class="acc-name-row">
-          <span class="acc-username">${acc.username}</span>
-          <span class="acc-status ${acc.online?'online':'offline'}">${acc.online?'Online':'Inactive'}</span>
+<!-- ══ ACCOUNTS ══ -->
+<div class="view" id="v-accounts">
+  <div class="sh">
+    <div class="sh-title">Accounts</div>
+    <div class="sh-right">
+      <input class="inp" id="acc-search" placeholder="Search accounts..." oninput="renderAccounts()" style="width:200px">
+      <div class="dd" id="dd-acc-filter">
+        <button class="btn ghost" onclick="toggleDD('dd-acc-filter')"><span id="acc-filter-lbl">All</span> ▾</button>
+        <div class="dd-menu" id="dd-acc-filter-menu">
+          <div class="dd-item on" onclick="setAccListFilter('all',this)">All Accounts <span class="dd-chk">✓</span></div>
+          <div class="dd-item" onclick="setAccListFilter('online',this)">Online Only</div>
+          <div class="dd-item" onclick="setAccListFilter('offline',this)">Offline Only</div>
         </div>
-        <div class="acc-lastseen">${acc.online?'Active now':'Updated '+timeSince(acc.last_ping)}</div>
-      </div>
-      <div class="acc-numbers">
-        <div class="acc-num"><div class="acc-num-val">${fmtNum(acc.bucks||0)}</div><div class="acc-num-label">Bucks</div></div>
-        <div class="acc-num"><div class="acc-num-val">${fmtNum(acc.currency||0)}</div><div class="acc-num-label">Event</div></div>
-        <div class="acc-num"><div class="acc-num-val">${acc.pet_count||0}</div><div class="acc-num-label">Pets</div></div>
-        <div class="acc-num"><div class="acc-num-val">${fmtNum(acc.tickets||0)}</div><div class="acc-num-label">Tickets</div></div>
-      </div>
-      <div class="acc-actions" onclick="event.stopPropagation()">
-        <button class="btn xs" onclick="sendJump('${acc.username}')" style="color:var(--green);border-color:var(--green-border);background:var(--green-bg)">Jump</button>
       </div>
     </div>
-    <div class="acc-expanded" id="exp-${acc.username}">
-      <div class="acc-tabs">
-        <button class="acc-tab active" onclick="accTab('${acc.username}','inv',this)">Inventory</button>
-        <button class="acc-tab" onclick="accTab('${acc.username}','config',this)">Config</button>
-        <button class="acc-tab" onclick="accTab('${acc.username}','shop',this)">Shop</button>
-        <button class="acc-tab" onclick="accTab('${acc.username}','log',this)">Log</button>
+  </div>
+  <div class="acc-list" id="acc-list"><div class="empty">loading...</div></div>
+</div>
+
+<!-- ══ CONFIGS ══ -->
+<div class="view" id="v-configs">
+  <div class="sh" style="margin-bottom:20px">
+    <div class="sh-title">Configs</div>
+    <button class="btn w xs" onclick="newConfig()">+ New Config</button>
+  </div>
+  <div class="cfg-page">
+    <div>
+      <div class="cfg-list" id="cfg-list"><div class="empty">no configs yet</div></div>
+      <div class="cfg-new" onclick="newConfig()" style="margin-top:8px">＋ New Config</div>
+    </div>
+    <div id="cfg-editor-wrap"><div class="empty" style="padding:48px">Select a config to edit</div></div>
+  </div>
+</div>
+
+<!-- ══ STATS ══ -->
+<div class="view" id="v-stats">
+  <div class="sh" style="margin-bottom:20px">
+    <div class="sh-title">Stats</div>
+    <span style="font-size:11px;color:var(--t3)">Data accumulates as accounts ping in</span>
+  </div>
+  <div class="stat-mini-grid">
+    <div class="stat-mini"><div class="stat-mini-val" id="st-total-pings">0</div><div class="stat-mini-lbl">Total Pings</div></div>
+    <div class="stat-mini"><div class="stat-mini-val" id="st-avg-bucks">0</div><div class="stat-mini-lbl">Avg Bucks</div></div>
+    <div class="stat-mini"><div class="stat-mini-val" id="st-avg-pets">0</div><div class="stat-mini-lbl">Avg Pets</div></div>
+    <div class="stat-mini"><div class="stat-mini-val" id="st-max-acc">—</div><div class="stat-mini-lbl">Top Account</div></div>
+  </div>
+  <div class="stats-grid">
+    <div class="chart-card">
+      <div class="chart-title">Bucks per Account</div>
+      <div class="chart-sub">Current balance distribution</div>
+      <div class="chart-wrap"><canvas id="chart-bucks"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Event Currency per Account</div>
+      <div class="chart-sub">Egg balance distribution</div>
+      <div class="chart-wrap"><canvas id="chart-event"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Pets per Account</div>
+      <div class="chart-sub">Total pet count</div>
+      <div class="chart-wrap"><canvas id="chart-pets"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Inventory Breakdown</div>
+      <div class="chart-sub">Pets by rarity across all accounts</div>
+      <div class="chart-wrap"><canvas id="chart-rarity"></canvas></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /page -->
+<script>
+const S=""; let allAccs=[]; let savedCfgs=JSON.parse(localStorage.getItem('farm_cfgs')||'[]');
+let invTab='pets'; let invSort='name'; let accFilter='all'; let accListFilter='all';
+let selAccs=new Set(['__all__']); let editingCfg=null;
+let charts={};
+
+
+const PET_IMGS = {
+  // Eggs
+  'moon_egg': 'https://static.wikia.nocookie.net/adoptme/images/0/01/Moon_Egg.png/revision/latest?cb=20250203204719',
+  'moon_2025_egg': 'https://static.wikia.nocookie.net/adoptme/images/0/01/Moon_Egg.png/revision/latest?cb=20250203204719',
+  'royal_moon_egg': 'https://static.wikia.nocookie.net/adoptme/images/6/66/Royal_Moon_Egg.png/revision/latest?cb=20250202012528',
+  'cracked_egg': 'https://static.wikia.nocookie.net/adoptme/images/0/0d/Cracked_Egg_in-game.png/revision/latest?cb=20240121093803',
+  'pet_egg': 'https://static.wikia.nocookie.net/adoptme/images/2/2b/Pet_Egg.png/revision/latest?cb=20200807040030',
+  'royal_egg': 'https://static.wikia.nocookie.net/adoptme/images/3/32/AM_Royal_Egg.png/revision/latest?cb=20200807040058',
+  'golden_egg': 'https://static.wikia.nocookie.net/adoptme/images/0/01/AM_Golden_Egg.png/revision/latest?cb=20200807040523',
+  'diamond_egg': 'https://static.wikia.nocookie.net/adoptme/images/7/70/Diamond_Egg.png/revision/latest?cb=20210130154342',
+  'farm_egg': 'https://static.wikia.nocookie.net/adoptme/images/0/06/FarmEgg.png/revision/latest?cb=20200202033249',
+  'aussie_egg': 'https://static.wikia.nocookie.net/adoptme/images/1/16/Aussie_Egg.png/revision/latest?cb=20200307175151',
+  'jungle_egg': 'https://static.wikia.nocookie.net/adoptme/images/c/c9/Jungle_Egg.png/revision/latest?cb=20200807040744',
+  'safari_egg': 'https://static.wikia.nocookie.net/adoptme/images/9/9a/Safari_Egg.png/revision/latest?cb=20200922150828',
+  'fossil_egg': 'https://static.wikia.nocookie.net/adoptme/images/1/14/Fossil_Egg.png/revision/latest?cb=20210416073725',
+  'ocean_egg': 'https://static.wikia.nocookie.net/adoptme/images/c/cc/Ocean_Egg.png/revision/latest?cb=20210330200236',
+  'mythic_egg': 'https://static.wikia.nocookie.net/adoptme/images/9/92/Mythic_Egg.png/revision/latest?cb=20210716183002',
+  'woodland_egg': 'https://static.wikia.nocookie.net/adoptme/images/2/22/Woodland_Egg.png/revision/latest?cb=20220317165302',
+  'japan_egg': 'https://static.wikia.nocookie.net/adoptme/images/2/25/Japan_Egg.png/revision/latest?cb=20220908164709',
+  'southeast_asia_egg': 'https://static.wikia.nocookie.net/adoptme/images/0/0d/Southeast_Asia_Egg.png/revision/latest?cb=20230301171217',
+  'danger_egg': 'https://static.wikia.nocookie.net/adoptme/images/6/62/Danger_Egg_inventory.png/revision/latest?cb=20230624161226',
+  'desert_egg': 'https://static.wikia.nocookie.net/adoptme/images/8/8d/Desert_Egg.png/revision/latest?cb=20240122172154',
+  'royal_desert_egg': 'https://static.wikia.nocookie.net/adoptme/images/6/69/Royal_Desert_Egg.png/revision/latest?cb=20240123160315',
+  'garden_egg': 'https://static.wikia.nocookie.net/adoptme/images/3/3d/Garden_Egg.png/revision/latest?cb=20240923204548',
+  'aztec_egg': 'https://static.wikia.nocookie.net/adoptme/images/c/cc/Aztec_Egg.png/revision/latest?cb=20250814220647',
+  'royal_aztec_egg': 'https://static.wikia.nocookie.net/adoptme/images/1/14/Royal_Aztec_Egg.png/revision/latest?cb=20250808153037',
+  'basic_egg': 'https://static.wikia.nocookie.net/adoptme/images/f/fa/Basic_Egg.png/revision/latest?cb=20250911162220',
+  'crystal_egg': 'https://static.wikia.nocookie.net/adoptme/images/6/6d/Crystal_Egg.png/revision/latest?cb=20250911162243',
+  'endangered_egg': 'https://static.wikia.nocookie.net/adoptme/images/c/ce/Endangered_Egg.png/revision/latest?cb=20260302180645',
+  'christmas_egg': 'https://static.wikia.nocookie.net/adoptme/images/2/2c/Christmas_Egg.png/revision/latest?cb=20210416073418',
+  'blue_egg': 'https://static.wikia.nocookie.net/adoptme/images/8/84/Blue_Egg.png/revision/latest?cb=20200807035736',
+  'pink_egg': 'https://static.wikia.nocookie.net/adoptme/images/1/19/Pink_Egg.png/revision/latest?cb=20200807035421',
+  'starter_egg': 'https://static.wikia.nocookie.net/adoptme/images/6/6b/Starter_Egg.png/revision/latest?cb=20200807035824',
+  'retired_egg': 'https://static.wikia.nocookie.net/adoptme/images/2/21/Retired_Egg.png/revision/latest?cb=20220719104304',
+  'urban_egg': 'https://static.wikia.nocookie.net/adoptme/images/2/21/Urban_Egg.png/revision/latest?cb=20231206203415',
+  'pet_recycler_2025_crystal_egg': 'https://static.wikia.nocookie.net/adoptme/images/6/6d/Crystal_Egg.png/revision/latest?cb=20250911162243',
+  // Pets
+  'cocoadile': 'https://static.wikia.nocookie.net/adoptme/images/c/c7/Cocoadile.png/revision/latest?cb=20260312011553',
+  'sugarfest_2026_cocoadile': 'https://static.wikia.nocookie.net/adoptme/images/c/c7/Cocoadile.png/revision/latest?cb=20260312011553',
+  'unicorn': 'https://static.wikia.nocookie.net/adoptme/images/1/1f/Unicorn_Pet.png/revision/latest?cb=20250209082117',
+  'dragon': 'https://static.wikia.nocookie.net/adoptme/images/3/3c/Dragon_Pet.png/revision/latest?cb=20210726173407',
+  'golden_dragon': 'https://static.wikia.nocookie.net/adoptme/images/a/a6/GoldenDragon_Pet.png/revision/latest?cb=20200321150254',
+  'diamond_dragon': 'https://static.wikia.nocookie.net/adoptme/images/9/9b/DiamondDragon_Pet.png/revision/latest?cb=20201227185020',
+  'golden_unicorn': 'https://static.wikia.nocookie.net/adoptme/images/9/99/GoldenUnicorn_Pet.png/revision/latest?cb=20200321150328',
+  'diamond_unicorn': 'https://static.wikia.nocookie.net/adoptme/images/6/6b/DiamondUnicorn_Pet.png/revision/latest?cb=20201227185651',
+  'golden_griffin': 'https://static.wikia.nocookie.net/adoptme/images/3/35/GoldenGriffin_Pet.png/revision/latest?cb=20200321150239',
+  'diamond_griffin': 'https://static.wikia.nocookie.net/adoptme/images/7/7a/DiamondGrififn_Pet.png/revision/latest?cb=20201227185407',
+  'alicorn': 'https://static.wikia.nocookie.net/adoptme/images/1/17/Alicorn.png/revision/latest?cb=20220721171711',
+  'ancient_dragon': 'https://static.wikia.nocookie.net/adoptme/images/7/77/Ancient_Dragon.png/revision/latest?cb=20220721171733',
+  'kangaroo': 'https://static.wikia.nocookie.net/adoptme/images/1/1c/Kangaroo_Pet.png/revision/latest?cb=20210422150049',
+  'koala': 'https://static.wikia.nocookie.net/adoptme/images/3/3f/Koala_Pet.png/revision/latest?cb=20250208193147',
+  'turtle': 'https://static.wikia.nocookie.net/adoptme/images/7/7e/Turtle_Pet.png/revision/latest?cb=20200307174933',
+  'cow': 'https://static.wikia.nocookie.net/adoptme/images/9/99/Cow_Pet.png/revision/latest?cb=20200202004711',
+  'chicken': 'https://static.wikia.nocookie.net/adoptme/images/a/ac/Chicken_Pet.png/revision/latest?cb=20210416073349',
+  'pig': 'https://static.wikia.nocookie.net/adoptme/images/b/bb/Pig_Pet.png/revision/latest?cb=20200202004658',
+  'llama': 'https://static.wikia.nocookie.net/adoptme/images/4/43/Llama.png/revision/latest?cb=20201113123718',
+  'elephant': 'https://static.wikia.nocookie.net/adoptme/images/b/b3/Elephantinventory.png/revision/latest?cb=20211117073746',
+  'giraffe': 'https://static.wikia.nocookie.net/adoptme/images/4/4f/Giraffeinventory.png/revision/latest?cb=20211117073914',
+  'lion': 'https://static.wikia.nocookie.net/adoptme/images/0/09/Lioninventory.png/revision/latest?cb=20211117073250',
+  'panda': 'https://static.wikia.nocookie.net/adoptme/images/8/8b/Red_Panda.png/revision/latest?cb=20201113121742',
+  'red_panda': 'https://static.wikia.nocookie.net/adoptme/images/8/8b/Red_Panda.png/revision/latest?cb=20201113121742',
+  'crow': 'https://static.wikia.nocookie.net/adoptme/images/0/02/Crow_Pet.png/revision/latest?cb=20231206203313',
+  'corgi': 'https://static.wikia.nocookie.net/adoptme/images/1/12/Corgi.png/revision/latest?cb=20220719105455',
+  'dog': 'https://static.wikia.nocookie.net/adoptme/images/3/35/Dog.png/revision/latest?cb=20260228184731',
+  'cat': 'https://static.wikia.nocookie.net/adoptme/images/0/05/Cat.png/revision/latest?cb=20260228185150',
+  'bunny': 'https://static.wikia.nocookie.net/adoptme/images/a/a9/Bunny2.png/revision/latest?cb=20201112135932',
+  'rabbit': 'https://static.wikia.nocookie.net/adoptme/images/9/94/Rabbit1.png/revision/latest?cb=20201112132726',
+  'dolphin': 'https://static.wikia.nocookie.net/adoptme/images/8/87/Images-Dolphin.png/revision/latest?cb=20211117064839',
+  'shark': 'https://static.wikia.nocookie.net/adoptme/images/6/62/Images-Shark.png/revision/latest?cb=20211117065226',
+  'narwhal': 'https://static.wikia.nocookie.net/adoptme/images/4/40/Images-Narwhal.png/revision/latest?cb=20211117064914',
+  'octopus': 'https://static.wikia.nocookie.net/adoptme/images/b/b7/Images-Octopus.png/revision/latest?cb=20211117065045',
+  'seahorse': 'https://static.wikia.nocookie.net/adoptme/images/9/9b/Images-Seahorse.png/revision/latest?cb=20211117064947',
+  'parrot': 'https://static.wikia.nocookie.net/adoptme/images/1/10/Parrotinventory.png/revision/latest?cb=20211117074958',
+  'brown_bear': 'https://static.wikia.nocookie.net/adoptme/images/5/58/Brown_Bear.png/revision/latest?cb=20210401083452',
+  'crocodile': 'https://static.wikia.nocookie.net/adoptme/images/d/d6/Crocodile.png/revision/latest?cb=20200818174324',
+  'capybara': 'https://static.wikia.nocookie.net/adoptme/images/6/6e/Capybara.png/revision/latest?cb=20210205103143',
+  'black_panther': 'https://static.wikia.nocookie.net/adoptme/images/f/f2/Black_Panther.png/revision/latest?cb=20231206203935',
+  't_rex': 'https://static.wikia.nocookie.net/adoptme/images/f/f8/T-Rex.png/revision/latest?cb=20201003004901',
+  'triceratops': 'https://static.wikia.nocookie.net/adoptme/images/a/a1/Triceratops.png/revision/latest?cb=20201015163413',
+  'sabertooth': 'https://static.wikia.nocookie.net/adoptme/images/a/a4/Sabertooth.png/revision/latest?cb=20201003004859',
+  'woolly_mammoth': 'https://static.wikia.nocookie.net/adoptme/images/8/88/Wooly_Mammoth.png/revision/latest?cb=20201003004903',
+  'dodo': 'https://static.wikia.nocookie.net/adoptme/images/9/93/Dodo_AM.png/revision/latest?cb=20201023104144',
+  'phoenix': 'https://static.wikia.nocookie.net/adoptme/images/2/2a/PhoenixIcon.png/revision/latest?cb=20211117071736',
+  'hydra': 'https://static.wikia.nocookie.net/adoptme/images/0/03/HydraIcon.png/revision/latest?cb=20211117071606',
+  'wyvern': 'https://static.wikia.nocookie.net/adoptme/images/7/77/WyvernIcon.png/revision/latest?cb=20211117071654',
+  'kirin': 'https://static.wikia.nocookie.net/adoptme/images/8/8e/KirinInventory.png/revision/latest?cb=20211117071117',
+  'orca': 'https://static.wikia.nocookie.net/adoptme/images/7/75/Orca.png/revision/latest?cb=20220901174317',
+  'red_fox': 'https://static.wikia.nocookie.net/adoptme/images/2/21/Red_Fox.png/revision/latest?cb=20220317164920',
+  'hawk': 'https://static.wikia.nocookie.net/adoptme/images/3/3c/Hawk.png/revision/latest?cb=20220317164919',
+  'bullfrog': 'https://static.wikia.nocookie.net/adoptme/images/d/da/Bullfrog.png/revision/latest?cb=20220317164919',
+  'maneki_neko': 'https://static.wikia.nocookie.net/adoptme/images/1/12/Maneki-Neko.png/revision/latest?cb=20220908161348',
+  'tanuki': 'https://static.wikia.nocookie.net/adoptme/images/a/a2/Tanuki.png/revision/latest?cb=20220908160641',
+  'komodo_dragon': 'https://static.wikia.nocookie.net/adoptme/images/9/93/Komodo_Dragon.png/revision/latest?cb=20230409102229',
+  'naga_dragon': 'https://static.wikia.nocookie.net/adoptme/images/e/ea/Naga_Dragon.png/revision/latest?cb=20230409102248',
+  'spinosaurus': 'https://static.wikia.nocookie.net/adoptme/images/2/24/Spinosaurus.png/revision/latest?cb=20230708144048',
+  'hippo': 'https://static.wikia.nocookie.net/adoptme/images/f/f3/Hippo.png/revision/latest?cb=20230607152901',
+  'liger': 'https://static.wikia.nocookie.net/adoptme/images/b/b4/Liger.png/revision/latest?cb=20230708144549',
+  'armadillo': 'https://static.wikia.nocookie.net/adoptme/images/9/9f/Armadillo.png/revision/latest?cb=20240123173046',
+  'coyote': 'https://static.wikia.nocookie.net/adoptme/images/0/02/Coyote.png/revision/latest?cb=20240118204531',
+  'vulture': 'https://static.wikia.nocookie.net/adoptme/images/0/01/Vulture.png/revision/latest?cb=20240123172423',
+  'rattlesnake': 'https://static.wikia.nocookie.net/adoptme/images/6/6c/Rattlesnake.png/revision/latest?cb=20240122160228',
+  'mole': 'https://static.wikia.nocookie.net/adoptme/images/6/63/Mole.png/revision/latest?cb=20240523140146',
+  'skunk': 'https://static.wikia.nocookie.net/adoptme/images/7/79/Skunk.png/revision/latest?cb=20240523140001',
+  'blue_jay': 'https://static.wikia.nocookie.net/adoptme/images/8/87/Blue_Jay.png/revision/latest?cb=20240522202610',
+  'orangutan': 'https://static.wikia.nocookie.net/adoptme/images/d/dd/Orangutan.png/revision/latest?cb=20240821224846',
+  'poodle': 'https://static.wikia.nocookie.net/adoptme/images/7/7d/Poodle.png/revision/latest?cb=20240821215329',
+  'mahi_mahi': 'https://static.wikia.nocookie.net/adoptme/images/7/7a/Mahi_Mahi_inventory.png/revision/latest?cb=20240622220230',
+  'diamond_mahi_mahi': 'https://static.wikia.nocookie.net/adoptme/images/b/bb/Diamond_Mahi_Mahi.png/revision/latest?cb=20240623021828',
+  'gargoyle': 'https://static.wikia.nocookie.net/adoptme/images/4/44/Gargoyle.png/revision/latest?cb=20230823161139',
+  'shih_tzu': 'https://static.wikia.nocookie.net/adoptme/images/3/3b/Shih_Tzu.png/revision/latest?cb=20251112165141',
+  'dango_penguins': 'https://static.wikia.nocookie.net/adoptme/images/3/3c/Dango_Penguins.png/revision/latest?cb=20251105163728',
+  'snorgle': 'https://static.wikia.nocookie.net/adoptme/images/5/5b/Snorgle.png/revision/latest?cb=20250203205139',
+  'starmite': 'https://static.wikia.nocookie.net/adoptme/images/1/1b/Starmite.png/revision/latest?cb=20250203205118',
+  'zeopod': 'https://static.wikia.nocookie.net/adoptme/images/7/7c/Zeopod.png/revision/latest?cb=20250203205052',
+  'hopbop': 'https://static.wikia.nocookie.net/adoptme/images/c/c5/HopBop.png/revision/latest?cb=20250205215400',
+  'sunglider': 'https://static.wikia.nocookie.net/adoptme/images/e/ea/Sunglider.png/revision/latest?cb=20250205215129',
+  'moonpine': 'https://static.wikia.nocookie.net/adoptme/images/4/4e/Moonpine.png/revision/latest?cb=20250205215334',
+  'puptune': 'https://static.wikia.nocookie.net/adoptme/images/2/29/Puptune.png/revision/latest?cb=20250205181338',
+  'dimension_drifter': 'https://static.wikia.nocookie.net/adoptme/images/a/a9/Dimension_Drifter.png/revision/latest?cb=20250203205218',
+  'black_footed_ferret': 'https://static.wikia.nocookie.net/adoptme/images/0/07/Black-Footed_Ferret.png/revision/latest?cb=20260302181041',
+  'black_rhino': 'https://static.wikia.nocookie.net/adoptme/images/0/0f/Black_Rhino.png/revision/latest?cb=20260302180939',
+  'black_tiger': 'https://static.wikia.nocookie.net/adoptme/images/0/0e/Black_Tiger.png/revision/latest?cb=20260302180838',
+  'blue_whale': 'https://static.wikia.nocookie.net/adoptme/images/d/dc/Blue_Whale.png/revision/latest?cb=20260302181132',
+  'california_condor': 'https://static.wikia.nocookie.net/adoptme/images/6/6a/California_Condor.png/revision/latest?cb=20260302180734',
+  'galapagos_sea_lion': 'https://static.wikia.nocookie.net/adoptme/images/7/74/Galapagos_Sea_Lion.png/revision/latest?cb=20260302180804',
+  'kakapo': 'https://static.wikia.nocookie.net/adoptme/images/4/45/Kakapo.png/revision/latest?cb=20260302180912',
+  'mexican_wolf': 'https://static.wikia.nocookie.net/adoptme/images/6/63/Mexican_Wolf.png/revision/latest?cb=20260302181009',
+  'pangolin': 'https://static.wikia.nocookie.net/adoptme/images/2/28/Pangolin.png/revision/latest?cb=20260302181107',
+  'sea_turtle': 'https://static.wikia.nocookie.net/adoptme/images/f/f0/Sea_Turtle.png/revision/latest?cb=20260303114544',
+  'silverback_gorilla': 'https://static.wikia.nocookie.net/adoptme/images/2/22/Silverback_Gorilla.png/revision/latest?cb=20260227162027',
+  'quetzalcoatl': 'https://static.wikia.nocookie.net/adoptme/images/6/61/Quetzalcoatl.png/revision/latest?cb=20250812161950',
+  'chanekeh': 'https://static.wikia.nocookie.net/adoptme/images/a/a3/Chanekeh.png/revision/latest?cb=20250809182119',
+  'ehecatl': 'https://static.wikia.nocookie.net/adoptme/images/2/20/Ehecatl.png/revision/latest?cb=20250810180258',
+  'onza': 'https://static.wikia.nocookie.net/adoptme/images/c/ce/Onza.png/revision/latest?cb=20250810160205',
+  'tree_frog': 'https://static.wikia.nocookie.net/adoptme/images/1/13/Tree_Frog.png/revision/latest?cb=20250808233809',
+  'water_opossum': 'https://static.wikia.nocookie.net/adoptme/images/b/b3/Water_Opossum.png/revision/latest?cb=20250809161712',
+  'temple_friend': 'https://static.wikia.nocookie.net/adoptme/images/e/e2/Temple_Friend.png/revision/latest?cb=20250811180338',
+  'tegu': 'https://static.wikia.nocookie.net/adoptme/images/6/69/Tegu.png/revision/latest?cb=20250808234115',
+  'velocirooster': 'https://static.wikia.nocookie.net/adoptme/images/2/2b/Velocirooster.png/revision/latest?cb=20260307181242',
+  'emberlight': 'https://static.wikia.nocookie.net/adoptme/images/c/c1/Emberlight.png/revision/latest?cb=20250912151721',
+  'dragon_fruit_fox': 'https://static.wikia.nocookie.net/adoptme/images/e/e6/Dragon_Fruit_Fox.png/revision/latest?cb=20260107163427',
+  'muskrat': 'https://static.wikia.nocookie.net/adoptme/images/b/b8/Muskrat.png/revision/latest?cb=20250526164928',
+  'pomeranian': 'https://static.wikia.nocookie.net/adoptme/images/c/c1/Pomeranian.png/revision/latest?cb=20220901160235',
+  'camel': 'https://static.wikia.nocookie.net/adoptme/images/0/09/Camel.png/revision/latest?cb=20231206203935',
+  'ribbon_seal': 'https://static.wikia.nocookie.net/adoptme/images/c/c9/Ribbon_Seal.png/revision/latest?cb=20220512212551',
+  'starfish': 'https://static.wikia.nocookie.net/adoptme/images/5/52/Starfish.png/revision/latest?cb=20200723095039',
+  'swordfish': 'https://static.wikia.nocookie.net/adoptme/images/f/f7/Swordfish.png/revision/latest?cb=20231206203823',
+  'dragonfly': 'https://static.wikia.nocookie.net/adoptme/images/8/84/Dragonfly.png/revision/latest?cb=20220721165554',
+  'parakeet': 'https://static.wikia.nocookie.net/adoptme/images/7/7c/Parakeet.png/revision/latest?cb=20220721170141',
+  'donkey': 'https://static.wikia.nocookie.net/adoptme/images/9/95/Donkey.png/revision/latest?cb=20220721171038',
+  'ant': 'https://static.wikia.nocookie.net/adoptme/images/5/56/Ant.png/revision/latest?cb=20220721170231',
+  'mouse': 'https://static.wikia.nocookie.net/adoptme/images/5/5c/Mouse.png/revision/latest?cb=20220721165622',
+  'badger': 'https://static.wikia.nocookie.net/adoptme/images/f/ff/Badger.png/revision/latest?cb=20240730190342',
+  'ocelot': 'https://static.wikia.nocookie.net/adoptme/images/0/0d/Ocelot.png/revision/latest?cb=20230217170129',
+  'grinmoire': 'https://static.wikia.nocookie.net/adoptme/images/5/5a/Grinmoire.png/revision/latest?cb=20230508164708',
+};
+
+function getPetImg(id) {
+  if (!id) return null;
+  const k = id.toLowerCase().replace(/-/g,'_');
+  // Direct match
+  if (PET_IMGS[k]) return PET_IMGS[k];
+  // Partial match — check if any key is contained in the id
+  for (const [key, url] of Object.entries(PET_IMGS)) {
+    if (k.includes(key) || key.includes(k)) return url;
+  }
+  return null;
+}
+
+function fmtN(n){if(!n||n===0)return'0';if(n>=1e6)return(n/1e6).toFixed(1)+'m';if(n>=10000)return Math.round(n/1000)+'k';return n.toLocaleString();}
+function fmtT(ts){if(!ts)return'never';return new Date(ts*1000).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
+function tAgo(ts){if(!ts)return'never';const s=Math.floor(Date.now()/1000-ts);if(s<60)return s+'s ago';if(s<3600)return Math.floor(s/60)+'m ago';return Math.floor(s/3600)+'h ago';}
+function fmtId(id){return(id||'').replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());}
+
+async function fetchAccs(){
+  try{
+    const r=await fetch(S+"/dashboard/accounts");
+    if(r.status===401){location.href="/login";return;}
+    allAccs=await r.json(); renderAll();
+  }catch(e){document.getElementById("sync-lbl").textContent="connection error";}
+}
+
+function renderAll(){
+  let pets=0,leg=0,curr=0,bucks=0,tick=0,online=0;
+  allAccs.forEach(a=>{pets+=a.pet_count||0;leg+=a.legendary_count||0;curr+=a.currency||0;bucks+=a.bucks||0;tick+=a.tickets||0;if(a.online)online++;});
+  const tot=allAccs.length;
+  document.getElementById("s-online").textContent=online;
+  document.getElementById("s-online-sub").textContent=online+"/"+tot+" Active";
+  document.getElementById("s-pets").textContent=fmtN(pets);
+  document.getElementById("s-leg").textContent=fmtN(leg);
+  document.getElementById("s-curr").textContent=fmtN(curr);
+  document.getElementById("s-bucks").textContent=fmtN(bucks);
+  document.getElementById("s-tick").textContent=fmtN(tick);
+  document.getElementById("sync-lbl").textContent="Synced "+new Date().toLocaleTimeString();
+  buildAccFilterList(); renderInv(); renderAccounts(); renderStats();
+}
+
+// ── INVENTORY ──
+function buildAccFilterList(){
+  const el=document.getElementById("dd-accs-list");
+  el.innerHTML=allAccs.map(a=>`<div class="dd-item ${selAccs.has(a.username)?'on':''}" onclick="toggleAccSel('${a.username}',this)" data-val="${a.username}">${a.username} ${selAccs.has(a.username)?'<span class="dd-chk">✓</span>':''}</div>`).join('');
+}
+function toggleAccSel(u,el){
+  selAccs.delete('__all__');
+  if(selAccs.has(u)){selAccs.delete(u);}else{selAccs.add(u);}
+  if(selAccs.size===0)selAccs.add('__all__');
+  buildAccFilterList();
+}
+function setAccFilter(val,el){selAccs=new Set(['__all__']);document.querySelectorAll("#dd-accs-menu .dd-item").forEach(i=>{i.classList.remove('on');i.querySelector('.dd-chk')?.remove();});el.classList.add('on');el.insertAdjacentHTML('beforeend','<span class="dd-chk">✓</span>');applyAccFilter();}
+function applyAccFilter(){
+  const isAll=selAccs.has('__all__');
+  document.getElementById("acc-sel-lbl").textContent=isAll?'All Accounts':selAccs.size+' Selected';
+  document.getElementById("dd-accs-menu").classList.remove('on');
+  renderInv();
+}
+function getActiveAccs(){if(selAccs.has('__all__'))return allAccs;return allAccs.filter(a=>selAccs.has(a.username));}
+
+function setInvTab(t,btn){invTab=t;document.querySelectorAll(".inv-tab").forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderInv();}
+function setInvSort(s,btn){invSort=s;document.getElementById("inv-sort-lbl").textContent=btn.textContent.replace('✓','').trim();document.querySelectorAll("#dd-inv-sort-menu .dd-item").forEach(i=>{i.classList.remove('on');i.querySelector('.dd-chk')?.remove();});btn.classList.add('on');btn.insertAdjacentHTML('beforeend','<span class="dd-chk">✓</span>');document.getElementById("dd-inv-sort-menu").classList.remove('on');renderInv();}
+
+function mkBadges(p){return[p.rarity==="legendary"?'<span class="badge b-leg">leg</span>':'',p.is_mega?'<span class="badge b-mega">mega</span>':'',p.is_neon&&!p.is_mega?'<span class="badge b-neon">neon</span>':'',!p.hatched?'<span class="badge b-egg">egg</span>':''].join('');}
+
+function renderInv(){
+  const accs=getActiveAccs();
+  const body=document.getElementById("inv-body");
+  let items=[];
+
+  if(invTab==='pets'||invTab==='eggs'){
+    accs.forEach(acc=>{
+      Object.values(acc.inventory?.pets||{}).forEach(p=>{
+        const isEgg=!p.hatched;
+        if(invTab==='eggs'&&!isEgg)return;
+        if(invTab==='pets'&&isEgg)return;
+        items.push({...p,_acc:acc.username});
+      });
+    });
+    // sort
+    items.sort((a,b)=>{
+      if(invSort==='rarity'){const r={legendary:3,rare:2,uncommon:1,common:0};return(r[b.rarity]||0)-(r[a.rarity]||0);}
+      if(invSort==='age')return b.age-a.age;
+      return fmtId(a.id).localeCompare(fmtId(b.id));
+    });
+    if(items.length===0){body.innerHTML='<div class="inv-empty">no '+invTab+' found</div>';return;}
+    body.innerHTML=`<div class="pet-grid">${items.map((p,i)=>`
+      <div class="pet-card" onclick="togglePetCard(this)">
+        <div class="pet-card-top">
+          <span class="pet-card-name">${fmtId(p.id)}</span>
+          <div class="badges">${mkBadges(p)}</div>
+        </div>
+        <div class="pet-card-detail">
+          <div class="pet-detail-row"><span class="pet-detail-key">Account</span><span class="pet-detail-val">${p._acc}</span></div>
+          <div class="pet-detail-row"><span class="pet-detail-key">ID</span><span class="pet-detail-val">${p.kind||p.id}</span></div>
+          <div class="pet-detail-row"><span class="pet-detail-key">Age</span><span class="pet-detail-val">${p.age}</span></div>
+          <div class="pet-detail-row"><span class="pet-detail-key">Rarity</span><span class="pet-detail-val">${p.rarity||'common'}</span></div>
+        </div>
+      </div>`).join('')}</div>`;
+  } else {
+    const catMap={gifts:'gifts',wear:'pet_accessories',food:'food'};
+    const cat=catMap[invTab]||invTab;
+    accs.forEach(acc=>{
+      Object.values(acc.inventory?.[cat]||{}).forEach(it=>{items.push({...it,_acc:acc.username});});
+    });
+    if(invTab==='gifts'||invTab==='wear'||invTab==='food'){
+      items.sort((a,b)=>fmtId(a.id||a.kind).localeCompare(fmtId(b.id||b.kind)));
+    }
+    if(items.length===0){body.innerHTML='<div class="inv-empty">no items found</div>';return;}
+    body.innerHTML=`<div class="item-list">${items.map(it=>`
+      <div class="item-row">
+        <div><div class="item-name">${fmtId(it.kind||it.id)}</div><div class="item-id">${it.id}</div></div>
+        <div class="item-acc">${it._acc}</div>
+      </div>`).join('')}</div>`;
+  }
+}
+function togglePetCard(el){el.classList.toggle('expanded');}
+
+// ── ACCOUNTS ──
+function setAccListFilter(v,el){accListFilter=v;document.getElementById("acc-filter-lbl").textContent=el.textContent.replace('✓','').trim();document.querySelectorAll("#dd-acc-filter-menu .dd-item").forEach(i=>{i.classList.remove('on');i.querySelector('.dd-chk')?.remove();});el.classList.add('on');el.insertAdjacentHTML('beforeend','<span class="dd-chk">✓</span>');document.getElementById("dd-acc-filter-menu").classList.remove('on');renderAccounts();}
+
+function renderAccounts(){
+  const q=(document.getElementById("acc-search")?.value||"").toLowerCase();
+  const list=allAccs.filter(a=>{
+    if(accListFilter==='online'&&!a.online)return false;
+    if(accListFilter==='offline'&&a.online)return false;
+    if(q&&!a.username.toLowerCase().includes(q))return false;
+    return true;
+  });
+  const el=document.getElementById("acc-list");
+  if(list.length===0){el.innerHTML='<div class="empty">no accounts found</div>';return;}
+  el.innerHTML="";
+  list.forEach(a=>el.appendChild(mkAccRow(a)));
+}
+
+function mkAccRow(acc){
+  const div=document.createElement("div");
+  div.className="acc-row";div.id="ar-"+acc.username;
+  const cfg=savedCfgs.find(c=>c.assignedTo?.includes(acc.username));
+  div.innerHTML=`
+    <div class="acc-row-main" onclick="toggleAccDrop('${acc.username}')">
+      <span class="acc-status-dot ${acc.online?'on':'off'}"></span>
+      <div class="acc-info">
+        <div class="acc-name">${acc.username}</div>
+        <div class="acc-meta">
+          <span>${acc.online?'Online':'Last seen '+tAgo(acc.last_ping)}</span>
+          <span class="acc-cfg-tag">${cfg?cfg.name:'No Config'}</span>
+        </div>
       </div>
-      <div class="tab-content active" id="tc-${acc.username}-inv">${makeInvTab(acc)}</div>
-      <div class="tab-content" id="tc-${acc.username}-config">${makeConfigTab(acc.username,cfg)}</div>
-      <div class="tab-content" id="tc-${acc.username}-shop">${makeShopTab(acc.username,cfg)}</div>
-      <div class="tab-content" id="tc-${acc.username}-log"><div class="empty" id="log-${acc.username}">Click to load logs</div></div>
+      <div class="acc-nums">
+        <div class="acc-num"><div class="acc-num-v">${fmtN(acc.bucks||0)}</div><div class="acc-num-l">Bucks</div></div>
+        <div class="acc-num"><div class="acc-num-v">${fmtN(acc.currency||0)}</div><div class="acc-num-l">Event</div></div>
+        <div class="acc-num"><div class="acc-num-v">${acc.pet_count||0}</div><div class="acc-num-l">Pets</div></div>
+        <div class="acc-num"><div class="acc-num-v">${fmtN(acc.tickets||0)}</div><div class="acc-num-l">Tickets</div></div>
+      </div>
+      <div class="acc-btns" onclick="event.stopPropagation()">
+        <button class="btn xs" onclick="sendJump('${acc.username}')">Jump</button>
+        <button class="btn xs ghost" onclick="openCfgForAcc('${acc.username}')">Config</button>
+      </div>
+    </div>
+    <div class="acc-drop" id="adrop-${acc.username}">
+      <div class="acc-drop-grid">
+        <div class="drop-section">
+          <div class="drop-sec-head">📋 Account Info</div>
+          <div class="drop-sec-body">
+            <div class="drop-info-row"><span class="drop-info-key">Username</span><span class="drop-info-val">${acc.username}</span></div>
+            <div class="drop-info-row"><span class="drop-info-key">Status</span><span class="drop-info-val">${acc.online?'Online':'Offline'}</span></div>
+            <div class="drop-info-row"><span class="drop-info-key">Last Ping</span><span class="drop-info-val">${fmtT(acc.last_ping)}</span></div>
+            <div class="drop-info-row"><span class="drop-info-key">Last Action</span><span class="drop-info-val">${acc.last_action||'—'}</span></div>
+          </div>
+        </div>
+        <div class="drop-section">
+          <div class="drop-sec-head">⚙️ Assign Config</div>
+          <div class="drop-sec-body">
+            <div style="margin-bottom:8px">
+              <select class="inp" id="cfg-assign-${acc.username}" style="width:100%">
+                <option value="">— None —</option>
+                ${savedCfgs.map(c=>`<option value="${c.id}" ${cfg?.id===c.id?'selected':''}>${c.name}</option>`).join('')}
+              </select>
+            </div>
+            <button class="btn xs w" onclick="assignConfig('${acc.username}')" style="width:100%;justify-content:center">Apply Config</button>
+          </div>
+        </div>
+      </div>
     </div>`;
   return div;
 }
 
-function toggleExpand(username) {
-  const exp = document.getElementById("exp-"+username);
-  if(!exp) return;
-  exp.classList.toggle("open");
+function toggleAccDrop(u){document.getElementById("adrop-"+u)?.classList.toggle("on");}
+
+async function assignConfig(username){
+  const sel=document.getElementById("cfg-assign-"+username)?.value;
+  if(sel){
+    const cfg=savedCfgs.find(c=>c.id===sel);
+    if(cfg){
+      // Add to assignedTo list
+      savedCfgs.forEach(c=>{ c.assignedTo=(c.assignedTo||[]).filter(u=>u!==username); });
+      cfg.assignedTo=cfg.assignedTo||[];
+      if(!cfg.assignedTo.includes(username))cfg.assignedTo.push(username);
+      localStorage.setItem('farm_cfgs',JSON.stringify(savedCfgs));
+      // Push config to server
+      try{
+        await fetch(S+"/dashboard/config/"+username,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(cfg.settings||{})});
+        showToast("Config '"+cfg.name+"' applied to "+username);
+      }catch(e){showToast("Failed to apply",true);}
+      renderAccounts();
+    }
+  }
 }
 
-// ── INV ──
-function makeBadges(p) {
-  return [
-    p.rarity==="legendary"?'<span class="badge b-leg">leg</span>':'',
-    p.is_mega?'<span class="badge b-mega">mega</span>':'',
-    p.is_neon&&!p.is_mega?'<span class="badge b-neon">neon</span>':'',
-    !p.hatched?'<span class="badge b-egg">egg</span>':''
-  ].join('');
-}
-function makePetRowHtml(p) {
-  const types=[];
-  if(p.rarity==="legendary") types.push("legendary");
-  if(p.is_mega) types.push("mega");
-  if(p.is_neon) types.push("neon");
-  if(!p.hatched) types.push("egg");
-  return `<div class="pet-row" data-type="${types.join(' ')}">
-    <div class="pet-left"><div class="pet-name">${fmtId(p.id)}</div><div class="pet-id-text">${p.kind||p.id}</div></div>
-    <div class="pet-right"><span class="pet-age">age ${p.age}</span><div class="badges">${makeBadges(p)}</div></div>
-  </div>`;
-}
-function makeSection(uid,icon,label,count,bodyHtml) {
-  if(count===0) return `<div class="inv-section"><div class="inv-section-head empty"><div class="inv-head-left">${icon} ${label}</div><span class="inv-cnt">0</span></div></div>`;
-  return `<div class="inv-section">
-    <div class="inv-section-head" onclick="toggleSec('${uid}')">
-      <div class="inv-head-left">${icon} ${label}</div>
-      <div class="inv-head-right"><span class="inv-cnt">${count}</span><span class="inv-chevron" id="chev-${uid}">›</span></div>
-    </div>
-    <div class="inv-body" id="isec-${uid}">${bodyHtml}</div>
-  </div>`;
-}
-function toggleSec(uid) {
-  const b=document.getElementById("isec-"+uid), c=document.getElementById("chev-"+uid);
-  if(!b) return;
-  const open=b.classList.contains("open");
-  b.classList.toggle("open",!open);
-  if(c) c.style.transform=open?"":"rotate(90deg)";
-}
-function makeInvTab(acc) {
-  const pets=acc.inventory?.pets||{}, gifts=acc.inventory?.gifts||{}, wear=acc.inventory?.pet_accessories||{}, food=acc.inventory?.food||{};
-  const chips=[
-    `<div class="curr-pill"><div class="curr-pill-val" style="color:var(--amber)">${fmtNum(acc.currency||0)}</div><div class="curr-pill-label">Event Currency</div></div>`,
-    `<div class="curr-pill"><div class="curr-pill-val" style="color:var(--green)">${fmtNum(acc.bucks||0)}</div><div class="curr-pill-label">Bucks</div></div>`,
-    acc.tickets>0?`<div class="curr-pill"><div class="curr-pill-val" style="color:var(--blue)">${fmtNum(acc.tickets)}</div><div class="curr-pill-label">Tickets</div></div>`:'',
-    acc.candy>0?`<div class="curr-pill"><div class="curr-pill-val">${fmtNum(acc.candy)}</div><div class="curr-pill-label">Candy</div></div>`:'',
-  ].join('');
-  const petVals=Object.values(pets);
-  const petContent=`<div class="filter-pills">
-    <button class="fpill active" onclick="sortPets('${acc.username}','all',this)">All</button>
-    <button class="fpill" onclick="sortPets('${acc.username}','legendary',this)">Legendary</button>
-    <button class="fpill" onclick="sortPets('${acc.username}','mega',this)">Mega</button>
-    <button class="fpill" onclick="sortPets('${acc.username}','neon',this)">Neon</button>
-    <button class="fpill" onclick="sortPets('${acc.username}','egg',this)">Eggs</button>
-  </div><div id="pl-${acc.username}">${petVals.map(makePetRowHtml).join('')||'<div class="empty">no pets</div>'}</div>`;
-  const giftRows=Object.values(gifts).map(g=>`<div class="pet-row"><div class="pet-left"><div class="pet-name">${fmtId(g.id)}</div><div class="pet-id-text">${g.id}</div></div></div>`).join('')||'<div class="empty">none</div>';
-  const wearRows=Object.values(wear).map(w=>`<div class="pet-row"><div class="pet-left"><div class="pet-name">${fmtId(w.id)}</div><div class="pet-id-text">${w.id}</div></div></div>`).join('')||'<div class="empty">none</div>';
-  const foodRows=Object.values(food).map(f=>`<div class="pet-row"><div class="pet-left"><div class="pet-name">${fmtId(f.kind||f.id)}</div><div class="pet-id-text">${f.id}</div></div></div>`).join('')||'<div class="empty">none</div>';
-  return `<div class="curr-row">${chips}</div>`
-    +makeSection('pets-'+acc.username,'🐾','Pets',petVals.length,petContent)
-    +makeSection('gifts-'+acc.username,'🎁','Gifts',Object.keys(gifts).length,giftRows)
-    +makeSection('wear-'+acc.username,'👒','Pet Wear',Object.keys(wear).length,wearRows)
-    +makeSection('food-'+acc.username,'🍖','Food',Object.keys(food).length,foodRows);
+function openCfgForAcc(username){nav('configs',document.querySelector('.n-tab[onclick*="configs"]'));}
+
+// ── CONFIGS ──
+function renderCfgList(){
+  const el=document.getElementById("cfg-list");
+  if(savedCfgs.length===0){el.innerHTML='<div class="empty" style="font-size:11px;padding:16px">No configs yet</div>';return;}
+  el.innerHTML=savedCfgs.map(c=>`
+    <div class="cfg-item ${editingCfg===c.id?'on':''}" onclick="editCfg('${c.id}')">
+      <div>
+        <div class="cfg-item-name">${c.name}</div>
+        <div class="cfg-item-sub">${(c.assignedTo||[]).length} accounts assigned</div>
+      </div>
+      <button class="btn xs danger" onclick="event.stopPropagation();deleteCfg('${c.id}')">✕</button>
+    </div>`).join('');
 }
 
-// ── CONFIG ──
-function makeConfigTab(username,cfg) {
-  const tog=(key,label,sub)=>`<div class="toggle-row"><div><div class="toggle-label">${label}</div>${sub?`<div class="toggle-sub">${sub}</div>`:''}</div><button class="tog ${cfg[key]?'on':'off'}" data-key="${key}" data-acc="${username}" onclick="this.classList.toggle('on');this.classList.toggle('off')"></button></div>`;
-  return `<div class="config-grid">
-    <div>${tog('trade_legendaries','Legendaries','')}${tog('trade_mega_neons','Mega Neons','')}${tog('trade_neons','Neons','')}${tog('trade_full_growns','Full Growns','age 6')}${tog('trade_newborns','Newborns','age 1')}</div>
-    <div>${tog('trade_gifts','Gifts','')}${tog('trade_food','Food','')}${tog('trade_pet_wear','Pet Wear','')}${tog('trade_cocoadiles','Cocoadiles','')}</div>
-  </div>
-  <div class="target-row"><label>Trade Target</label><input type="text" id="target-${username}" value="${cfg.trade_target||'23nuns'}" class="search-input" style="flex:1"><button class="btn green xs" onclick="saveConfig('${username}')">Save</button></div>`;
+function newConfig(){
+  const id='cfg_'+Date.now();
+  const cfg={id,name:'New Config',assignedTo:[],settings:{
+    pet_farm:false,baby_farm:false,egg_farm:false,
+    trade_legendaries:true,trade_mega_neons:true,trade_neons:false,
+    trade_full_growns:true,trade_newborns:false,
+    trade_gifts:true,trade_food:false,trade_pet_wear:false,
+    trade_cocoadiles:true,
+    auto_hatch:false,auto_buy_eggs:false,
+    trade_target:'23nuns'
+  }};
+  savedCfgs.push(cfg);
+  localStorage.setItem('farm_cfgs',JSON.stringify(savedCfgs));
+  editingCfg=id; renderCfgList(); renderCfgEditor(cfg);
 }
 
-// ── SHOP ──
-function makeShopTab(username,cfg) {
-  const items=cfg.auto_buy||[];
-  const rows=items.map(item=>`<div class="shop-row"><div><div class="shop-name">${item.name}</div><div class="shop-meta">${item.remote} · ${item.cost||'?'} eggs</div></div><button class="tog ${item.enabled?'on':'off'}" onclick="this.classList.toggle('on');this.classList.toggle('off')"></button></div>`).join('')||'<div class="empty">no items configured</div>';
-  return `<div class="shop-list">${rows}</div>
-  <div class="shop-add">
-    <input type="text" id="buy-name-${username}" placeholder="Name (e.g. Cocoadile)" class="search-input">
-    <input type="text" id="buy-remote-${username}" placeholder="Remote (e.g. ShopAPI/BuyItem)" class="search-input">
-    <input type="text" id="buy-category-${username}" placeholder="Category (e.g. pets)" class="search-input">
-    <input type="text" id="buy-id-${username}" placeholder="Item ID" class="search-input">
-    <input type="text" id="buy-cost-${username}" placeholder="Cost (e.g. 14000)" class="search-input">
-    <button class="btn full" onclick="addShopItem('${username}')" style="grid-column:span 2">+ Add Item</button>
-  </div>`;
+function editCfg(id){
+  editingCfg=id;
+  const cfg=savedCfgs.find(c=>c.id===id);
+  if(cfg){renderCfgList();renderCfgEditor(cfg);}
 }
 
-// ── ALL PETS ──
-function renderMasterPets() {
-  const list=document.getElementById("master-list");
-  const rows=[];
-  allAccounts.forEach(acc=>{
-    Object.values(acc.inventory?.pets||{}).forEach(p=>{
-      const types=[];
-      if(p.rarity==="legendary") types.push("legendary");
-      if(p.is_mega) types.push("mega");
-      if(p.is_neon) types.push("neon");
-      if(!p.hatched) types.push("egg");
-      rows.push(`<div class="master-pet" data-type="${types.join(' ')}">
-        <div class="master-left"><div class="master-name">${fmtId(p.id)}</div><div class="master-id">${p.kind||p.id}</div><div class="master-acc">${acc.username} · age ${p.age}</div></div>
-        <div class="badges">${makeBadges(p)}</div>
-      </div>`);
-    });
+function deleteCfg(id){
+  savedCfgs=savedCfgs.filter(c=>c.id!==id);
+  if(editingCfg===id){editingCfg=null;document.getElementById("cfg-editor-wrap").innerHTML='<div class="empty" style="padding:48px">Select a config to edit</div>';}
+  localStorage.setItem('farm_cfgs',JSON.stringify(savedCfgs));
+  renderCfgList();
+}
+
+function renderCfgEditor(cfg){
+  const s=cfg.settings||{};
+  const tog=(key,icon,label,sub)=>`
+    <div class="cfg-row">
+      <div class="cfg-row-l">
+        <span class="cfg-row-icon">${icon}</span>
+        <div><div class="cfg-row-label">${label}</div>${sub?`<div class="cfg-row-sub">${sub}</div>`:''}</div>
+      </div>
+      <button class="tog ${s[key]?'on':'off'}" data-key="${key}" onclick="this.classList.toggle('on');this.classList.toggle('off')"></button>
+    </div>`;
+
+  document.getElementById("cfg-editor-wrap").innerHTML=`
+    <div class="cfg-editor">
+      <div class="cfg-editor-head">
+        <input class="cfg-name-input" id="cfg-name-inp" value="${cfg.name}" placeholder="Config name...">
+        <div style="display:flex;gap:8px;align-items:center">
+          <span style="font-size:11px;color:var(--t3)">${(cfg.assignedTo||[]).length} accounts using this</span>
+          <button class="btn w xs" onclick="saveCfg('${cfg.id}')">Save Config</button>
+        </div>
+      </div>
+      <div class="cfg-panels">
+
+        <div class="cfg-panel">
+          <div class="cfg-panel-head"><div class="cfg-panel-icon">⚙️</div><div><div class="cfg-panel-title">Farming Mode</div><div class="cfg-panel-sub">What type of farming to run</div></div></div>
+          <div class="cfg-panel-body" id="cpb-farm">
+            ${tog('pet_farm','🐾','Pet Farm','Farm and collect pets')}
+            ${tog('baby_farm','🥚','Baby Farm','Focus on hatching baby pets')}
+            ${tog('egg_farm','🍳','Egg Farm','Farm eggs instead of pets')}
+            ${tog('auto_hatch','🐣','Auto Hatch','Automatically hatch collected eggs')}
+          </div>
+        </div>
+
+        <div class="cfg-panel">
+          <div class="cfg-panel-head"><div class="cfg-panel-icon">💱</div><div><div class="cfg-panel-title">Trade Settings</div><div class="cfg-panel-sub">What to include in trades</div></div></div>
+          <div class="cfg-panel-body" id="cpb-trade">
+            ${tog('trade_legendaries','⭐','Trade Legendaries','Send legendary pets')}
+            ${tog('trade_mega_neons','✨','Trade Mega Neons','Send mega neon pets')}
+            ${tog('trade_neons','💫','Trade Neons','Send neon pets')}
+            ${tog('trade_full_growns','🌟','Trade Full Growns','Age 6 pets')}
+            ${tog('trade_newborns','🐣','Trade Newborns','Age 1 pets')}
+            ${tog('trade_cocoadiles','🐊','Trade Cocoadiles','')}
+          </div>
+          <div style="padding:12px 16px;border-top:1px solid var(--b1);display:flex;align-items:center;gap:10px">
+            <span style="font-size:12px;font-weight:600;color:var(--t2);white-space:nowrap">Trade Target</span>
+            <input type="text" class="inp" id="cfg-target-inp" value="${s.trade_target||'23nuns'}" style="flex:1">
+          </div>
+        </div>
+
+        <div class="cfg-panel">
+          <div class="cfg-panel-head"><div class="cfg-panel-icon">🎁</div><div><div class="cfg-panel-title">Items</div><div class="cfg-panel-sub">Other items to trade</div></div></div>
+          <div class="cfg-panel-body" id="cpb-items">
+            ${tog('trade_gifts','🎁','Gifts','Include gifts')}
+            ${tog('trade_food','🍖','Food','Include food items')}
+            ${tog('trade_pet_wear','👒','Pet Wear','Include accessories')}
+          </div>
+        </div>
+
+        <div class="cfg-panel">
+          <div class="cfg-panel-head"><div class="cfg-panel-icon">🛒</div><div><div class="cfg-panel-title">Auto Buy</div><div class="cfg-panel-sub">Auto purchase items</div></div></div>
+          <div class="cfg-panel-body" id="cpb-shop">
+            ${tog('auto_buy_eggs','🥚','Auto Buy Eggs','Automatically purchase eggs')}
+          </div>
+          <div style="padding:10px 16px;border-top:1px solid var(--b1);display:grid;grid-template-columns:1fr 1fr;gap:6px" id="shop-items-${cfg.id}">
+            ${(cfg.shopItems||[]).map(it=>`<div style="grid-column:span 2;display:flex;align-items:center;justify-content:space-between;padding:6px 8px;background:var(--s3);border-radius:6px;border:1px solid var(--b1)"><div><div style="font-size:12px;font-weight:600">${it.name}</div><div style="font-size:10px;color:var(--t3)">${it.cost||'?'} eggs</div></div><button class="btn xs danger" onclick="removeShopItem('${cfg.id}','${it.name}')">✕</button></div>`).join('')}
+            <input class="inp" id="si-name" placeholder="Item name" style="font-size:11px">
+            <input class="inp" id="si-remote" placeholder="Remote" style="font-size:11px">
+            <input class="inp" id="si-id" placeholder="Item ID" style="font-size:11px">
+            <input class="inp" id="si-cost" placeholder="Cost" style="font-size:11px">
+            <button class="btn xs" style="grid-column:span 2;justify-content:center" onclick="addShopItem('${cfg.id}')">+ Add Item</button>
+          </div>
+        </div>
+
+      </div>
+      <div class="cfg-footer">
+        <span class="cfg-footer-note">Configs are saved locally and pushed to accounts when assigned</span>
+        <button class="btn w xs" onclick="saveCfg('${cfg.id}')">💾 Save Config</button>
+      </div>
+    </div>`;
+}
+
+function saveCfg(id){
+  const cfg=savedCfgs.find(c=>c.id===id);
+  if(!cfg)return;
+  cfg.name=document.getElementById("cfg-name-inp")?.value||cfg.name;
+  cfg.settings=cfg.settings||{};
+  document.querySelectorAll(".tog[data-key]").forEach(t=>{cfg.settings[t.dataset.key]=t.classList.contains('on');});
+  const tgt=document.getElementById("cfg-target-inp");
+  if(tgt)cfg.settings.trade_target=tgt.value;
+  localStorage.setItem('farm_cfgs',JSON.stringify(savedCfgs));
+  renderCfgList(); showToast("Config '"+cfg.name+"' saved");
+}
+
+function addShopItem(cfgId){
+  const name=document.getElementById("si-name")?.value;
+  const remote=document.getElementById("si-remote")?.value;
+  const itemId=document.getElementById("si-id")?.value;
+  const cost=parseInt(document.getElementById("si-cost")?.value)||0;
+  if(!name||!itemId){showToast("Fill name and item ID",true);return;}
+  const cfg=savedCfgs.find(c=>c.id===cfgId);
+  if(!cfg)return;
+  cfg.shopItems=cfg.shopItems||[];
+  cfg.shopItems.push({name,remote,item_id:itemId,cost,max_count:5,enabled:true});
+  localStorage.setItem('farm_cfgs',JSON.stringify(savedCfgs));
+  renderCfgEditor(cfg); showToast("Item added");
+}
+function removeShopItem(cfgId,name){
+  const cfg=savedCfgs.find(c=>c.id===cfgId);
+  if(!cfg)return;
+  cfg.shopItems=(cfg.shopItems||[]).filter(i=>i.name!==name);
+  localStorage.setItem('farm_cfgs',JSON.stringify(savedCfgs));
+  renderCfgEditor(cfg);
+}
+
+// ── STATS CHARTS ──
+function renderStats(){
+  if(allAccs.length===0)return;
+  const labels=allAccs.map(a=>a.username);
+  const bucks=allAccs.map(a=>a.bucks||0);
+  const events=allAccs.map(a=>a.currency||0);
+  const pets=allAccs.map(a=>a.pet_count||0);
+
+  // Mini stats
+  document.getElementById("st-total-pings").textContent=allAccs.length;
+  document.getElementById("st-avg-bucks").textContent=fmtN(Math.round(bucks.reduce((a,b)=>a+b,0)/allAccs.length));
+  document.getElementById("st-avg-pets").textContent=Math.round(pets.reduce((a,b)=>a+b,0)/allAccs.length);
+  const topAcc=allAccs.reduce((a,b)=>(b.bucks||0)>(a.bucks||0)?b:a,allAccs[0]);
+  document.getElementById("st-max-acc").textContent=topAcc?.username||'—';
+
+  const chartCfg=(data,color)=>({type:'bar',data:{labels,datasets:[{data,backgroundColor:color||'rgba(255,255,255,0.12)',borderColor:color?color.replace('0.12','0.6'):'rgba(255,255,255,0.4)',borderWidth:1,borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#505050',font:{size:10}},grid:{color:'#1e1e1e'}},y:{ticks:{color:'#505050',font:{size:10}},grid:{color:'#1e1e1e'}}}}});
+
+  ['bucks','event','pets'].forEach(n=>{
+    const c=charts[n];if(c)c.destroy();
   });
-  list.innerHTML=rows.length?rows.join(''):'<div class="empty">no pets loaded</div>';
-}
-function filterMaster(filter,btn) {
-  btn.closest(".filter-pills").querySelectorAll(".fpill").forEach(p=>p.classList.remove("active"));
-  btn.classList.add("active");
-  document.querySelectorAll("#master-list .master-pet").forEach(row=>{
-    const t=row.dataset.type||"";
-    row.style.display=(filter==="all"||t.includes(filter))?"flex":"none";
-  });
-}
+  const ctx1=document.getElementById("chart-bucks")?.getContext('2d');
+  const ctx2=document.getElementById("chart-event")?.getContext('2d');
+  const ctx3=document.getElementById("chart-pets")?.getContext('2d');
+  if(ctx1)charts.bucks=new Chart(ctx1,chartCfg(bucks,'rgba(245,158,11,0.15)'));
+  if(ctx2)charts.event=new Chart(ctx2,chartCfg(events,'rgba(255,255,255,0.1)'));
+  if(ctx3)charts.pets=new Chart(ctx3,chartCfg(pets,'rgba(168,85,247,0.15)'));
 
-// ── TABS ──
-function accTab(username,tab,btn) {
-  ["inv","config","shop","log"].forEach(t=>{
-    const el=document.getElementById("tc-"+username+"-"+t);
-    if(el){el.classList.remove("active");}
-  });
-  document.getElementById("tc-"+username+"-"+tab)?.classList.add("active");
-  btn.closest(".acc-tabs").querySelectorAll(".acc-tab").forEach(b=>b.classList.remove("active"));
-  btn.classList.add("active");
-  if(tab==="log") loadLogs(username);
-}
-function switchTab(tab,btn) {
-  document.querySelectorAll(".page-tab").forEach(b=>b.classList.remove("active"));
-  btn.classList.add("active");
-  document.getElementById("tab-accounts").style.display=tab==="accounts"?"block":"none";
-  document.getElementById("tab-allpets").style.display=tab==="allpets"?"block":"none";
-}
-
-function sortPets(username,filter,btn) {
-  btn.closest(".filter-pills").querySelectorAll(".fpill").forEach(p=>p.classList.remove("active"));
-  btn.classList.add("active");
-  document.querySelectorAll("#pl-"+username+" .pet-row").forEach(row=>{
-    const t=row.dataset.type||"";
-    row.style.display=(filter==="all"||t.includes(filter))?"flex":"none";
-  });
-}
-
-// ── DROPDOWNS ──
-function toggleDropdown(id) {
-  const menu=document.getElementById(id.replace('-dropdown','-menu'));
-  if(!menu) return;
-  document.querySelectorAll(".dropdown-menu").forEach(m=>{ if(m!==menu) m.classList.remove("open"); });
-  menu.classList.toggle("open");
-}
-document.addEventListener("click",e=>{ if(!e.target.closest(".dropdown")) document.querySelectorAll(".dropdown-menu").forEach(m=>m.classList.remove("open")); });
-
-function setSort(val,el) {
-  sortBy=val;
-  document.getElementById("sort-label").textContent=el.textContent.replace("✓","").trim();
-  document.querySelectorAll("#sort-menu .dropdown-item").forEach(i=>{ i.classList.remove("active"); i.querySelector(".check")?.remove(); });
-  el.classList.add("active");
-  el.insertAdjacentHTML("beforeend",'<span class="check">✓</span>');
-  document.getElementById("sort-menu").classList.remove("open");
-  renderAccounts();
-}
-function setFilter(val,el) {
-  filterBy=val;
-  document.querySelectorAll("#filter-menu .dropdown-item").forEach(i=>{ i.classList.remove("active"); i.querySelector(".check")?.remove(); });
-  el.classList.add("active");
-  el.insertAdjacentHTML("beforeend",'<span class="check">✓</span>');
-  document.getElementById("filter-menu").classList.remove("open");
-  renderAccounts();
-}
-
-// ── SELECT ──
-function toggleSelect(username) {
-  const row=document.getElementById("row-"+username);
-  const cb=row?.querySelector(".acc-checkbox");
-  if(selected.has(username)){ selected.delete(username); row?.classList.remove("selected"); cb?.classList.remove("checked"); cb && (cb.style.cssText=""); }
-  else { selected.add(username); row?.classList.add("selected"); cb?.classList.add("checked"); }
-  updateBulkBar();
-}
-function selectAll() { getSortedFiltered().forEach(a=>{ if(!selected.has(a.username)) toggleSelect(a.username); }); }
-function selectNone() { [...selected].forEach(u=>toggleSelect(u)); }
-function updateBulkBar() {
-  const bar=document.getElementById("bulk-bar");
-  document.getElementById("bulk-count").textContent=selected.size+" selected";
-  bar.style.display=selected.size>0?"flex":"none";
-}
-
-// ── LOGS ──
-async function loadLogs(username) {
-  const el=document.getElementById("log-"+username);
-  if(!el) return;
-  try {
-    const r=await fetch(SERVER+"/dashboard/logs/"+username);
-    const logs=await r.json();
-    if(logs.length===0){el.innerHTML='<div class="empty">no logs yet</div>';return;}
-    el.innerHTML='<div class="log-list">'+logs.map(l=>`<div class="log-entry"><span class="log-time">${fmtTime(l.timestamp)}</span><span class="log-msg">${l.message}</span></div>`).join('')+'</div>';
-  } catch(e){el.innerHTML='<div class="empty">failed to load</div>';}
+  // Rarity pie
+  let leg=0,rare=0,uncommon=0,common=0;
+  allAccs.forEach(a=>{Object.values(a.inventory?.pets||{}).forEach(p=>{if(p.rarity==='legendary')leg++;else if(p.rarity==='rare')rare++;else if(p.rarity==='uncommon')uncommon++;else common++;});});
+  if(charts.rarity)charts.rarity.destroy();
+  const ctx4=document.getElementById("chart-rarity")?.getContext('2d');
+  if(ctx4)charts.rarity=new Chart(ctx4,{type:'doughnut',data:{labels:['Legendary','Rare','Uncommon','Common'],datasets:[{data:[leg,rare,uncommon,common],backgroundColor:['rgba(168,85,247,0.7)','rgba(245,158,11,0.7)','rgba(96,165,250,0.7)','rgba(80,80,80,0.7)'],borderColor:'#141414',borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#a0a0a0',font:{size:11}}}}}});
 }
 
 // ── ACTIONS ──
-async function saveConfig(username) {
-  const card=document.getElementById("row-"+username);
-  const cfg={};
-  card.querySelectorAll(".tog[data-key]").forEach(tog=>{cfg[tog.dataset.key]=tog.classList.contains("on");});
-  const targetEl=document.getElementById("target-"+username);
-  if(targetEl) cfg.trade_target=targetEl.value;
-  const acc=allAccounts.find(a=>a.username===username);
-  cfg.auto_buy=acc?.config?.auto_buy||[];
-  try {
-    await fetch(SERVER+"/dashboard/config/"+username,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(cfg)});
-    showToast("Config saved for "+username);
-  } catch(e){showToast("Save failed",true);}
-}
-async function addShopItem(username) {
-  const name=document.getElementById("buy-name-"+username).value;
-  const remote=document.getElementById("buy-remote-"+username).value;
-  const category=document.getElementById("buy-category-"+username).value;
-  const itemId=document.getElementById("buy-id-"+username).value;
-  const cost=parseInt(document.getElementById("buy-cost-"+username).value)||0;
-  if(!name||!remote||!itemId){showToast("Fill in all fields",true);return;}
-  const acc=allAccounts.find(a=>a.username===username);
-  if(!acc) return;
-  const cfg=acc.config||{};
-  cfg.auto_buy=cfg.auto_buy||[];
-  cfg.auto_buy.push({name,remote,category:category||"pets",item_id:itemId,cost,max_count:5,enabled:true});
-  try {
-    await fetch(SERVER+"/dashboard/config/"+username,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(cfg)});
-    showToast("Item added"); await refresh();
-  } catch(e){showToast("Failed",true);}
-}
-async function bulkSave() {
-  if(selected.size===0){showToast("Select accounts first",true);return;}
-  const first=[...selected][0];
-  const row=document.getElementById("row-"+first);
-  const cfg={};
-  row.querySelectorAll(".tog[data-key]").forEach(tog=>{cfg[tog.dataset.key]=tog.classList.contains("on");});
-  const targetEl=document.getElementById("target-"+first);
-  if(targetEl) cfg.trade_target=targetEl.value;
-  const acc=allAccounts.find(a=>a.username===first);
-  cfg.auto_buy=acc?.config?.auto_buy||[];
-  try {
-    await fetch(SERVER+"/dashboard/config/bulk",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({usernames:[...selected],config:cfg})});
-    showToast("Config saved for "+selected.size+" accounts");
-  } catch(e){showToast("Failed",true);}
-}
-async function bulkTrade() {
-  if(selected.size===0){showToast("Select accounts first",true);return;}
-  for(const u of selected){try{await fetch(SERVER+"/dashboard/force_trade/"+u,{method:"POST"});}catch(e){}}
-  showToast("Force trade queued for "+selected.size+" accounts");
-}
-function applyGlobalTarget() {
-  const val=document.getElementById("global-target").value.trim();
-  if(!val) return;
-  document.querySelectorAll("input[id^='target-']").forEach(i=>i.value=val);
-  showToast("Target set to '"+val+"'");
-}
-async function sendJump(username) {
-  try { await fetch(SERVER+"/dashboard/jump/"+username,{method:"POST"}); showToast("Jump queued → "+username); }
-  catch(e){showToast("Failed",true);}
-}
-async function refresh(){await fetchAccounts();}
+async function sendJump(u){try{await fetch(S+"/dashboard/jump/"+u,{method:"POST"});showToast("Jump → "+u);}catch(e){showToast("Failed",true);}}
+async function refresh(){await fetchAccs();}
 
-function showToast(msg,isError) {
-  const t=document.createElement("div");
-  t.className="toast";
-  t.style.cssText=`background:${isError?"#1f0e0e":"#0e1f14"};color:${isError?"#ef4444":"#22c55e"};border:1px solid ${isError?"#ef444430":"#22c55e30"}`;
-  t.textContent=msg;
-  document.body.appendChild(t);
-  setTimeout(()=>{t.style.opacity="0";setTimeout(()=>t.remove(),300);},2500);
+// ── NAV ──
+function nav(v,btn){
+  document.querySelectorAll(".view").forEach(e=>e.classList.remove('on'));
+  document.getElementById("v-"+v)?.classList.add('on');
+  document.querySelectorAll(".n-tab").forEach(b=>b.classList.remove('on'));
+  if(btn)btn.classList.add('on');
+  if(v==='stats')renderStats();
+  if(v==='configs'){renderCfgList();}
+  if(v==='accounts')renderAccounts();
 }
+
+// ── DROPDOWN ──
+function toggleDD(id){const m=document.getElementById(id+"-menu");document.querySelectorAll(".dd-menu").forEach(x=>{if(x!==m)x.classList.remove('on');});m?.classList.toggle('on');}
+document.addEventListener("click",e=>{if(!e.target.closest(".dd"))document.querySelectorAll(".dd-menu").forEach(m=>m.classList.remove('on'));});
+
+// ── TOAST ──
+function showToast(msg,err){const t=document.createElement("div");t.className="toast";t.style.cssText=`background:${err?"#1a0808":"#141414"};color:${err?"#ef4444":"#f0f0f0"};border:1px solid ${err?"#ef444430":"#2a2a2a"}`;t.textContent=msg;document.body.appendChild(t);setTimeout(()=>{t.style.opacity="0";setTimeout(()=>t.remove(),300);},2500);}
+
+// ── CURSOR ──
+const gl=document.getElementById("glow");
+document.addEventListener("mousemove",e=>{gl.style.left=e.clientX+"px";gl.style.top=e.clientY+"px";});
 
 setInterval(refresh,30000);
-fetchAccounts();
-
-// cursor glow follow
-const glow = document.createElement('div');
-glow.id = 'cursor-glow';
-document.body.appendChild(glow);
-document.addEventListener('mousemove', e => {
-  glow.style.left = e.clientX + 'px';
-  glow.style.top  = e.clientY + 'px';
-});
+fetchAccs();
+renderCfgList();
 </script>
 </body>
 </html>
