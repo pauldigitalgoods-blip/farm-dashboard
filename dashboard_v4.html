@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adopt Me Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;1,14..32,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0d0f;
+  --c1:#131316;
+  --c2:#18181c;
+  --c3:#1e1e23;
+  --c4:#252529;
+  --b1:#2a2a30;
+  --b2:#333339;
+  --b3:#44444c;
+  --t1:#f0f0f2;
+  --t2:#9090a0;
+  --t3:#50505c;
+  --t4:#30303a;
+  --red:#e05555;
+  --green:#3dba6f;
+  --r:8px;
+  --rs:5px;
+}
+html{background:var(--bg)}
+body{color:var(--t1);font-family:'Inter',sans-serif;font-size:13px;min-height:100vh;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--b1);border-radius:2px}
+
+/* NAV */
+nav{
+  position:sticky;top:0;z-index:200;height:50px;
+  display:flex;align-items:center;padding:0 22px;gap:0;
+  background:rgba(13,13,15,.92);backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--b1);
+}
+.n-brand{font-size:13px;font-weight:600;color:var(--t1);margin-right:28px;display:flex;align-items:center;gap:8px}
+.n-pip{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0;box-shadow:0 0 8px rgba(61,186,111,.5)}
+.n-tabs{display:flex;gap:1px;flex:1}
+.nt{
+  font-size:12px;font-weight:500;padding:5px 12px;border-radius:var(--rs);
+  cursor:pointer;color:var(--t3);border:none;background:none;
+  font-family:'Inter',sans-serif;transition:color .12s;
+}
+.nt:hover{color:var(--t2)}
+.nt.on{color:var(--t1);background:var(--c3)}
+.n-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.n-time{font-size:11px;color:var(--t3);font-variant-numeric:tabular-nums}
+
+/* PAGE */
+.page{padding:18px 22px}
+.view{display:none}.view.on{display:block}
+
+/* BUTTONS */
+.btn{
+  font-family:'Inter',sans-serif;font-size:12px;font-weight:500;
+  padding:6px 13px;border-radius:var(--rs);border:1px solid var(--b2);
+  background:var(--c3);cursor:pointer;color:var(--t1);
+  transition:all .12s;white-space:nowrap;display:inline-flex;align-items:center;gap:5px;
+}
+.btn:hover{background:var(--c4);border-color:var(--b2)}
+.btn.solid{background:var(--t1);color:var(--bg);border-color:transparent;font-weight:600}
+.btn.solid:hover{background:#e0e0e4}
+.btn.sm{font-size:11px;padding:4px 10px;border-radius:4px}
+.btn.ghost{background:transparent;border-color:var(--b1);color:var(--t2)}
+.btn.ghost:hover{color:var(--t1);border-color:var(--b2);background:var(--c2)}
+.btn.danger{background:transparent;border-color:rgba(224,85,85,.2);color:var(--red)}
+.btn.danger:hover{background:rgba(224,85,85,.08)}
+
+/* INPUT */
+.inp{
+  background:var(--c2);border:1px solid var(--b1);border-radius:var(--rs);
+  padding:6px 10px;color:var(--t1);font-family:'Inter',sans-serif;
+  font-size:12px;outline:none;transition:border-color .12s;width:100%;
+}
+.inp::placeholder{color:var(--t3)}
+.inp:focus{border-color:var(--b2);background:var(--c3)}
+select.inp{
+  appearance:none;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='5'%3E%3Cpath d='M0 0l5 5 5-5z' fill='%2350505c'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 9px center;padding-right:26px;
+}
+select.inp option{background:#131316}
+
+/* TOGGLE */
+.sw{
+  width:34px;height:18px;border-radius:9px;border:none;cursor:pointer;
+  position:relative;transition:background .16s;flex-shrink:0;padding:0;
+}
+.sw.on{background:rgba(255,255,255,.9)}
+.sw.off{background:var(--c4);border:1px solid var(--b2)}
+.sw::after{
+  content:'';position:absolute;width:12px;height:12px;border-radius:50%;top:3px;
+  transition:left .16s;box-shadow:0 1px 3px rgba(0,0,0,.5);
+}
+.sw.on::after{left:19px;background:var(--bg)}
+.sw.off::after{left:2px;background:var(--t3)}
+
+/* DROPDOWN */
+.dd{position:relative}
+.ddm{
+  position:absolute;top:calc(100% + 5px);left:0;
+  background:var(--c2);border:1px solid var(--b2);
+  border-radius:var(--r);padding:4px;min-width:160px;z-index:400;
+  display:none;box-shadow:0 20px 50px rgba(0,0,0,.6);
+}
+.ddm.r{left:auto;right:0}
+.ddm.on{display:block;animation:pop .1s ease}
+@keyframes pop{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+.ddi{
+  padding:7px 10px;border-radius:4px;cursor:pointer;font-size:12px;
+  color:var(--t2);font-weight:500;transition:all .08s;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+}
+.ddi:hover{background:var(--c3);color:var(--t1)}
+.ddi.on{color:var(--t1)}
+.ddi-icon{width:16px;color:var(--t3);flex-shrink:0}
+.dd-sep{height:1px;background:var(--b1);margin:3px 0}
+
+/* SECTION HEADER */
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px}
+.sh-title{font-size:14px;font-weight:600;letter-spacing:-.01em}
+.sh-r{display:flex;align-items:center;gap:8px}
+
+/* ── DASHBOARD STATS ── */
+.inv-block{
+  background:var(--c1);border:1px solid var(--b1);border-radius:var(--r);
+  overflow:hidden;margin-bottom:14px;
+}
+.inv-block-h{
+  padding:11px 16px;border-bottom:1px solid var(--b1);
+  font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);
+  display:flex;align-items:center;gap:6px;
+}
+.inv-block-h svg{opacity:.6}
+.inv-stats-row{display:grid;grid-template-columns:repeat(6,1fr);padding:0}
+.inv-stat{
+  padding:14px 16px;border-right:1px solid var(--b1);
+  display:flex;flex-direction:column;gap:6px;
+}
+.inv-stat:last-child{border-right:none}
+.inv-stat-icon{
+  width:28px;height:28px;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.inv-stat-val{font-size:20px;font-weight:700;letter-spacing:-.5px;line-height:1}
+.inv-stat-lbl{font-size:11px;color:var(--t2);font-weight:500;margin-top:2px}
+
+.session-row{display:grid;grid-template-columns:repeat(4,1fr);padding:0}
+.sess-stat{
+  padding:12px 16px;border-right:1px solid var(--b1);
+  display:flex;align-items:center;gap:10px;
+}
+.sess-stat:last-child{border-right:none}
+.sess-icon{
+  width:32px;height:32px;border-radius:7px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.sess-val{font-size:16px;font-weight:700;letter-spacing:-.3px}
+.sess-lbl{font-size:11px;color:var(--t2);font-weight:500;margin-top:2px}
+
+/* INV PANEL */
+.inv-panel{background:var(--c1);border:1px solid var(--b1);border-radius:var(--r);overflow:hidden}
+.inv-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:11px 16px;border-bottom:1px solid var(--b1);flex-wrap:wrap;gap:8px;
+}
+.inv-head-title{font-size:12px;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.06em}
+.inv-ctrls{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.tabbar{
+  display:flex;gap:1px;background:var(--c2);
+  border:1px solid var(--b1);border-radius:var(--rs);padding:2px;
+}
+.tabbtn{
+  font-size:11px;font-weight:500;padding:4px 10px;border-radius:3px;
+  cursor:pointer;border:none;background:transparent;color:var(--t3);
+  font-family:'Inter',sans-serif;transition:all .1s;
+}
+.tabbtn:hover{color:var(--t2)}
+.tabbtn.on{background:var(--c4);color:var(--t1)}
+.inv-body{padding:14px 16px}
+
+/* PET CARDS */
+.pet-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:5px}
+.pet-card{
+  background:var(--c2);border:1px solid var(--b1);border-radius:var(--rs);
+  padding:10px;transition:border-color .12s;
+}
+.pet-card:hover{border-color:var(--b2)}
+.pet-av{
+  width:34px;height:34px;border-radius:6px;display:flex;
+  align-items:center;justify-content:center;font-size:13px;
+  font-weight:700;flex-shrink:0;
+}
+.pet-name{font-size:12px;font-weight:600;line-height:1.3}
+.pet-kind{font-size:10px;color:var(--t3);margin-top:1px;font-variant-numeric:tabular-nums;word-break:break-all}
+.pet-meta{margin-top:7px;padding-top:7px;border-top:1px solid var(--b1);display:grid;grid-template-columns:auto 1fr;gap:2px 8px}
+.pm-k{font-size:10px;color:var(--t3)}
+.pm-v{font-size:10px;font-weight:600;text-align:right}
+.badges{display:flex;gap:2px;margin-top:3px;flex-wrap:wrap}
+.badge{font-size:9px;padding:1px 5px;border-radius:3px;font-weight:600;text-transform:uppercase;letter-spacing:.03em}
+.b-leg{background:rgba(168,85,247,.12);color:#b07ef0;border:1px solid rgba(168,85,247,.2)}
+.b-mega{background:rgba(245,158,11,.12);color:#e9a83a;border:1px solid rgba(245,158,11,.2)}
+.b-neon{background:var(--c3);color:var(--t2);border:1px solid var(--b1)}
+.b-egg{background:var(--c2);color:var(--t3);border:1px solid var(--b1)}
+
+/* ITEM LIST */
+.item-list{display:flex;flex-direction:column;gap:3px}
+.item-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 10px;background:var(--c2);border:1px solid var(--b1);border-radius:var(--rs);
+}
+.item-name{font-size:12px;font-weight:500}
+.item-id{font-size:10px;color:var(--t3);margin-top:1px}
+.item-acc{font-size:10px;color:var(--t3)}
+
+/* ACCOUNTS */
+.acc-list{display:flex;flex-direction:column;gap:4px}
+.acc-row{
+  background:var(--c1);border:1px solid var(--b1);
+  border-radius:var(--r);overflow:hidden;transition:border-color .12s;
+}
+.acc-row:hover{border-color:var(--b2)}
+.acc-main{display:flex;align-items:center;padding:11px 16px;gap:12px;cursor:pointer}
+.acc-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.acc-dot.on{background:var(--green);box-shadow:0 0 6px rgba(61,186,111,.4)}
+.acc-dot.off{background:var(--t4)}
+.acc-info{flex:1;min-width:0}
+.acc-name{font-size:13px;font-weight:600}
+.acc-sub{font-size:11px;color:var(--t3);margin-top:2px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.acc-chip{
+  font-size:10px;background:var(--c3);border:1px solid var(--b1);
+  border-radius:3px;padding:1px 6px;color:var(--t2);font-weight:500;
+}
+.acc-task{font-size:10px;color:var(--t2)}
+.acc-nums{display:flex;align-items:center;gap:0;flex-shrink:0;border-left:1px solid var(--b1);margin-left:8px}
+.acc-num{
+  padding:0 16px;text-align:right;
+  border-right:1px solid var(--b1);
+}
+.acc-num:last-child{border-right:none}
+.acc-nv{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+.acc-nl{font-size:10px;color:var(--t3);margin-top:1px}
+.acc-btns{display:flex;gap:5px;flex-shrink:0;margin-left:12px}
+
+/* INACTIVE BADGE */
+.status-badge{
+  font-size:10px;padding:2px 7px;border-radius:3px;font-weight:600;
+  text-transform:uppercase;letter-spacing:.04em;
+}
+.status-badge.on{background:rgba(61,186,111,.12);color:var(--green);border:1px solid rgba(61,186,111,.2)}
+.status-badge.off{background:var(--c3);color:var(--t3);border:1px solid var(--b1)}
+
+/* ACC DROPDOWN */
+.acc-drop{border-top:1px solid var(--b1);display:none;padding:14px 16px}
+.acc-drop.on{display:block}
+.drop-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.drop-box{background:var(--c2);border:1px solid var(--b1);border-radius:var(--rs);overflow:hidden}
+.drop-box-h{padding:8px 12px;border-bottom:1px solid var(--b1);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--t3)}
+.drop-box-b{padding:10px 12px}
+.drop-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--b1)}
+.drop-row:last-child{border-bottom:none}
+.drop-k{font-size:11px;color:var(--t2)}
+.drop-v{font-size:11px;font-weight:600;max-width:130px;text-align:right;word-break:break-all}
+
+/* BULK */
+.bulk-bar{
+  background:var(--c2);border:1px solid var(--b2);border-radius:var(--rs);
+  padding:8px 14px;display:flex;align-items:center;gap:8px;margin-bottom:10px;
+  animation:pop .12s ease;
+}
+.bulk-cnt{font-size:12px;font-weight:600;min-width:70px}
+
+/* CONFIGS */
+.cfg-layout{display:grid;grid-template-columns:210px 1fr;gap:14px;align-items:start}
+.cfg-list{display:flex;flex-direction:column;gap:3px}
+.cfg-item{
+  background:var(--c1);border:1px solid var(--b1);border-radius:var(--rs);
+  padding:10px 12px;cursor:pointer;transition:all .12s;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.cfg-item:hover{border-color:var(--b2)}
+.cfg-item.on{border-color:var(--b2);background:var(--c2)}
+.cfg-item-name{font-size:12px;font-weight:600}
+.cfg-item-sub{font-size:10px;color:var(--t3);margin-top:1px}
+.cfg-new{
+  background:transparent;border:1px dashed var(--b2);
+  border-radius:var(--rs);padding:9px 12px;cursor:pointer;
+  transition:all .12s;display:flex;align-items:center;gap:5px;
+  color:var(--t3);font-size:12px;font-weight:500;width:100%;
+  font-family:'Inter',sans-serif;margin-top:4px;
+}
+.cfg-new:hover{border-color:var(--t3);color:var(--t2)}
+
+.cfg-editor{background:var(--c1);border:1px solid var(--b1);border-radius:var(--r);overflow:hidden}
+.cfg-top{
+  padding:13px 18px;border-bottom:1px solid var(--b1);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.cfg-name-inp{
+  background:var(--c2);border:1px solid var(--b1);border-radius:var(--rs);
+  padding:6px 11px;color:var(--t1);font-family:'Inter',sans-serif;
+  font-size:14px;font-weight:600;outline:none;width:210px;transition:border-color .12s;
+}
+.cfg-name-inp:focus{border-color:var(--b2)}
+
+.cfg-tabs{display:flex;border-bottom:1px solid var(--b1);padding:0 18px}
+.cfg-tab{
+  font-size:12px;font-weight:500;padding:9px 13px;cursor:pointer;
+  color:var(--t3);border:none;background:none;font-family:'Inter',sans-serif;
+  border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .12s;
+}
+.cfg-tab:hover{color:var(--t2)}
+.cfg-tab.on{color:var(--t1);border-bottom-color:var(--t1)}
+
+.cfg-body{padding:14px 18px}
+.cfg-tp{display:none}.cfg-tp.on{display:block}
+
+.cfg-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 0;border-bottom:1px solid var(--b1);
+}
+.cfg-row:last-child{border-bottom:none}
+.cfg-row-l{flex:1;min-width:0;padding-right:12px}
+.cfg-row-lbl{font-size:12px;font-weight:500;color:var(--t1)}
+.cfg-row-sub{font-size:11px;color:var(--t3);margin-top:1px}
+.cfg-row-r{display:flex;align-items:center;gap:7px;flex-shrink:0}
+.soon{
+  font-size:9px;font-weight:600;padding:2px 6px;border-radius:3px;
+  background:var(--c3);border:1px solid var(--b1);color:var(--t3);
+  text-transform:uppercase;letter-spacing:.05em;
+}
+
+.cfg-field{
+  padding:9px 0;border-bottom:1px solid var(--b1);
+  display:flex;align-items:center;gap:10px;
+}
+.cfg-field:last-child{border-bottom:none}
+.cfg-field label{font-size:11px;font-weight:500;color:var(--t2);white-space:nowrap;min-width:95px}
+.cfg-fi{
+  background:var(--c2);border:1px solid var(--b1);border-radius:var(--rs);
+  padding:6px 10px;color:var(--t1);font-family:'Inter',sans-serif;
+  font-size:12px;outline:none;flex:1;transition:border-color .12s;
+}
+.cfg-fi:focus{border-color:var(--b2);background:var(--c3)}
+.cfg-fi::placeholder{color:var(--t3)}
+select.cfg-fi{
+  appearance:none;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='5'%3E%3Cpath d='M0 0l5 5 5-5z' fill='%2350505c'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 9px center;padding-right:26px;
+}
+select.cfg-fi option{background:#131316}
+
+.cfg-section{
+  font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--t3);padding:13px 0 6px;margin-top:2px;
+}
+.cfg-footer{
+  padding:11px 18px;border-top:1px solid var(--b1);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.cfg-footer-note{font-size:11px;color:var(--t3)}
+
+/* SHOP */
+.shop-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 0;border-bottom:1px solid var(--b1);gap:8px;
+}
+.shop-row:last-child{border-bottom:none}
+.shop-name{font-size:12px;font-weight:500}
+.shop-meta{font-size:10px;color:var(--t3);margin-top:1px}
+.shop-add{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:10px;padding-top:10px;border-top:1px solid var(--b1)}
+
+/* STATS */
+.stats-mini{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.smc{background:var(--c1);border:1px solid var(--b1);border-radius:var(--r);padding:14px 16px}
+.smc-val{font-size:20px;font-weight:700;letter-spacing:-.5px}
+.smc-lbl{font-size:10px;color:var(--t3);margin-top:3px;text-transform:uppercase;letter-spacing:.06em;font-weight:500}
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chart-card{background:var(--c1);border:1px solid var(--b1);border-radius:var(--r);padding:16px 18px}
+.chart-title{font-size:12px;font-weight:600}
+.chart-sub{font-size:11px;color:var(--t3);margin:2px 0 14px}
+.chart-wrap{position:relative;height:155px}
+
+/* MISC */
+.empty{color:var(--t3);font-size:12px;text-align:center;padding:28px}
+.toast{
+  position:fixed;bottom:18px;right:18px;padding:9px 14px;
+  border-radius:var(--rs);font-size:12px;z-index:9999;
+  transition:opacity .25s;pointer-events:none;font-weight:500;
+  backdrop-filter:blur(12px);
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="n-brand">
+    <span class="n-pip" id="npip"></span>
+    Adopt Me Dashboard
+  </div>
+  <div class="n-tabs">
+    <button class="nt on" onclick="goNav('dashboard',this)">Dashboard</button>
+    <button class="nt" onclick="goNav('accounts',this)">Accounts</button>
+    <button class="nt" onclick="goNav('configs',this)">Configs</button>
+    <button class="nt" onclick="goNav('stats',this)">Stats</button>
+  </div>
+  <div class="n-right">
+    <span class="n-time" id="sync-lbl">–</span>
+    <button class="btn ghost sm" onclick="refresh()">Refresh</button>
+  </div>
+</nav>
+
+<div class="page">
+
+<!-- DASHBOARD -->
+<div class="view on" id="v-dashboard">
+
+  <!-- Total Inventory block -->
+  <div class="inv-block">
+    <div class="inv-block-h">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1L1 4v7h10V4L6 1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+      Total Inventory
+    </div>
+    <div class="inv-stats-row">
+      <div class="inv-stat">
+        <div class="inv-stat-icon" style="background:rgba(61,186,111,.12)">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 10l2.5-3L7 9l2-2.5L12 10" stroke="#3dba6f" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="inv-stat-val" id="s-online">0</div>
+        <div class="inv-stat-lbl" id="s-frac">0 / 0 active</div>
+      </div>
+      <div class="inv-stat">
+        <div class="inv-stat-icon" style="background:rgba(74,222,128,.1)">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M5 4.5h3.5a1.5 1.5 0 010 3H5.5a1.5 1.5 0 000 3H9" stroke="#4ade80" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="inv-stat-val" id="s-bucks">0</div>
+        <div class="inv-stat-lbl">Bucks</div>
+      </div>
+      <div class="inv-stat">
+        <div class="inv-stat-icon" style="background:rgba(167,139,250,.1)">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2.5C5 3.3 4.3 4 3.5 4S2 3.3 2 2.5 2.7 1 3.5 1 5 1.7 5 2.5z" fill="#a78bfa"/><path d="M12 2.5C12 3.3 11.3 4 10.5 4S9 3.3 9 2.5 9.7 1 10.5 1 12 1.7 12 2.5z" fill="#a78bfa"/><path d="M3 6c0-2.2 1.8-4 4-4s4 1.8 4 4v4a2 2 0 01-2 2H5a2 2 0 01-2-2V6z" stroke="#a78bfa" stroke-width="1.2"/></svg>
+        </div>
+        <div class="inv-stat-val" id="s-pets">0</div>
+        <div class="inv-stat-lbl">Pets</div>
+      </div>
+      <div class="inv-stat">
+        <div class="inv-stat-icon" style="background:rgba(251,146,60,.1)">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2C4.5 2 2.5 4.5 2.5 7.5A4.5 4.5 0 007 12a4.5 4.5 0 004.5-4.5C11.5 4.5 9.5 2 7 2z" stroke="#fb923c" stroke-width="1.3"/></svg>
+        </div>
+        <div class="inv-stat-val" id="s-curr">0</div>
+        <div class="inv-stat-lbl">Event currency</div>
+      </div>
+      <div class="inv-stat">
+        <div class="inv-stat-icon" style="background:rgba(250,204,21,.1)">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2l1.3 2.6L11 5l-2 1.9.5 2.7L7 8.4l-2.5 1.2.5-2.7L3 5l2.7-.4L7 2z" stroke="#facc15" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/></svg>
+        </div>
+        <div class="inv-stat-val" id="s-leg">0</div>
+        <div class="inv-stat-lbl">Legendaries</div>
+      </div>
+      <div class="inv-stat">
+        <div class="inv-stat-icon" style="background:rgba(96,165,250,.1)">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 5a1 1 0 011-1h8a1 1 0 011 1v1a1.5 1.5 0 000 3v1a1 1 0 01-1 1H3a1 1 0 01-1-1V9a1.5 1.5 0 000-3V5z" stroke="#60a5fa" stroke-width="1.3"/><path d="M8.5 4v6" stroke="#60a5fa" stroke-width="1" stroke-dasharray="1.5 1.2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="inv-stat-val" id="s-tick">0</div>
+        <div class="inv-stat-lbl">Tickets</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Session Gains block -->
+  <div class="inv-block">
+    <div class="inv-block-h">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 9l3-3 2 2 3-4 2 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Session Gains
+    </div>
+    <div class="session-row">
+      <div class="sess-stat">
+        <div class="sess-icon" style="background:rgba(74,222,128,.1)">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M5.5 5.5h4a1.5 1.5 0 010 3H6.5a1.5 1.5 0 000 3H11" stroke="#4ade80" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div>
+          <div class="sess-val" id="sg-earned">+$0</div>
+          <div class="sess-lbl">Earned</div>
+        </div>
+      </div>
+      <div class="sess-stat">
+        <div class="sess-icon" style="background:rgba(250,204,21,.1)">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2.5l1.5 3 3.5.5-2.5 2.4.6 3.5L8 10.5l-3.1 1.4.6-3.5L3 6l3.5-.5L8 2.5z" stroke="#facc15" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <div class="sess-val" id="sg-leg">0</div>
+          <div class="sess-lbl">Legendaries</div>
+        </div>
+      </div>
+      <div class="sess-stat">
+        <div class="sess-icon" style="background:rgba(167,139,250,.1)">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 2h4M7 2v3L4 9v3a1 1 0 001 1h6a1 1 0 001-1V9l-3-4V2" stroke="#a78bfa" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 10h7" stroke="#a78bfa" stroke-width="1.1" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <div class="sess-val" id="sg-pots">0</div>
+          <div class="sess-lbl">Potions</div>
+        </div>
+      </div>
+      <div class="sess-stat">
+        <div class="sess-icon" style="background:rgba(96,165,250,.1)">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="6" r="2.5" stroke="#60a5fa" stroke-width="1.3"/><path d="M3 13c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="#60a5fa" stroke-width="1.3" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <div class="sess-val" id="sg-online">0 / 0</div>
+          <div class="sess-lbl">Online</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Inventory panel -->
+  <div class="inv-panel">
+    <div class="inv-head">
+      <div class="inv-head-title">Inventory</div>
+      <div class="inv-ctrls">
+        <input class="inp" id="pet-search" placeholder="Search..." oninput="renderInv()" style="width:130px">
+        <div class="dd" id="dd-accs">
+          <button class="btn ghost sm" onclick="toggleDD('dd-accs')"><span id="acc-sel-lbl">All Accounts</span> ▾</button>
+          <div class="ddm" id="dd-accs-menu">
+            <div class="ddi on" onclick="setAccAll()">All Accounts <span style="font-size:10px;color:var(--t1)">✓</span></div>
+            <div class="dd-sep"></div>
+            <div id="dd-accs-list"></div>
+            <div class="dd-sep"></div>
+            <button class="btn sm solid" onclick="applyAccFilter()" style="width:100%;justify-content:center">Apply</button>
+          </div>
+        </div>
+        <div class="dd" id="dd-isort">
+          <button class="btn ghost sm" onclick="toggleDD('dd-isort')">Sort: <span id="sort-lbl">Name</span> ▾</button>
+          <div class="ddm" id="dd-isort-menu">
+            <div class="ddi on" onclick="setSort('name',this)">Name <span style="font-size:10px;color:var(--t1)">✓</span></div>
+            <div class="ddi" onclick="setSort('rarity',this)">Rarity</div>
+            <div class="ddi" onclick="setSort('age',this)">Age</div>
+          </div>
+        </div>
+        <div class="tabbar">
+          <button class="tabbtn on" onclick="setInvTab('pets',this)">Pets</button>
+          <button class="tabbtn" onclick="setInvTab('eggs',this)">Eggs</button>
+          <button class="tabbtn" onclick="setInvTab('gifts',this)">Gifts</button>
+          <button class="tabbtn" onclick="setInvTab('wear',this)">Wear</button>
+          <button class="tabbtn" onclick="setInvTab('food',this)">Food</button>
+        </div>
+      </div>
+    </div>
+    <div class="inv-body" id="inv-body"><div class="empty">Loading...</div></div>
+  </div>
+</div>
+
+<!-- ACCOUNTS -->
+<div class="view" id="v-accounts">
+  <div class="sh">
+    <div class="sh-title">Manage Accounts</div>
+    <div class="sh-r">
+      <input class="inp" id="acc-search" placeholder="Search accounts..." oninput="renderAccounts()" style="width:185px">
+      <div class="dd" id="dd-af">
+        <button class="btn ghost sm" onclick="toggleDD('dd-af')">All Accounts ▾</button>
+        <div class="ddm r" id="dd-af-menu">
+          <div class="ddi on" onclick="setAF('all',this)">All Accounts <span style="font-size:10px;color:var(--t1)">✓</span></div>
+          <div class="ddi" onclick="setAF('online',this)">Online only</div>
+          <div class="ddi" onclick="setAF('offline',this)">Offline only</div>
+        </div>
+      </div>
+      <div class="dd" id="dd-asort">
+        <button class="btn ghost sm" onclick="toggleDD('dd-asort')">Sort: <span id="asort-lbl">Name</span> ▾</button>
+        <div class="ddm r" id="dd-asort-menu">
+          <div class="ddi on" onclick="setAccSort('name',this)">
+            <span class="ddi-icon"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 4h8M4 6h4M5 8h2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></span>
+            Name <span style="font-size:10px;color:var(--t1)">✓</span>
+          </div>
+          <div class="ddi" onclick="setAccSort('bucks',this)">
+            <span class="ddi-icon"><svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.2"/><path d="M6 3v6M4.5 4.5h2a1 1 0 010 2H5a1 1 0 000 2h2" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></span>
+            Bucks
+          </div>
+          <div class="ddi" onclick="setAccSort('pets',this)">
+            <span class="ddi-icon"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 1.5L1.5 4.5v6h9v-6L6 1.5z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg></span>
+            Pets
+          </div>
+          <div class="ddi" onclick="setAccSort('eggs',this)">
+            <span class="ddi-icon"><svg width="12" height="12" viewBox="0 0 12 12"><ellipse cx="6" cy="7" rx="3.5" ry="4" stroke="currentColor" stroke-width="1.2"/><path d="M6 3C6 3 4.5 2 6 0c0 0 1.5 2 0 3z" fill="currentColor"/></svg></span>
+            Eggs
+          </div>
+          <div class="ddi" onclick="setAccSort('potions',this)">
+            <span class="ddi-icon"><svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="7" r="3.5" stroke="currentColor" stroke-width="1.2"/><path d="M6 3.5V2M4 2h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></span>
+            Potions
+          </div>
+          <div class="dd-sep"></div>
+          <div class="ddi" id="sort-dir-btn" onclick="toggleSortDir()">↑ Ascending</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="bulk-bar" id="bulk-bar" style="display:none">
+    <span class="bulk-cnt" id="bulk-cnt">0 selected</span>
+    <button class="btn sm ghost" onclick="selAll()">Select all</button>
+    <button class="btn sm ghost" onclick="selNone()">Clear</button>
+    <div style="flex:1"></div>
+    <button class="btn sm solid" onclick="bulkTrade()">Force trade</button>
+  </div>
+  <div class="acc-list" id="acc-list"><div class="empty">Loading...</div></div>
+</div>
+
+<!-- CONFIGS -->
+<div class="view" id="v-configs">
+  <div class="sh" style="margin-bottom:16px">
+    <div class="sh-title">Configs</div>
+    <button class="btn solid sm" onclick="newCfg()">New config</button>
+  </div>
+  <div class="cfg-layout">
+    <div>
+      <div class="cfg-list" id="cfg-list"><div class="empty" style="font-size:11px;padding:12px">No configs</div></div>
+      <button class="cfg-new" onclick="newCfg()">+ New config</button>
+    </div>
+    <div id="cfg-editor-wrap"><div class="empty" style="padding:44px">Select or create a config</div></div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="view" id="v-stats">
+  <div class="sh" style="margin-bottom:14px">
+    <div class="sh-title">Stats</div>
+    <span style="font-size:11px;color:var(--t3)">Live data from all accounts</span>
+  </div>
+  <div class="stats-mini">
+    <div class="smc"><div class="smc-val" id="st-accs">0</div><div class="smc-lbl">Total accounts</div></div>
+    <div class="smc"><div class="smc-val" id="st-bucks">0</div><div class="smc-lbl">Total bucks</div></div>
+    <div class="smc"><div class="smc-val" id="st-farmed">0</div><div class="smc-lbl">Farmed this session</div></div>
+    <div class="smc"><div class="smc-val" id="st-pots">0</div><div class="smc-lbl">Age potions</div></div>
+  </div>
+  <div class="charts-grid">
+    <div class="chart-card"><div class="chart-title">Bucks per account</div><div class="chart-sub">Current balance</div><div class="chart-wrap"><canvas id="c-bucks"></canvas></div></div>
+    <div class="chart-card"><div class="chart-title">Event currency</div><div class="chart-sub">Egg balance</div><div class="chart-wrap"><canvas id="c-event"></canvas></div></div>
+    <div class="chart-card"><div class="chart-title">Pets per account</div><div class="chart-sub">Total count</div><div class="chart-wrap"><canvas id="c-pets"></canvas></div></div>
+    <div class="chart-card"><div class="chart-title">Rarity breakdown</div><div class="chart-sub">All accounts combined</div><div class="chart-wrap"><canvas id="c-rarity"></canvas></div></div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const S="";
+let allAccs=[],selAccs=new Set(['__all__']),invTab='pets',invSort='name',accF='all',accSort='name',accSortDir=1,editCfg=null;
+let cfgs=JSON.parse(localStorage.getItem('am_cfgs')||'[]');
+let charts={},selected=new Set();
+
+function fmtN(n){if(!n)return'0';n=Number(n);if(n>=1e6)return(n/1e6).toFixed(1)+'m';if(n>=10000)return Math.round(n/1000)+'k';return n.toLocaleString();}
+function fmtT(ts){if(!ts)return'never';return new Date(ts*1000).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
+function tAgo(ts){if(!ts)return'never';const s=Math.floor(Date.now()/1000-ts);if(s<60)return s+'s ago';if(s<3600)return Math.floor(s/60)+'m ago';return Math.floor(s/3600)+'h ago';}
+function fmtId(id){
+  if(!id)return'';
+  let s=id.toLowerCase();
+  s=s.replace(/^sugarfest_\d{4}_/,'').replace(/^[a-z]+_\d{4}_/,'')
+    .replace(/^pet_recycler_\d{4}_/,'').replace(/^basic_egg_\d{4}_/,'').replace(/_\d{4}$/,'');
+  return s.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+}
+
+async function fetchAccs(){
+  try{
+    const r=await fetch(S+"/dashboard/accounts");
+    if(r.status===401){location.href="/login";return;}
+    allAccs=await r.json();
+    renderAll();
+    document.getElementById("sync-lbl").textContent=new Date().toLocaleTimeString();
+    document.getElementById("npip").style.background='var(--green)';
+    document.getElementById("npip").style.boxShadow='0 0 8px rgba(61,186,111,.5)';
+  }catch(e){
+    document.getElementById("sync-lbl").textContent="offline";
+    document.getElementById("npip").style.background='var(--red)';
+    document.getElementById("npip").style.boxShadow='none';
+  }
+}
+
+function renderAll(){
+  let pets=0,leg=0,curr=0,bucks=0,tick=0,online=0,farmed=0,pots=0;
+  allAccs.forEach(a=>{
+    pets+=a.pet_count||0;leg+=a.legendary_count||0;
+    curr+=a.currency||0;bucks+=a.bucks||0;
+    tick+=a.tickets||0;farmed+=a.money_farmed||0;pots+=a.potions||0;
+    if(a.online)online++;
+  });
+  const tot=allAccs.length;
+  document.getElementById("s-online").textContent=online;
+  document.getElementById("s-frac").textContent=online+" / "+tot+" Active";
+  document.getElementById("s-pets").textContent=fmtN(pets);
+  document.getElementById("s-leg").textContent=fmtN(leg);
+  document.getElementById("s-curr").textContent=fmtN(curr);
+  document.getElementById("s-bucks").textContent="$"+fmtN(bucks);
+  document.getElementById("s-tick").textContent=fmtN(tick);
+  document.getElementById("sg-earned").textContent="+$"+fmtN(farmed);
+  document.getElementById("sg-leg").textContent=fmtN(leg);
+  document.getElementById("sg-pots").textContent="+"+pots;
+  document.getElementById("sg-online").textContent=online+" / "+tot;
+  document.getElementById("st-accs").textContent=tot;
+  document.getElementById("st-bucks").textContent="$"+fmtN(bucks);
+  document.getElementById("st-farmed").textContent="+$"+fmtN(farmed);
+  document.getElementById("st-pots").textContent=pots;
+  buildAccDDList();renderInv();renderAccounts();
+}
+
+// ── INVENTORY ──
+function getActiveAccs(){return selAccs.has('__all__')?allAccs:allAccs.filter(a=>selAccs.has(a.username));}
+function buildAccDDList(){
+  document.getElementById("dd-accs-list").innerHTML=allAccs.map(a=>`
+    <div class="ddi ${selAccs.has(a.username)?'on':''}" onclick="toggleAccSel('${a.username}')">
+      ${a.username}${selAccs.has(a.username)?'<span style="font-size:10px;color:var(--t1)">✓</span>':''}
+    </div>`).join('');
+}
+function toggleAccSel(u){selAccs.delete('__all__');selAccs.has(u)?selAccs.delete(u):selAccs.add(u);if(!selAccs.size)selAccs.add('__all__');buildAccDDList();}
+function setAccAll(){selAccs=new Set(['__all__']);buildAccDDList();}
+function applyAccFilter(){document.getElementById("acc-sel-lbl").textContent=selAccs.has('__all__')?'All Accounts':selAccs.size+' selected';document.getElementById("dd-accs-menu").classList.remove('on');renderInv();}
+function setInvTab(t,btn){invTab=t;document.querySelectorAll(".tabbtn").forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderInv();}
+function setSort(s,btn){
+  invSort=s;
+  document.getElementById("sort-lbl").textContent=btn.textContent.replace('✓','').trim();
+  document.querySelectorAll("#dd-isort-menu .ddi").forEach(i=>{i.classList.remove('on');i.querySelector('span[style*="10px"]')?.remove();});
+  btn.classList.add('on');btn.insertAdjacentHTML('beforeend','<span style="font-size:10px;color:var(--t1)">✓</span>');
+  document.getElementById("dd-isort-menu").classList.remove('on');renderInv();
+}
+
+function mkAv(p){
+  const bg=p.is_mega?'rgba(245,158,11,.15)':p.rarity==='legendary'?'rgba(167,139,250,.15)':p.rarity==='rare'?'rgba(96,165,250,.15)':'var(--c3)';
+  const col=p.is_mega?'#e9a83a':p.rarity==='legendary'?'#a78bfa':p.rarity==='rare'?'#60a5fa':'var(--t3)';
+  const bdr=p.is_mega?'rgba(245,158,11,.2)':p.rarity==='legendary'?'rgba(167,139,250,.2)':'var(--b1)';
+  return`<div class="pet-av" style="background:${bg};color:${col};border:1px solid ${bdr}">${fmtId(p.id).charAt(0)||'?'}</div>`;
+}
+function mkBadges(p){return[p.rarity==='legendary'?'<span class="badge b-leg">Leg</span>':'',p.is_mega?'<span class="badge b-mega">Mega</span>':'',p.is_neon&&!p.is_mega?'<span class="badge b-neon">Neon</span>':'',!p.hatched?'<span class="badge b-egg">Egg</span>':''].join('');}
+
+function renderInv(){
+  const accs=getActiveAccs();
+  const q=(document.getElementById("pet-search")?.value||"").toLowerCase();
+  const body=document.getElementById("inv-body");
+  let items=[];
+  if(invTab==='pets'||invTab==='eggs'){
+    accs.forEach(acc=>{Object.values(acc.inventory?.pets||{}).forEach(p=>{
+      const isEgg=!p.hatched;
+      if(invTab==='eggs'&&!isEgg)return;if(invTab==='pets'&&isEgg)return;
+      if(q&&!fmtId(p.id).toLowerCase().includes(q)&&!(p.kind||'').toLowerCase().includes(q))return;
+      items.push({...p,_acc:acc.username});
+    });});
+    items.sort((a,b)=>{
+      if(invSort==='rarity'){const r={legendary:4,ultra_rare:3,rare:2,uncommon:1,common:0};return(r[b.rarity]||0)-(r[a.rarity]||0);}
+      if(invSort==='age')return b.age-a.age;
+      return fmtId(a.id).localeCompare(fmtId(b.id));
+    });
+    if(!items.length){body.innerHTML='<div class="empty">No '+invTab+' found</div>';return;}
+    body.innerHTML=`<div class="pet-grid">${items.map(p=>`
+      <div class="pet-card">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          ${mkAv(p)}<div style="min-width:0;flex:1"><div class="pet-name">${fmtId(p.id)}</div><div class="badges">${mkBadges(p)}</div></div>
+        </div>
+        <div class="pet-meta">
+          <span class="pm-k">Account</span><span class="pm-v">${p._acc}</span>
+          <span class="pm-k">ID</span><span class="pm-v" style="font-size:9px">${p.kind||p.id}</span>
+          <span class="pm-k">Age</span><span class="pm-v">${p.age}</span>
+          <span class="pm-k">Rarity</span><span class="pm-v">${p.rarity||'common'}</span>
+        </div>
+      </div>`).join('')}</div>`;
+  }else{
+    const cat={gifts:'gifts',wear:'pet_accessories',food:'food'}[invTab];
+    accs.forEach(acc=>{Object.values(acc.inventory?.[cat]||{}).forEach(it=>{
+      if(q&&!fmtId(it.kind||it.id).toLowerCase().includes(q))return;
+      items.push({...it,_acc:acc.username});
+    });});
+    items.sort((a,b)=>fmtId(a.id||a.kind).localeCompare(fmtId(b.id||b.kind)));
+    if(!items.length){body.innerHTML='<div class="empty">No items found</div>';return;}
+    body.innerHTML=`<div class="item-list">${items.map(it=>`
+      <div class="item-row">
+        <div><div class="item-name">${fmtId(it.kind||it.id)}</div><div class="item-id">${it.id}</div></div>
+        <div class="item-acc">${it._acc}</div>
+      </div>`).join('')}</div>`;
+  }
+}
+
+// ── ACCOUNTS ──
+function setAF(v,el){
+  accF=v;
+  document.querySelectorAll("#dd-af-menu .ddi").forEach(i=>{i.classList.remove('on');i.querySelector('span[style*="10px"]')?.remove();});
+  el.classList.add('on');el.insertAdjacentHTML('beforeend','<span style="font-size:10px;color:var(--t1)">✓</span>');
+  document.getElementById("dd-af-menu").classList.remove('on');renderAccounts();
+}
+function setAccSort(s,btn){
+  accSort=s;
+  document.getElementById("asort-lbl").textContent=btn.textContent.replace('✓','').trim().replace(/^[^\w]*(.+)$/,'$1').trim();
+  document.querySelectorAll("#dd-asort-menu .ddi:not(#sort-dir-btn)").forEach(i=>{i.classList.remove('on');i.querySelector('span[style*="10px"]')?.remove();});
+  btn.classList.add('on');btn.insertAdjacentHTML('beforeend','<span style="font-size:10px;color:var(--t1)">✓</span>');
+  renderAccounts();
+}
+function toggleSortDir(){accSortDir*=-1;document.getElementById("sort-dir-btn").textContent=accSortDir===1?'↑ Ascending':'↓ Descending';renderAccounts();}
+
+function renderAccounts(){
+  const q=(document.getElementById("acc-search")?.value||"").toLowerCase();
+  let list=allAccs.filter(a=>{
+    if(accF==='online'&&!a.online)return false;
+    if(accF==='offline'&&a.online)return false;
+    if(q&&!a.username.toLowerCase().includes(q))return false;
+    return true;
+  });
+  const sortMap={name:a=>a.username.toLowerCase(),bucks:a=>a.bucks||0,pets:a=>a.pet_count||0,eggs:a=>a.currency||0,potions:a=>a.potions||0};
+  const fn=sortMap[accSort]||sortMap.name;
+  list.sort((a,b)=>{const av=fn(a),bv=fn(b);return av<bv?-accSortDir:av>bv?accSortDir:0;});
+  const el=document.getElementById("acc-list");
+  if(!list.length){el.innerHTML='<div class="empty">No accounts found</div>';return;}
+  el.innerHTML="";list.forEach(a=>el.appendChild(mkAccRow(a)));
+  updateBulk();
+}
+
+function mkAccRow(acc){
+  const div=document.createElement("div");
+  div.className="acc-row";div.id="ar-"+acc.username;
+  const ac=cfgs.find(c=>c.assignedTo?.includes(acc.username));
+  div.innerHTML=`
+    <div class="acc-main" onclick="toggleDrop('${acc.username}')">
+      <span class="acc-dot ${acc.online?'on':'off'}"></span>
+      <div class="acc-info">
+        <div class="acc-name">${acc.username}</div>
+        <div class="acc-sub">
+          <span class="status-badge ${acc.online?'on':'off'}">${acc.online?'Online':'Inactive'}</span>
+          <span style="color:var(--t3)">${acc.online?'Active now':'Updated '+tAgo(acc.last_ping)}</span>
+          ${acc.current_task&&acc.current_task!=='idle'&&acc.current_task!=='waiting for config'?`<span class="acc-task">${acc.current_task}</span>`:''}
+          ${acc.current_pet?`<span class="acc-chip">${fmtId(acc.current_pet)}</span>`:''}
+          <span class="acc-chip">${ac?ac.name:'No config'}</span>
+        </div>
+      </div>
+      <div class="acc-nums">
+        <div class="acc-num"><div class="acc-nv">$${fmtN(acc.bucks||0)}</div><div class="acc-nl">Bucks</div></div>
+        <div class="acc-num"><div class="acc-nv">${fmtN(acc.currency||0)}</div><div class="acc-nl">Event</div></div>
+        <div class="acc-num"><div class="acc-nv">${acc.pet_count||0}</div><div class="acc-nl">Pets</div></div>
+        <div class="acc-num"><div class="acc-nv">${fmtN(acc.tickets||0)}</div><div class="acc-nl">Tickets</div></div>
+        <div class="acc-num"><div class="acc-nv">${acc.potions||0}</div><div class="acc-nl">Potions</div></div>
+      </div>
+      <div class="acc-btns" onclick="event.stopPropagation()">
+        <button class="btn sm ghost" onclick="doJump('${acc.username}')">Jump</button>
+        <button class="btn sm danger" onclick="doForceTrade('${acc.username}')">Trade</button>
+      </div>
+    </div>
+    <div class="acc-drop" id="adrop-${acc.username}">
+      <div class="drop-cols">
+        <div class="drop-box">
+          <div class="drop-box-h">Account Info</div>
+          <div class="drop-box-b">
+            <div class="drop-row"><span class="drop-k">Username</span><span class="drop-v">${acc.username}</span></div>
+            <div class="drop-row"><span class="drop-k">Status</span><span class="drop-v">${acc.online?'Online':'Offline'}</span></div>
+            <div class="drop-row"><span class="drop-k">Last ping</span><span class="drop-v">${fmtT(acc.last_ping)}</span></div>
+            <div class="drop-row"><span class="drop-k">Task</span><span class="drop-v">${acc.current_task||'idle'}</span></div>
+            <div class="drop-row"><span class="drop-k">Pet</span><span class="drop-v">${fmtId(acc.current_pet)||'—'}</span></div>
+            <div class="drop-row"><span class="drop-k">Potions</span><span class="drop-v">${acc.potions||0}</span></div>
+          </div>
+        </div>
+        <div class="drop-box">
+          <div class="drop-box-h">Assign Config</div>
+          <div class="drop-box-b">
+            <select class="inp" id="asgn-${acc.username}" style="margin-bottom:8px">
+              <option value="">— None —</option>
+              ${cfgs.map(c=>`<option value="${c.id}" ${ac?.id===c.id?'selected':''}>${c.name}</option>`).join('')}
+            </select>
+            <button class="btn solid sm" onclick="assignCfg('${acc.username}')" style="width:100%;justify-content:center">Apply</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  return div;
+}
+
+function toggleDrop(u){document.getElementById("adrop-"+u)?.classList.toggle("on");}
+
+async function assignCfg(u){
+  const sel=document.getElementById("asgn-"+u)?.value;
+  cfgs.forEach(c=>{c.assignedTo=(c.assignedTo||[]).filter(x=>x!==u);});
+  if(sel){
+    const c=cfgs.find(x=>x.id===sel);
+    if(c){c.assignedTo=c.assignedTo||[];if(!c.assignedTo.includes(u))c.assignedTo.push(u);
+      localStorage.setItem('am_cfgs',JSON.stringify(cfgs));
+      try{await fetch(S+"/dashboard/config/"+u,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(c.settings||{})});toast("'"+c.name+"' applied to "+u);}
+      catch(e){toast("Push failed",true);}
+    }
+  }else{localStorage.setItem('am_cfgs',JSON.stringify(cfgs));toast("Config cleared for "+u);}
+  renderAccounts();
+}
+
+// bulk
+function selAll(){allAccs.forEach(a=>selected.add(a.username));updateBulk();}
+function selNone(){selected.clear();updateBulk();}
+function updateBulk(){const b=document.getElementById("bulk-bar");document.getElementById("bulk-cnt").textContent=selected.size+" selected";b.style.display=selected.size?"flex":"none";}
+async function bulkTrade(){if(!selected.size){toast("Select accounts first",true);return;}for(const u of selected){try{await fetch(S+"/dashboard/force_trade/"+u,{method:"POST"});}catch(e){}}toast("Force trade queued for "+selected.size+" accounts");}
+
+// ── CONFIGS ──
+function renderCfgList(){
+  const el=document.getElementById("cfg-list");
+  if(!cfgs.length){el.innerHTML='<div class="empty" style="font-size:11px;padding:12px">No configs</div>';return;}
+  el.innerHTML=cfgs.map(c=>`
+    <div class="cfg-item ${editCfg?.id===c.id?'on':''}" onclick="openEditor('${c.id}')">
+      <div><div class="cfg-item-name">${c.name}</div><div class="cfg-item-sub">${(c.assignedTo||[]).length} account(s)</div></div>
+      <button class="btn sm danger" onclick="event.stopPropagation();delCfg('${c.id}')">✕</button>
+    </div>`).join('');
+}
+
+const DS={
+  farm_enabled:false,pet_farm:false,baby_farm:true,egg_farm:false,
+  farm_eggs_type:'',auto_buy_eggs:false,egg_buy_type:'',
+  max_pets:false,max_pets_count:6,farm_until_full_grown:false,
+  prioritize_friendship:false,selective_pet_farming:false,pet_types_to_farm:[],switch_on_grown:false,
+  task_exclusion:false,excluded_tasks:[],idle_progression:false,priority_pets_pen:[],
+  auto_age_potion:false,age_potion_pets:[],
+  auto_recycle:false,recycle_common:false,recycle_uncommon:false,recycle_rare:false,
+  recycle_ultra_rare:false,recycle_legendary:false,keep_neon_mega:true,keep_full_grown:true,
+  selective_recycle:false,pets_to_recycle:[],
+  webhook:'',pet_unlock_webhook:'',unlock_rarity_filter:[],auto_neon:false,get_trade_license:true,
+  trade_enabled:false,auto_accept_incoming:false,trade_target:'23nuns',trade_mode:'all',
+  trade_legendaries:true,trade_mega_neons:true,trade_neons:false,
+  trade_full_growns:true,trade_newborns:false,trade_cocoadiles:true,
+  trade_gifts:true,trade_food:false,trade_pet_wear:false,
+  exclude_neon_mega:false,exclude_full_grown:false,filter_by_age:false,pet_ages_filter:[],
+  auto_buy:false,auto_buy_items:[],auto_open:false,gifts_to_open:[],
+  auto_pay:false,auto_pay_target:'',disable_3d:false,reduce_graphics:false,
+};
+
+function newCfg(){
+  const id='cfg_'+Date.now();
+  const c={id,name:'New Config',assignedTo:[],settings:{...DS},shopItems:[]};
+  cfgs.push(c);localStorage.setItem('am_cfgs',JSON.stringify(cfgs));
+  editCfg=c;renderCfgList();renderEditor(c);
+}
+function openEditor(id){editCfg=cfgs.find(c=>c.id===id);renderCfgList();renderEditor(editCfg);}
+function delCfg(id){
+  cfgs=cfgs.filter(c=>c.id!==id);
+  if(editCfg?.id===id){editCfg=null;document.getElementById("cfg-editor-wrap").innerHTML='<div class="empty" style="padding:44px">Select or create a config</div>';}
+  localStorage.setItem('am_cfgs',JSON.stringify(cfgs));renderCfgList();
+}
+
+function renderEditor(cfg){
+  const s=cfg.settings||{};
+  const sw=(k,l,sub,soon)=>`<div class="cfg-row"><div class="cfg-row-l"><div class="cfg-row-lbl">${l}</div>${sub?`<div class="cfg-row-sub">${sub}</div>`:''}</div><div class="cfg-row-r">${soon?'<span class="soon">Soon</span>':''}<button class="sw ${s[k]?'on':'off'}" data-key="${k}" onclick="this.classList.toggle('on');this.classList.toggle('off')"></button></div></div>`;
+  const fi=(l,k,ph,t)=>`<div class="cfg-field"><label>${l}</label><input type="${t||'text'}" class="cfg-fi" data-key="${k}" value="${s[k]||''}" placeholder="${ph||''}"></div>`;
+  const sl=(l,k,opts)=>`<div class="cfg-field"><label>${l}</label><select class="cfg-fi" data-key="${k}">${opts.map(o=>`<option value="${o.v}" ${s[k]===o.v?'selected':''}>${o.l}</option>`).join('')}</select></div>`;
+  const sec=(l)=>`<div class="cfg-section">${l}</div>`;
+  const a2s=(k)=>Array.isArray(s[k])?s[k].join(', '):'';
+
+  document.getElementById("cfg-editor-wrap").innerHTML=`
+  <div class="cfg-editor">
+    <div class="cfg-top">
+      <input class="cfg-name-inp" id="cfg-ni" value="${cfg.name}" placeholder="Config name">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:11px;color:var(--t3)">${(cfg.assignedTo||[]).length} account(s)</span>
+        <button class="btn solid sm" onclick="saveCfg('${cfg.id}')">Save config</button>
+      </div>
+    </div>
+    <div class="cfg-tabs">
+      <button class="cfg-tab on" onclick="cfgTab('farm',this)">Farm</button>
+      <button class="cfg-tab" onclick="cfgTab('trade',this)">Trade</button>
+      <button class="cfg-tab" onclick="cfgTab('recycle',this)">Recycle</button>
+      <button class="cfg-tab" onclick="cfgTab('shop',this)">Shop</button>
+      <button class="cfg-tab" onclick="cfgTab('extras',this)">Extras</button>
+    </div>
+    <div class="cfg-body">
+      <div class="cfg-tp on" id="cfgtp-farm">
+        ${sw('farm_enabled','Farm enabled','Master switch — nothing runs until this is on')}
+        ${sw('pet_farm','Pet farm','Grow and care for pets')}
+        ${sw('baby_farm','Baby farm','Handle baby ailments')}
+        ${sec('Egg Farming')}
+        ${sw('egg_farm','Egg farm','Farm eggs instead of pets')}
+        ${fi('Egg type','farm_eggs_type','farm_egg, jungle_egg, moon_2025_egg')}
+        ${sw('auto_buy_eggs','Auto buy eggs','Auto purchase eggs to farm')}
+        ${fi('Egg to buy','egg_buy_type','farm_egg, jungle_egg, moon_2025_egg')}
+        ${sec('Pet Options')}
+        ${sw('farm_until_full_grown','Farm until full grown','Stop farming a pet once it reaches age 6')}
+        ${sw('prioritize_friendship','Prioritize friendship','Pick pets with highest friendship level first')}
+        ${sw('switch_on_grown','Switch on grown','Move to next pet when current reaches age 6')}
+        ${sw('max_pets','Max pets cap','Limit how many pets to farm at once')}
+        ${fi('Max pet count','max_pets_count','6','number')}
+        ${sec('Selective Farming')}
+        ${sw('selective_pet_farming','Selective pet farming','Only farm specific pet types listed below')}
+        ${fi('Pet types to farm','pet_types_to_farm_str','cocoadile, dragon, moon_snorgle, frost_fury (comma separated)')}
+        ${sec('Task Exclusion')}
+        ${sw('task_exclusion','Task exclusion','Skip specific tasks listed below')}
+        ${fi('Tasks to exclude','excluded_tasks_str','camping, school, mystery, pizza_party (comma separated)')}
+        ${sec('Idle Progression')}
+        ${sw('idle_progression','Idle progression','Send pets to pet pen when idle',true)}
+        ${fi('Priority pets','priority_pets_pen_str','cocoadile, legendary_dragon, frost_fury (comma separated)')}
+        ${sec('Age Potions')}
+        ${sw('auto_age_potion','Auto age potion','Automatically feed age potions to pets',true)}
+        ${fi('Pets to age','age_potion_pets_str','cocoadile, dragon, moon_snorgle (comma separated)')}
+      </div>
+      <div class="cfg-tp" id="cfgtp-trade">
+        ${sw('trade_enabled','Auto trading','Enable the trade bot')}
+        ${sw('auto_accept_incoming','Auto accept incoming','Accept trades from anyone automatically')}
+        ${fi('Send to username','trade_target','e.g. 23nuns')}
+        ${sl('Trade mode','trade_mode',[{v:'all',l:'Trade all'},{v:'selective',l:'Selective'}])}
+        ${sec('What to Trade')}
+        ${sw('trade_legendaries','Legendaries','')}
+        ${sw('trade_mega_neons','Mega neons','')}
+        ${sw('trade_neons','Neons','')}
+        ${sw('trade_full_growns','Full growns','Age 6')}
+        ${sw('trade_newborns','Newborns','Age 1')}
+        ${sw('trade_cocoadiles','Cocoadiles','')}
+        ${sw('trade_gifts','Gifts','')}
+        ${sw('trade_food','Food','')}
+        ${sw('trade_pet_wear','Pet wear','')}
+        ${sec('Filters')}
+        ${sw('exclude_neon_mega','Exclude neon / mega','Never trade neons or megas')}
+        ${sw('exclude_full_grown','Exclude full grown','Never trade age 6 pets')}
+        ${sw('filter_by_age','Filter by age','Only trade pets of specific ages')}
+        ${fi('Pet ages','pet_ages_filter_str','1, 3, 6 (comma separated)')}
+      </div>
+      <div class="cfg-tp" id="cfgtp-recycle">
+        ${sw('auto_recycle','Auto recycle','Enable auto recycling',true)}
+        ${sec('Recycle by Rarity')}
+        ${sw('recycle_common','Recycle common','')}
+        ${sw('recycle_uncommon','Recycle uncommon','')}
+        ${sw('recycle_rare','Recycle rare','')}
+        ${sw('recycle_ultra_rare','Recycle ultra rare','')}
+        ${sw('recycle_legendary','Recycle legendary','')}
+        ${sec('Keep Conditions')}
+        ${sw('keep_neon_mega','Keep neon / mega','Never recycle neon or mega pets')}
+        ${sw('keep_full_grown','Keep full grown','Never recycle age 6 pets')}
+        ${sec('Selective Recycle')}
+        ${sw('selective_recycle','Selective recycle mode','Only recycle the pets listed below')}
+        ${fi('Pets to recycle','pets_to_recycle_str','cocoadile, dragon, cat, dog (comma separated)')}
+      </div>
+      <div class="cfg-tp" id="cfgtp-shop">
+        ${sw('auto_buy','Auto buy','Enable auto purchasing from shop')}
+        <div style="margin-top:10px" id="shop-items-${cfg.id}">
+          ${(cfg.shopItems||[]).length===0
+            ?'<div class="empty" style="text-align:left;padding:10px 0;font-size:11px">No items — add one below</div>'
+            :(cfg.shopItems||[]).map((it,i)=>`<div class="shop-row"><div><div class="shop-name">${it.name}</div><div class="shop-meta">${it.remote||''} · ${it.cost||'?'} eggs</div></div><div style="display:flex;align-items:center;gap:6px"><button class="btn sm danger" onclick="removeShopItem('${cfg.id}',${i})">Remove</button><button class="sw ${it.enabled?'on':'off'}" onclick="toggleShopItem('${cfg.id}',${i},this)"></button></div></div>`).join('')}
+        </div>
+        <div class="shop-add">
+          <input class="inp" id="si-n-${cfg.id}" placeholder="Name" style="font-size:11px">
+          <input class="inp" id="si-r-${cfg.id}" placeholder="Remote (ShopAPI/BuyItem)" style="font-size:11px">
+          <input class="inp" id="si-i-${cfg.id}" placeholder="Item ID" style="font-size:11px">
+          <input class="inp" id="si-c-${cfg.id}" placeholder="Cost (eggs)" style="font-size:11px">
+          <button class="btn sm" onclick="addShopItem('${cfg.id}')" style="grid-column:span 2;justify-content:center">Add item</button>
+        </div>
+        <div style="margin-top:14px;border-top:1px solid var(--b1);padding-top:12px">
+          ${sw('auto_open','Auto open gifts','Automatically open gifts',true)}
+          ${fi('Gifts to open','gifts_to_open_str','small_gift, premium_gift, gift_box (comma separated)')}
+          ${sw('auto_pay','Auto pay player','Automatically pay a target player',true)}
+          ${fi('Pay target','auto_pay_target','e.g. 23nuns')}
+        </div>
+      </div>
+      <div class="cfg-tp" id="cfgtp-extras">
+        ${sec('Notifications')}
+        ${fi('Webhook URL','webhook','https://discord.com/api/webhooks/...')}
+        ${fi('Pet unlock webhook','pet_unlock_webhook','https://discord.com/api/webhooks/...')}
+        ${fi('Unlock rarity filter','unlock_rarity_filter_str','legendary, rare, ultra_rare (comma separated)')}
+        ${sec('Automation')}
+        ${sw('auto_neon','Auto neon','Automatically fuse neon pets',true)}
+        ${sw('get_trade_license','Get trade license','Auto-complete the trade license quiz')}
+        ${sec('Performance')}
+        ${sw('disable_3d','Disable 3D rendering','Reduces GPU usage significantly')}
+        ${sw('reduce_graphics','Reduce graphics quality','Lower quality for better performance')}
+      </div>
+    </div>
+    <div class="cfg-footer">
+      <span class="cfg-footer-note">Changes apply to assigned accounts within 30 seconds</span>
+      <button class="btn solid sm" onclick="saveCfg('${cfg.id}')">Save config</button>
+    </div>
+  </div>`;
+
+  // fill comma-string fields
+  const lm=[['pet_types_to_farm_str','pet_types_to_farm'],['excluded_tasks_str','excluded_tasks'],['priority_pets_pen_str','priority_pets_pen'],['age_potion_pets_str','age_potion_pets'],['pets_to_recycle_str','pets_to_recycle'],['unlock_rarity_filter_str','unlock_rarity_filter'],['pet_ages_filter_str','pet_ages_filter'],['gifts_to_open_str','gifts_to_open']];
+  lm.forEach(([sk,ak])=>{const el=document.querySelector(`.cfg-fi[data-key="${sk}"]`);if(el)el.value=a2s(ak);});
+}
+
+function cfgTab(n,btn){
+  document.querySelectorAll(".cfg-tp").forEach(t=>t.classList.remove('on'));
+  document.getElementById("cfgtp-"+n)?.classList.add('on');
+  document.querySelectorAll(".cfg-tab").forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+function saveCfg(id){
+  const cfg=cfgs.find(c=>c.id===id);if(!cfg)return;
+  cfg.name=document.getElementById("cfg-ni")?.value||cfg.name;
+  cfg.settings=cfg.settings||{};
+  document.querySelectorAll(".sw[data-key]").forEach(t=>{cfg.settings[t.dataset.key]=t.classList.contains('on');});
+  document.querySelectorAll(".cfg-fi[data-key]").forEach(inp=>{cfg.settings[inp.dataset.key]=inp.type==='number'?parseInt(inp.value)||0:inp.value;});
+  const lm=[['pet_types_to_farm_str','pet_types_to_farm'],['excluded_tasks_str','excluded_tasks'],['priority_pets_pen_str','priority_pets_pen'],['age_potion_pets_str','age_potion_pets'],['pets_to_recycle_str','pets_to_recycle'],['unlock_rarity_filter_str','unlock_rarity_filter'],['pet_ages_filter_str','pet_ages_filter'],['gifts_to_open_str','gifts_to_open']];
+  lm.forEach(([sk,ak])=>{const v=cfg.settings[sk]||'';cfg.settings[ak]=v.split(',').map(x=>x.trim().toLowerCase()).filter(Boolean);delete cfg.settings[sk];});
+  cfg.settings.auto_buy_items=cfg.shopItems||[];
+  localStorage.setItem('am_cfgs',JSON.stringify(cfgs));
+  renderCfgList();
+  const assigned=cfg.assignedTo||[];
+  if(assigned.length){let done=0;assigned.forEach(async u=>{try{await fetch(S+"/dashboard/config/"+u,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(cfg.settings)});if(++done===assigned.length)toast("'"+cfg.name+"' saved and pushed to "+done+" account(s)");}catch(e){toast("Saved but push failed",true);}});}
+  else toast("'"+cfg.name+"' saved — assign to accounts to push");
+}
+
+function addShopItem(id){
+  const n=document.getElementById("si-n-"+id)?.value;const i=document.getElementById("si-i-"+id)?.value;
+  if(!n||!i){toast("Fill name and item ID",true);return;}
+  const r=document.getElementById("si-r-"+id)?.value;const c=parseInt(document.getElementById("si-c-"+id)?.value)||0;
+  const cfg=cfgs.find(x=>x.id===id);if(!cfg)return;
+  cfg.shopItems=cfg.shopItems||[];cfg.shopItems.push({name:n,remote:r||'ShopAPI/BuyItem',item_id:i,cost:c,max_count:5,enabled:true});
+  localStorage.setItem('am_cfgs',JSON.stringify(cfgs));renderEditor(cfg);toast("Item added");
+}
+function removeShopItem(id,idx){const c=cfgs.find(x=>x.id===id);if(!c)return;c.shopItems.splice(idx,1);localStorage.setItem('am_cfgs',JSON.stringify(cfgs));renderEditor(c);}
+function toggleShopItem(id,idx,btn){const c=cfgs.find(x=>x.id===id);if(!c||!c.shopItems[idx])return;c.shopItems[idx].enabled=!c.shopItems[idx].enabled;btn.classList.toggle('on');btn.classList.toggle('off');localStorage.setItem('am_cfgs',JSON.stringify(cfgs));}
+
+// ── STATS ──
+function renderStats(){
+  if(!allAccs.length)return;
+  const labels=allAccs.map(a=>a.username);
+  const gc={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#50505c',font:{size:10},maxRotation:30},grid:{color:'rgba(255,255,255,0.03)'}},y:{ticks:{color:'#50505c',font:{size:10}},grid:{color:'rgba(255,255,255,0.03)'}}}};
+  ['bucks','event','pets','rarity'].forEach(n=>charts[n]?.destroy());
+  const mk=(id,data,clr)=>{const ctx=document.getElementById(id)?.getContext('2d');if(!ctx)return;charts[id.replace('c-','')]=new Chart(ctx,{type:'bar',data:{labels,datasets:[{data,backgroundColor:clr,borderRadius:4,borderSkipped:false}]},options:gc});};
+  mk('c-bucks',allAccs.map(a=>a.bucks||0),'rgba(74,222,128,.25)');
+  mk('c-event',allAccs.map(a=>a.currency||0),'rgba(251,146,60,.25)');
+  mk('c-pets',allAccs.map(a=>a.pet_count||0),'rgba(167,139,250,.25)');
+  let leg=0,rare=0,unc=0,com=0;
+  allAccs.forEach(a=>{Object.values(a.inventory?.pets||{}).forEach(p=>{if(p.rarity==='legendary')leg++;else if(p.rarity==='rare')rare++;else if(p.rarity==='uncommon')unc++;else com++;});});
+  const c4=document.getElementById("c-rarity")?.getContext('2d');
+  if(c4)charts.rarity=new Chart(c4,{type:'doughnut',data:{labels:['Legendary','Rare','Uncommon','Common'],datasets:[{data:[leg,rare,unc,com],backgroundColor:['rgba(167,139,250,.65)','rgba(96,165,250,.65)','rgba(74,222,128,.5)','rgba(80,80,80,.4)'],borderColor:'rgba(255,255,255,0.04)',borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#9090a0',font:{size:11},boxWidth:10}}}}});
+}
+
+// ── NAV ──
+function goNav(v,btn){
+  document.querySelectorAll(".view").forEach(e=>e.classList.remove('on'));
+  document.getElementById("v-"+v)?.classList.add('on');
+  document.querySelectorAll(".nt").forEach(b=>b.classList.remove('on'));
+  if(btn)btn.classList.add('on');
+  if(v==='stats')renderStats();
+  if(v==='configs'){renderCfgList();if(editCfg)renderEditor(editCfg);}
+  if(v==='accounts')renderAccounts();
+}
+
+// ── DROPDOWN ──
+function toggleDD(id){const m=document.getElementById(id+"-menu");document.querySelectorAll(".ddm").forEach(x=>{if(x!==m)x.classList.remove('on');});m?.classList.toggle('on');}
+document.addEventListener("click",e=>{if(!e.target.closest(".dd"))document.querySelectorAll(".ddm").forEach(m=>m.classList.remove('on'));});
+
+// ── ACTIONS ──
+async function doJump(u){try{await fetch(S+"/dashboard/jump/"+u,{method:"POST"});toast("Jump queued for "+u);}catch(e){toast("Failed",true);}}
+async function doForceTrade(u){try{await fetch(S+"/dashboard/force_trade/"+u,{method:"POST"});toast("Force trade queued for "+u);}catch(e){toast("Failed",true);}}
+async function refresh(){await fetchAccs();}
+
+function toast(msg,err){
+  const t=document.createElement("div");t.className="toast";
+  t.style.cssText=`background:${err?"rgba(26,8,8,.95)":"rgba(19,19,22,.95)"};color:${err?"var(--red)":"var(--t1)"};border:1px solid ${err?"rgba(224,85,85,.2)":"var(--b2)"}`;
+  t.textContent=msg;document.body.appendChild(t);
+  setTimeout(()=>{t.style.opacity="0";setTimeout(()=>t.remove(),300);},2600);
+}
+
+setInterval(refresh,30000);
+fetchAccs();
+renderCfgList();
+</script>
+</body>
+</html>
