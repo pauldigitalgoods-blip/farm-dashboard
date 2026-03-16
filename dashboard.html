@@ -23,14 +23,12 @@
   --online:#22c55e;
 }
 html{background:var(--bg);overflow-x:hidden}
-body{color:var(--t1);font-family:'Inter',sans-serif;font-size:13px;min-height:100vh;background:transparent}
+body{color:var(--t1);font-family:'Inter',sans-serif;font-size:13px;min-height:100vh}
 ::-webkit-scrollbar{width:3px;height:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--b2);border-radius:3px}
 
-/* CURSOR GLOW */
-#glow{pointer-events:none;position:fixed;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.025) 0%,rgba(255,255,255,0.008) 40%,transparent 65%);transform:translate(-50%,-50%);z-index:0;transition:left .08s linear,top .08s linear;pointer-events:none}
+#glow{pointer-events:none;position:fixed;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,0.025) 0%,rgba(255,255,255,0.008) 40%,transparent 65%);transform:translate(-50%,-50%);z-index:0;transition:left .08s linear,top .08s linear}
 
-/* NAV */
-nav{background:rgba(7,7,9,0.8);backdrop-filter:blur(24px);border-bottom:1px solid var(--b1);height:52px;display:flex;align-items:center;padding:0 28px;gap:0;position:sticky;top:0;z-index:100}
+nav{background:rgba(7,7,9,0.85);backdrop-filter:blur(24px);border-bottom:1px solid var(--b1);height:52px;display:flex;align-items:center;padding:0 28px;gap:0;position:sticky;top:0;z-index:100}
 .n-logo{font-size:14px;font-weight:800;letter-spacing:-.3px;margin-right:28px;display:flex;align-items:center;gap:8px;color:var(--t1)}
 .n-pulse{width:6px;height:6px;border-radius:50%;background:#fff;animation:npulse 3s infinite}
 @keyframes npulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(255,255,255,.3)}50%{opacity:.4;box-shadow:0 0 0 4px rgba(255,255,255,0)}}
@@ -41,14 +39,11 @@ nav{background:rgba(7,7,9,0.8);backdrop-filter:blur(24px);border-bottom:1px soli
 .n-right{margin-left:auto;display:flex;align-items:center;gap:8px}
 .n-sync{font-size:11px;color:var(--t3)}
 
-/* PAGE */
 .page{padding:24px 28px;position:relative;z-index:1}
 .view{display:none}.view.on{display:block}
 
-/* GLASS CARD */
+/* CARDS */
 .card{background:var(--g1);border:1px solid var(--b1);border-radius:14px;backdrop-filter:blur(8px)}
-.card2{background:var(--g2);border:1px solid var(--b2);border-radius:10px}
-.card3{background:var(--g3);border:1px solid var(--b2);border-radius:8px}
 
 /* BUTTONS */
 .btn{font-family:'Inter',sans-serif;font-size:12px;font-weight:500;padding:7px 14px;border-radius:8px;border:1px solid var(--b2);background:var(--g2);cursor:pointer;color:var(--t1);transition:all .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:5px}
@@ -62,13 +57,17 @@ nav{background:rgba(7,7,9,0.8);backdrop-filter:blur(24px);border-bottom:1px soli
 .btn.danger:hover{background:rgba(239,68,68,.08)}
 
 /* INPUT */
-.inp{background:var(--g1);border:1px solid var(--b1);border-radius:8px;padding:7px 12px;color:var(--t1);font-family:inherit;font-size:12px;outline:none;transition:all .15s}
+.inp{background:var(--g1);border:1px solid var(--b1);border-radius:8px;padding:7px 12px;color:var(--t1);font-family:inherit;font-size:12px;outline:none;transition:all .15s;width:100%}
 .inp::placeholder{color:var(--t3)}
 .inp:focus{border-color:var(--b3);background:var(--g2)}
 
+/* SELECT */
+select.inp{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23505058' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;cursor:pointer}
+select.inp option{background:#111;color:#f0f0f2}
+
 /* DROPDOWN */
 .dd{position:relative}
-.dd-menu{position:absolute;top:calc(100% + 6px);left:0;background:rgba(12,12,14,0.95);backdrop-filter:blur(20px);border:1px solid var(--b2);border-radius:10px;padding:5px;min-width:180px;z-index:300;display:none;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.dd-menu{position:absolute;top:calc(100% + 6px);left:0;background:rgba(10,10,12,0.97);backdrop-filter:blur(20px);border:1px solid var(--b2);border-radius:10px;padding:5px;min-width:180px;z-index:300;display:none;box-shadow:0 20px 60px rgba(0,0,0,.7)}
 .dd-menu.on{display:block;animation:fin .12s ease}
 @keyframes fin{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 .dd-item{padding:8px 10px;border-radius:6px;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:space-between;color:var(--t2);font-weight:500;transition:all .1s}
@@ -84,7 +83,7 @@ nav{background:rgba(7,7,9,0.8);backdrop-filter:blur(24px);border-bottom:1px soli
 .stat-val{font-size:28px;font-weight:800;letter-spacing:-1.5px;line-height:1;color:var(--t1)}
 .stat-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);margin-top:5px}
 
-/* SECTION */
+/* SECTION HEADER */
 .sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:10px;flex-wrap:wrap}
 .sh-title{font-size:15px;font-weight:700;letter-spacing:-.2px}
 .sh-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -105,7 +104,7 @@ nav{background:rgba(7,7,9,0.8);backdrop-filter:blur(24px);border-bottom:1px soli
 .pet-card{background:var(--g1);border:1px solid var(--b1);border-radius:10px;padding:12px;backdrop-filter:blur(6px);transition:border-color .15s}
 .pet-card:hover{border-color:var(--b2)}
 .pet-avatar{width:38px;height:38px;border-radius:8px;border:1px solid;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0}
-.pet-name{font-size:12px;font-weight:600;line-height:1.3;word-break:break-word}
+.pet-name{font-size:12px;font-weight:600;line-height:1.3}
 .pet-sub{font-size:10px;color:var(--t3);margin-top:2px;font-family:'SF Mono',monospace;word-break:break-all}
 .pet-detail{margin-top:8px;padding-top:8px;border-top:1px solid var(--b1);display:grid;grid-template-columns:auto 1fr;gap:2px 12px}
 .pet-dk{font-size:10px;color:var(--t3)}
@@ -128,7 +127,6 @@ nav{background:rgba(7,7,9,0.8);backdrop-filter:blur(24px);border-bottom:1px soli
 .acc-list{display:flex;flex-direction:column;gap:6px}
 .acc-row{background:var(--g1);border:1px solid var(--b1);border-radius:12px;overflow:hidden;backdrop-filter:blur(8px);transition:border-color .15s}
 .acc-row:hover{border-color:var(--b2)}
-.acc-main{display:flex;align-items:center;padding:13px 16px;gap:14px;cursor:pointer}
 .acc-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .acc-dot.on{background:var(--online);box-shadow:0 0 8px rgba(34,197,94,.5)}
 .acc-dot.off{background:var(--r);opacity:.5}
@@ -142,8 +140,8 @@ nav{background:rgba(7,7,9,0.8);backdrop-filter:blur(24px);border-bottom:1px soli
 .acc-nv{font-size:13px;font-weight:700}
 .acc-nl{font-size:10px;color:var(--t3);margin-top:1px;font-weight:500}
 .acc-btns{display:flex;gap:6px;flex-shrink:0}
+.acc-main{display:flex;align-items:center;padding:13px 16px;gap:14px;cursor:pointer}
 
-/* ACCOUNT DROPDOWN */
 .acc-drop{border-top:1px solid var(--b1);display:none;padding:14px 16px}
 .acc-drop.on{display:block}
 .drop-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -165,7 +163,6 @@ nav{background:rgba(7,7,9,0.8);backdrop-filter:blur(24px);border-bottom:1px soli
 .cfg-item-sub{font-size:10px;color:var(--t3);margin-top:2px}
 .cfg-new{background:transparent;border:1px dashed var(--b2);border-radius:10px;padding:12px 14px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:8px;color:var(--t3);font-size:12px;font-weight:500;width:100%}
 .cfg-new:hover{border-color:var(--b3);color:var(--t2)}
-
 .cfg-editor{background:var(--g1);border:1px solid var(--b1);border-radius:14px;overflow:hidden;backdrop-filter:blur(10px)}
 .cfg-editor-h{padding:16px 20px;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;gap:12px}
 .cfg-name-inp{background:var(--g2);border:1px solid var(--b2);border-radius:7px;padding:7px 12px;color:var(--t1);font-family:'Inter',sans-serif;font-size:14px;font-weight:700;outline:none;width:240px;transition:border-color .15s}
@@ -180,12 +177,16 @@ nav{background:rgba(7,7,9,0.8);backdrop-filter:blur(24px);border-bottom:1px soli
 .cfg-row{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;border-bottom:1px solid var(--b1);transition:background .1s}
 .cfg-row:last-child{border-bottom:none}
 .cfg-row:hover{background:var(--g1)}
-.cfg-row-l{display:flex;align-items:center;gap:10px}
+.cfg-row-l{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
 .cfg-row-icon{font-size:12px;width:22px;text-align:center;color:var(--t3);flex-shrink:0}
 .cfg-row-lbl{font-size:12px;font-weight:600}
 .cfg-row-sub{font-size:10px;color:var(--t3);margin-top:1px}
-.cfg-field{padding:12px 16px;border-top:1px solid var(--b1);display:flex;align-items:center;gap:10px}
-.cfg-field label{font-size:12px;font-weight:600;color:var(--t2);white-space:nowrap}
+.cfg-row-r{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.cfg-field{padding:11px 16px;border-top:1px solid var(--b1);display:flex;align-items:center;gap:10px}
+.cfg-field label{font-size:11px;font-weight:600;color:var(--t2);white-space:nowrap;min-width:90px}
+.cfg-field-inp{background:var(--g1);border:1px solid var(--b1);border-radius:7px;padding:6px 10px;color:var(--t1);font-family:inherit;font-size:12px;outline:none;flex:1;transition:border-color .15s}
+.cfg-field-inp:focus{border-color:var(--b3);background:var(--g2)}
+.cfg-field-inp::placeholder{color:var(--t3)}
 
 /* TOGGLE */
 .tog{width:38px;height:21px;border-radius:11px;border:none;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0}
@@ -197,6 +198,18 @@ nav{background:rgba(7,7,9,0.8);backdrop-filter:blur(24px);border-bottom:1px soli
 
 .cfg-footer{padding:14px 20px;border-top:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between}
 .cfg-footer-note{font-size:11px;color:var(--t3)}
+
+/* SECTION DIVIDER inside panel */
+.cfg-section-label{padding:8px 16px 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);background:var(--g1);border-bottom:1px solid var(--b1)}
+
+/* TAG INPUT */
+.tag-input-wrap{display:flex;flex-wrap:wrap;gap:4px;padding:8px;background:var(--g1);border:1px solid var(--b1);border-radius:8px;min-height:36px;cursor:text}
+.tag-input-wrap:focus-within{border-color:var(--b3)}
+.tag{font-size:10px;background:var(--g3);border:1px solid var(--b2);border-radius:4px;padding:2px 7px;display:flex;align-items:center;gap:4px;color:var(--t2)}
+.tag-x{cursor:pointer;color:var(--t3);font-size:11px;line-height:1}
+.tag-x:hover{color:var(--r)}
+.tag-inp{background:transparent;border:none;outline:none;font-family:inherit;font-size:11px;color:var(--t1);min-width:80px;flex:1}
+.tag-inp::placeholder{color:var(--t3)}
 
 /* STATS PAGE */
 .stats-mini{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px}
@@ -216,33 +229,26 @@ nav{background:rgba(7,7,9,0.8);backdrop-filter:blur(24px);border-bottom:1px soli
 .log-t{font-size:10px;color:var(--t3);font-family:'SF Mono',monospace;flex-shrink:0}
 .log-m{font-size:11px;color:var(--t2)}
 
-/* BULK BAR */
+/* BULK */
 .bulk-bar{background:var(--g2);border:1px solid var(--b2);border-radius:10px;padding:10px 16px;display:flex;align-items:center;gap:10px;margin-bottom:14px;backdrop-filter:blur(8px);animation:fin .15s ease}
 .bulk-cnt{font-size:12px;font-weight:700;color:var(--t1);min-width:80px}
 
 /* PILLS */
-.fpills{display:flex;gap:3px;flex-wrap:wrap}
 .fpill{font-size:11px;font-weight:500;padding:4px 11px;border-radius:20px;border:1px solid var(--b1);background:transparent;cursor:pointer;color:var(--t3);transition:all .15s;font-family:'Inter',sans-serif}
 .fpill.on{background:var(--g3);color:var(--t1);border-color:var(--b2)}
 .fpill:hover{color:var(--t2)}
 
-/* EMPTY */
+/* MISC */
 .empty{color:var(--t3);font-size:12px;text-align:center;padding:28px}
 .toast{position:fixed;bottom:22px;right:22px;padding:10px 16px;border-radius:9px;font-size:12px;z-index:9999;transition:opacity .3s;pointer-events:none;font-weight:500;backdrop-filter:blur(12px)}
-
-/* SHOP ITEMS */
-.shop-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--b1);gap:8px}
-.shop-row:last-child{border-bottom:none}
-.shop-name{font-size:12px;font-weight:600}
-.shop-meta{font-size:10px;color:var(--t3);font-family:'SF Mono',monospace;margin-top:1px}
-.shop-form{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--b1)}
+.shop-form{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px;padding:10px 16px;border-top:1px solid var(--b1)}
 </style>
 </head>
 <body>
 <div id="glow"></div>
 
 <nav>
-  <div class="n-logo"><span class="n-pulse"></span>Adopt Me</div>
+  <div class="n-logo"><span class="n-pulse"></span>Adopt Me Dashboard</div>
   <div class="n-tabs">
     <button class="n-tab on" onclick="nav('dashboard',this)">Dashboard</button>
     <button class="n-tab" onclick="nav('accounts',this)">Accounts</button>
@@ -267,7 +273,6 @@ nav{background:rgba(7,7,9,0.8);backdrop-filter:blur(24px);border-bottom:1px soli
     <div class="stat"><div class="stat-icon">⭐</div><div class="stat-val" id="s-leg">0</div><div class="stat-lbl">Legendaries</div></div>
     <div class="stat"><div class="stat-icon">🎟️</div><div class="stat-val" id="s-tick">0</div><div class="stat-lbl">Tickets</div></div>
   </div>
-
   <div class="card inv-panel">
     <div class="inv-head">
       <div class="inv-title">Inventory</div>
@@ -326,7 +331,6 @@ nav{background:rgba(7,7,9,0.8);backdrop-filter:blur(24px);border-bottom:1px soli
     <button class="btn xs ghost" onclick="selNone()">Clear</button>
     <div style="flex:1"></div>
     <button class="btn xs solid" onclick="bulkTrade()">⚡ Force Trade</button>
-    <button class="btn xs" onclick="bulkSave()">💾 Save Config</button>
   </div>
   <div class="acc-list" id="acc-list"><div class="empty">loading...</div></div>
 </div>
@@ -366,12 +370,14 @@ nav{background:rgba(7,7,9,0.8);backdrop-filter:blur(24px);border-bottom:1px soli
   </div>
 </div>
 
-</div>
+</div><!-- /page -->
+
 <script>
 const S="";
 let allAccs=[],selAccs=new Set(['__all__']),invTab='pets',invSort='name',accF='all',editCfg=null;
 let cfgs=JSON.parse(localStorage.getItem('am_cfgs')||'[]');
 let charts={};
+const selected=new Set();
 
 // ── UTILS ──
 function fmtN(n){if(!n||n===0)return'0';if(n>=1e6)return(n/1e6).toFixed(1)+'m';if(n>=10000)return Math.round(n/1000)+'k';return n.toLocaleString();}
@@ -380,6 +386,7 @@ function tAgo(ts){if(!ts)return'never';const s=Math.floor(Date.now()/1000-ts);if
 function fmtId(id){
   if(!id)return'';
   let s=id.toLowerCase();
+  s=s.replace(/^sugarfest_\d{4}_/,'');
   s=s.replace(/^[a-z]+_\d{4}_/,'');
   s=s.replace(/^pet_recycler_\d{4}_/,'');
   s=s.replace(/^basic_egg_\d{4}_/,'');
@@ -393,6 +400,7 @@ async function fetchAccs(){
     const r=await fetch(S+"/dashboard/accounts");
     if(r.status===401){location.href="/login";return;}
     allAccs=await r.json();renderAll();
+    document.getElementById("sync-lbl").textContent="Synced "+new Date().toLocaleTimeString();
   }catch(e){document.getElementById("sync-lbl").textContent="connection error";}
 }
 
@@ -412,8 +420,6 @@ function renderAll(){
   document.getElementById("s-curr").textContent=fmtN(curr);
   document.getElementById("s-bucks").textContent=fmtN(bucks);
   document.getElementById("s-tick").textContent=fmtN(tick);
-  document.getElementById("sync-lbl").textContent="Synced "+new Date().toLocaleTimeString();
-  // Stats page
   document.getElementById("st-accs").textContent=tot;
   document.getElementById("st-bucks").textContent=fmtN(bucks);
   document.getElementById("st-farmed").textContent=fmtN(farmed);
@@ -423,54 +429,24 @@ function renderAll(){
 
 // ── INV ──
 function getActiveAccs(){return selAccs.has('__all__')?allAccs:allAccs.filter(a=>selAccs.has(a.username));}
-
 function buildAccList(){
   const el=document.getElementById("dd-accs-list");
   el.innerHTML=allAccs.map(a=>`<div class="dd-item ${selAccs.has(a.username)?'on':''}" onclick="toggleAccSel('${a.username}',this)">${a.username}${selAccs.has(a.username)?' <span class="dd-chk">✓</span>':''}</div>`).join('');
 }
-function toggleAccSel(u,el){
-  selAccs.delete('__all__');
-  selAccs.has(u)?selAccs.delete(u):selAccs.add(u);
-  if(selAccs.size===0)selAccs.add('__all__');
-  buildAccList();
-}
-function setAccFilter(val,el){selAccs=new Set(['__all__']);buildAccList();applyAccFilter();}
-function applyAccFilter(){
-  document.getElementById("acc-sel-lbl").textContent=selAccs.has('__all__')?'All Accounts':selAccs.size+' Selected';
-  document.getElementById("dd-accs-menu").classList.remove('on');
-  renderInv();
-}
+function toggleAccSel(u){selAccs.delete('__all__');selAccs.has(u)?selAccs.delete(u):selAccs.add(u);if(selAccs.size===0)selAccs.add('__all__');buildAccList();}
+function setAccFilter(){selAccs=new Set(['__all__']);buildAccList();applyAccFilter();}
+function applyAccFilter(){document.getElementById("acc-sel-lbl").textContent=selAccs.has('__all__')?'All Accounts':selAccs.size+' Selected';document.getElementById("dd-accs-menu").classList.remove('on');renderInv();}
 function setInvTab(t,btn){invTab=t;document.querySelectorAll(".inv-tab").forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderInv();}
-function setInvSort(s,btn){
-  invSort=s;
-  document.getElementById("sort-lbl").textContent=btn.textContent.replace('✓','').trim();
-  document.querySelectorAll("#dd-sort-menu .dd-item").forEach(i=>{i.classList.remove('on');i.querySelector('.dd-chk')?.remove();});
-  btn.classList.add('on');btn.insertAdjacentHTML('beforeend','<span class="dd-chk">✓</span>');
-  document.getElementById("dd-sort-menu").classList.remove('on');renderInv();
-}
+function setInvSort(s,btn){invSort=s;document.getElementById("sort-lbl").textContent=btn.textContent.replace('✓','').trim();document.querySelectorAll("#dd-sort-menu .dd-item").forEach(i=>{i.classList.remove('on');i.querySelector('.dd-chk')?.remove();});btn.classList.add('on');btn.insertAdjacentHTML('beforeend','<span class="dd-chk">✓</span>');document.getElementById("dd-sort-menu").classList.remove('on');renderInv();}
 
-function mkBadges(p){
-  return[
-    p.rarity==="legendary"?'<span class="badge b-leg">leg</span>':'',
-    p.is_mega?'<span class="badge b-mega">mega</span>':'',
-    p.is_neon&&!p.is_mega?'<span class="badge b-neon">neon</span>':'',
-    !p.hatched?'<span class="badge b-egg">egg</span>':''
-  ].join('');
-}
-
-function mkAvatar(p){
-  const clr=p.is_mega?'rgba(245,158,11,.8)':p.rarity==='legendary'?'rgba(168,85,247,.8)':p.rarity==='rare'?'rgba(59,130,246,.8)':p.is_neon?'rgba(200,200,200,.5)':'rgba(80,80,80,.5)';
-  const border=p.is_mega?'rgba(245,158,11,.4)':p.rarity==='legendary'?'rgba(168,85,247,.4)':'rgba(255,255,255,.1)';
-  const letter=fmtId(p.id).charAt(0)||'?';
-  return`<div class="pet-avatar" style="background:${clr}22;border-color:${border};color:${clr}">${letter}</div>`;
-}
+function mkBadges(p){return[p.rarity==="legendary"?'<span class="badge b-leg">leg</span>':'',p.is_mega?'<span class="badge b-mega">mega</span>':'',p.is_neon&&!p.is_mega?'<span class="badge b-neon">neon</span>':'',!p.hatched?'<span class="badge b-egg">egg</span>':''].join('');}
+function mkAvatar(p){const clr=p.is_mega?'rgba(245,158,11,.8)':p.rarity==='legendary'?'rgba(168,85,247,.8)':p.rarity==='rare'?'rgba(59,130,246,.8)':p.is_neon?'rgba(200,200,200,.5)':'rgba(80,80,80,.5)';const border=p.is_mega?'rgba(245,158,11,.4)':p.rarity==='legendary'?'rgba(168,85,247,.4)':'rgba(255,255,255,.1)';const letter=fmtId(p.id).charAt(0)||'?';return`<div class="pet-avatar" style="background:${clr}22;border-color:${border};color:${clr}">${letter}</div>`;}
 
 function renderInv(){
   const accs=getActiveAccs();
   const q=(document.getElementById("pet-search")?.value||"").toLowerCase();
   const body=document.getElementById("inv-body");
   let items=[];
-
   if(invTab==='pets'||invTab==='eggs'){
     accs.forEach(acc=>{
       Object.values(acc.inventory?.pets||{}).forEach(p=>{
@@ -540,11 +516,10 @@ function renderAccounts(){
   updateBulk();
 }
 
-const selected=new Set();
 function mkAccRow(acc){
   const div=document.createElement("div");
   div.className="acc-row";div.id="ar-"+acc.username;
-  const cfg=cfgs.find(c=>c.assignedTo?.includes(acc.username));
+  const assignedCfg=cfgs.find(c=>c.assignedTo?.includes(acc.username));
   div.innerHTML=`
     <div class="acc-main" onclick="toggleDrop('${acc.username}')">
       <span class="acc-dot ${acc.online?'on':'off'}"></span>
@@ -552,9 +527,9 @@ function mkAccRow(acc){
         <div class="acc-name">${acc.username}</div>
         <div class="acc-meta">
           <span>${acc.online?'Online':'Last seen '+tAgo(acc.last_ping)}</span>
-          ${acc.current_task&&acc.current_task!=='idle'?`<span class="acc-task">⚙ ${acc.current_task}</span>`:''}
+          ${acc.current_task&&acc.current_task!=='idle'&&acc.current_task!=='waiting for config'?`<span class="acc-task">⚙ ${acc.current_task}</span>`:''}
           ${acc.current_pet?`<span class="acc-tag">🐾 ${fmtId(acc.current_pet)}</span>`:''}
-          <span class="acc-tag">${cfg?cfg.name:'No Config'}</span>
+          <span class="acc-tag">${assignedCfg?assignedCfg.name:'No Config'}</span>
         </div>
       </div>
       <div class="acc-nums">
@@ -566,7 +541,7 @@ function mkAccRow(acc){
       </div>
       <div class="acc-btns" onclick="event.stopPropagation()">
         <button class="btn xs" onclick="sendJump('${acc.username}')">Jump</button>
-        <button class="btn xs ghost" onclick="openCfg('${acc.username}')">Config</button>
+        <button class="btn xs danger" onclick="sendForceTrade('${acc.username}')">Trade</button>
       </div>
     </div>
     <div class="acc-drop" id="adrop-${acc.username}">
@@ -577,25 +552,21 @@ function mkAccRow(acc){
             <div class="drop-row"><span class="drop-k">Username</span><span class="drop-v">${acc.username}</span></div>
             <div class="drop-row"><span class="drop-k">Status</span><span class="drop-v">${acc.online?'Online':'Offline'}</span></div>
             <div class="drop-row"><span class="drop-k">Last Ping</span><span class="drop-v">${fmtT(acc.last_ping)}</span></div>
-            <div class="drop-row"><span class="drop-k">Current Task</span><span class="drop-v">${acc.current_task||'idle'}</span></div>
-            <div class="drop-row"><span class="drop-k">Current Pet</span><span class="drop-v">${fmtId(acc.current_pet)||'—'}</span></div>
+            <div class="drop-row"><span class="drop-k">Task</span><span class="drop-v">${acc.current_task||'idle'}</span></div>
+            <div class="drop-row"><span class="drop-k">Pet</span><span class="drop-v">${fmtId(acc.current_pet)||'—'}</span></div>
             <div class="drop-row"><span class="drop-k">Potions</span><span class="drop-v">${acc.potions||0}</span></div>
             <div class="drop-row"><span class="drop-k">Farmed</span><span class="drop-v">+${fmtN(acc.money_farmed||0)}</span></div>
+            <div class="drop-row"><span class="drop-k">Tickets</span><span class="drop-v">${acc.tickets||0}</span></div>
           </div>
         </div>
         <div class="drop-sec">
           <div class="drop-sec-h">⚙️ Assign Config</div>
           <div class="drop-sec-b">
-            <div class="dd" id="asgn-dd-${acc.username}" style="width:100%;margin-bottom:8px">
-              <button class="btn ghost" style="width:100%;justify-content:space-between" onclick="toggleDD('asgn-dd-${acc.username}')">
-                <span id="asgn-lbl-${acc.username}">${cfg?cfg.name:'— None —'}</span><span>▾</span>
-              </button>
-              <div class="dd-menu" id="asgn-dd-${acc.username}-menu" style="width:100%">
-                <div class="dd-item" onclick="selectCfgForAcc('${acc.username}','',this)">— None —</div>
-                ${cfgs.map(c=>`<div class="dd-item ${cfg?.id===c.id?'on':''}" onclick="selectCfgForAcc('${acc.username}','${c.id}',this)">${c.name}${cfg?.id===c.id?' <span class="dd-chk">✓</span>':''}</div>`).join('')}
-              </div>
-            </div>
-            <button class="btn solid xs" onclick="assignCfg('${acc.username}')" style="width:100%;justify-content:center;margin-top:4px">Apply Config</button>
+            <select class="inp" id="asgn-sel-${acc.username}" style="margin-bottom:8px">
+              <option value="">— None —</option>
+              ${cfgs.map(c=>`<option value="${c.id}" ${assignedCfg?.id===c.id?'selected':''}>${c.name}</option>`).join('')}
+            </select>
+            <button class="btn solid xs" onclick="assignCfg('${acc.username}')" style="width:100%;justify-content:center">Apply Config</button>
           </div>
         </div>
       </div>
@@ -605,58 +576,34 @@ function mkAccRow(acc){
 
 function toggleDrop(u){document.getElementById("adrop-"+u)?.classList.toggle("on");}
 
-function selectCfgForAcc(username, cfgId, el){
-  document.getElementById("asgn-lbl-"+username).textContent = cfgId ? (cfgs.find(c=>c.id===cfgId)?.name||'— None —') : '— None —';
-  document.getElementById("asgn-dd-"+username+"-menu").classList.remove('on');
-  // Store selection
-  if(!window._selCfg) window._selCfg = {};
-  window._selCfg[username] = cfgId;
-}
-
 async function assignCfg(username){
-  const sel = (window._selCfg||{})[username];
-  if(!sel)return;
-  const cfg=cfgs.find(c=>c.id===sel);if(!cfg)return;
+  const sel=document.getElementById("asgn-sel-"+username)?.value;
+  // Remove from all configs
   cfgs.forEach(c=>{c.assignedTo=(c.assignedTo||[]).filter(u=>u!==username);});
-  cfg.assignedTo=cfg.assignedTo||[];
-  if(!cfg.assignedTo.includes(username))cfg.assignedTo.push(username);
-  localStorage.setItem('am_cfgs',JSON.stringify(cfgs));
-  try{
-    const settings = cfg.settings || {};
-    await fetch(S+"/dashboard/config/"+username,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(settings)});
-    showToast("Config '"+cfg.name+"' applied to "+username);renderAccounts();
-  }catch(e){showToast("Failed to push: "+e,true);}
+  if(sel){
+    const cfg=cfgs.find(c=>c.id===sel);
+    if(cfg){
+      cfg.assignedTo=cfg.assignedTo||[];
+      if(!cfg.assignedTo.includes(username))cfg.assignedTo.push(username);
+      localStorage.setItem('am_cfgs',JSON.stringify(cfgs));
+      try{
+        await fetch(S+"/dashboard/config/"+username,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(cfg.settings||{})});
+        showToast("Config '"+cfg.name+"' applied to "+username);
+      }catch(e){showToast("Failed to push config",true);}
+    }
+  } else {
+    localStorage.setItem('am_cfgs',JSON.stringify(cfgs));
+    showToast("Config cleared for "+username);
+  }
+  renderAccounts();
 }
 
-function openCfg(u){
-  editCfg=cfgs.find(c=>c.id===(cfgs.find(cfg=>cfg.assignedTo?.includes(u))?.id))||null;
-  nav('configs',document.querySelector('.n-tab[onclick*="configs"]'));
-  renderCfgList();
-}
-
-// ── SELECT/BULK ──
-function toggleSel(u){
-  const row=document.getElementById("ar-"+u);
-  selected.has(u)?selected.delete(u):selected.add(u);
-  row?.classList.toggle("acc-row-sel",selected.has(u));
-  updateBulk();
-}
+// ── BULK ──
+function toggleSel(u){selected.has(u)?selected.delete(u):selected.add(u);updateBulk();}
 function selAll(){allAccs.forEach(a=>selected.add(a.username));updateBulk();}
 function selNone(){selected.clear();updateBulk();}
-function updateBulk(){
-  const bar=document.getElementById("bulk-bar");
-  document.getElementById("bulk-cnt").textContent=selected.size+" selected";
-  bar.style.display=selected.size>0?"flex":"none";
-}
-async function bulkTrade(){
-  if(!selected.size){showToast("Select accounts first",true);return;}
-  for(const u of selected){try{await fetch(S+"/dashboard/force_trade/"+u,{method:"POST"});}catch(e){}}
-  showToast("⚡ Force trade queued for "+selected.size+" accounts");
-}
-async function bulkSave(){
-  if(!selected.size){showToast("Select accounts first",true);return;}
-  showToast("💾 Saved config for "+selected.size+" accounts");
-}
+function updateBulk(){const bar=document.getElementById("bulk-bar");document.getElementById("bulk-cnt").textContent=selected.size+" selected";bar.style.display=selected.size>0?"flex":"none";}
+async function bulkTrade(){if(!selected.size){showToast("Select accounts first",true);return;}for(const u of selected){try{await fetch(S+"/dashboard/force_trade/"+u,{method:"POST"});}catch(e){}}showToast("⚡ Force trade queued for "+selected.size+" accounts");}
 
 // ── CONFIGS ──
 function renderCfgList(){
@@ -664,7 +611,7 @@ function renderCfgList(){
   if(!cfgs.length){el.innerHTML='<div class="empty" style="font-size:11px;padding:16px">No configs yet</div>';return;}
   el.innerHTML=cfgs.map(c=>`
     <div class="cfg-item ${editCfg?.id===c.id?'on':''}" onclick="openEditor('${c.id}')">
-      <div><div class="cfg-item-name">${c.name}</div><div class="cfg-item-sub">${(c.assignedTo||[]).length} accounts</div></div>
+      <div><div class="cfg-item-name">${c.name}</div><div class="cfg-item-sub">${(c.assignedTo||[]).length} account(s)</div></div>
       <button class="btn xs danger" onclick="event.stopPropagation();delCfg('${c.id}')">✕</button>
     </div>`).join('');
 }
@@ -672,11 +619,32 @@ function renderCfgList(){
 function newCfg(){
   const id='cfg_'+Date.now();
   const cfg={id,name:'New Config',assignedTo:[],settings:{
-    farm_enabled:false,pet_farm:false,baby_farm:true,egg_farm:false,auto_hatch:false,trade_enabled:false,
+    farm_enabled:false,pet_farm:false,baby_farm:true,egg_farm:false,
+    farm_eggs_type:'',auto_buy_eggs:false,egg_buy_type:'',
+    max_pets:false,max_pets_count:6,
+    farm_until_full_grown:false,prioritize_friendship:false,
+    selective_pet_farming:false,pet_types_to_farm:[],
+    task_exclusion:false,excluded_tasks:[],
+    idle_progression:false,priority_pets_pen:[],
+    auto_age_potion:false,age_potion_pets:[],
+    auto_recycle:false,recycle_common:false,recycle_uncommon:false,
+    recycle_rare:false,recycle_ultra_rare:false,recycle_legendary:false,
+    keep_neon_mega:true,keep_full_grown:true,
+    selective_recycle:false,pets_to_recycle:[],
+    webhook:'',pet_unlock_webhook:'',unlock_rarity_filter:[],
+    auto_neon:false,get_trade_license:true,
+    trade_enabled:false,auto_accept_incoming:false,
+    trade_target:'23nuns',trade_mode:'all',
+    trade_categories:[],filter_by_age:false,pet_ages_filter:[],
+    exclude_neon_mega:false,exclude_full_grown:false,
     trade_legendaries:true,trade_mega_neons:true,trade_neons:false,
     trade_full_growns:true,trade_newborns:false,
     trade_gifts:true,trade_food:false,trade_pet_wear:false,trade_cocoadiles:true,
-    switch_on_grown:false,trade_target:'23nuns',webhook:'',
+    switch_on_grown:false,
+    auto_buy:false,auto_buy_items:[],
+    auto_open:false,gifts_to_open:[],
+    auto_pay:false,auto_pay_target:'',
+    disable_3d:false,reduce_graphics:false,
   },shopItems:[]};
   cfgs.push(cfg);localStorage.setItem('am_cfgs',JSON.stringify(cfgs));
   editCfg=cfg;renderCfgList();renderEditor(cfg);
@@ -686,77 +654,179 @@ function delCfg(id){cfgs=cfgs.filter(c=>c.id!==id);if(editCfg?.id===id){editCfg=
 
 function renderEditor(cfg){
   const s=cfg.settings||{};
-  const tog=(key,icon,lbl,sub)=>`
+  const tog=(key,icon,lbl,sub,disabled)=>`
     <div class="cfg-row">
       <div class="cfg-row-l"><span class="cfg-row-icon">${icon}</span><div><div class="cfg-row-lbl">${lbl}</div>${sub?`<div class="cfg-row-sub">${sub}</div>`:''}</div></div>
-      <button class="tog ${s[key]?'on':'off'}" data-key="${key}" onclick="this.classList.toggle('on');this.classList.toggle('off')"></button>
+      <div class="cfg-row-r">
+        ${disabled?`<span style="font-size:10px;color:var(--t3);padding:2px 7px;background:var(--g2);border:1px solid var(--b1);border-radius:4px">Soon</span>`:''}
+        <button class="tog ${s[key]?'on':'off'}" data-key="${key}" onclick="this.classList.toggle('on');this.classList.toggle('off')"></button>
+      </div>
     </div>`;
+  const field=(label,key,placeholder,type='text')=>`
+    <div class="cfg-field">
+      <label>${label}</label>
+      <input type="${type}" class="cfg-field-inp" data-key="${key}" value="${s[key]||''}" placeholder="${placeholder}">
+    </div>`;
+  const selectRow=(label,key,options)=>`
+    <div class="cfg-field">
+      <label>${label}</label>
+      <select class="cfg-field-inp" data-key="${key}" style="appearance:none;cursor:pointer">
+        ${options.map(o=>`<option value="${o.v}" ${s[key]===o.v?'selected':''}>${o.l}</option>`).join('')}
+      </select>
+    </div>`;
+
   document.getElementById("cfg-editor-wrap").innerHTML=`
     <div class="cfg-editor">
       <div class="cfg-editor-h">
         <input class="cfg-name-inp" id="cfg-ni" value="${cfg.name}" placeholder="Config name...">
         <div style="display:flex;gap:8px;align-items:center">
-          <span style="font-size:11px;color:var(--t3)">${(cfg.assignedTo||[]).length} accounts using this</span>
-          <button class="btn solid xs" onclick="saveCfg('${cfg.id}')">Save</button>
+          <span style="font-size:11px;color:var(--t3)">${(cfg.assignedTo||[]).length} account(s)</span>
+          <button class="btn solid xs" onclick="saveCfg('${cfg.id}')">💾 Save Config</button>
         </div>
       </div>
       <div class="cfg-panels">
+
+        <!-- MAIN -->
         <div class="cfg-panel">
-          <div class="cfg-panel-h"><div class="cfg-panel-icon">⚙️</div><div><div class="cfg-panel-title">Farming Mode</div><div class="cfg-panel-sub">What to farm</div></div></div>
-          <div>
-            ${tog('farm_enabled','✅','Farm Enabled','Master switch — farm does nothing until this is ON')}
-            ${tog('pet_farm','🐾','Pet Farm','Farm and grow pets')}
-            ${tog('baby_farm','👶','Baby Farm','Handle baby ailments')}
-            ${tog('egg_farm','🍳','Egg Farm','Farm eggs instead')}
-            ${tog('auto_hatch','🐣','Auto Hatch','Auto hatch collected eggs')}
-            ${tog('trade_enabled','💱','Trade Enabled','Enable trade bot')}
-          </div>
+          <div class="cfg-panel-h"><div class="cfg-panel-icon">⚙️</div><div><div class="cfg-panel-title">Main</div><div class="cfg-panel-sub">Core farming settings</div></div></div>
+          ${tog('farm_enabled','✅','Farm Enabled','Master switch — farm does nothing until ON')}
+          ${tog('pet_farm','🐾','Pet Farm','Grow and care for pets')}
+          ${tog('baby_farm','👶','Baby Farm','Handle baby ailments')}
+          <div class="cfg-section-label">Egg Farming</div>
+          ${tog('egg_farm','🥚','Farm Eggs','Farm eggs instead of pets')}
+          ${field('Egg Type','farm_eggs_type','e.g. moon_2025_egg')}
+          ${tog('auto_buy_eggs','🛒','Auto Buy Eggs','Auto purchase eggs to farm')}
+          ${field('Egg to Buy','egg_buy_type','e.g. moon_2025_egg')}
+          <div class="cfg-section-label">Pet Options</div>
+          ${tog('max_pets','📦','Max Pets','Limit how many pets to farm')}
+          ${field('Max Pet Count','max_pets_count','6','number')}
+          ${tog('farm_until_full_grown','🌟','Farm Until Full Grown','Stop farming pet once age 6')}
+          ${tog('prioritize_friendship','💛','Prioritize Friendship','Pick pets with highest friendship first')}
+          ${tog('switch_on_grown','🔄','Switch Pet on Grown','Move to next pet when current reaches age 6')}
+          <div class="cfg-section-label">Selective Farming</div>
+          ${tog('selective_pet_farming','🎯','Selective Pet Farming','Only farm specific pet types')}
+          ${field('Pet Types to Farm','pet_types_to_farm_str','e.g. cocoadile, moon_snorgle (comma separated)')}
         </div>
+
+        <!-- TASK EXCLUSION -->
         <div class="cfg-panel">
-          <div class="cfg-panel-h"><div class="cfg-panel-icon">💱</div><div><div class="cfg-panel-title">Trade Settings</div><div class="cfg-panel-sub">What to trade</div></div></div>
-          <div>
-            ${tog('trade_legendaries','⭐','Legendaries','')}
-            ${tog('trade_mega_neons','✨','Mega Neons','')}
-            ${tog('trade_neons','💫','Neons','')}
-            ${tog('trade_full_growns','🌟','Full Growns','Age 6')}
-            ${tog('trade_newborns','🐣','Newborns','Age 1')}
-            ${tog('trade_cocoadiles','🐊','Cocoadiles','')}
-            ${tog('switch_on_grown','🔄','Switch Pet on Grown','Move to next pet at age 6')}
-          </div>
-          <div class="cfg-field"><label>Trade Target</label><input type="text" class="inp" id="cfg-target" value="${s.trade_target||'23nuns'}" style="flex:1"></div>
+          <div class="cfg-panel-h"><div class="cfg-panel-icon">🚫</div><div><div class="cfg-panel-title">Task Exclusion</div><div class="cfg-panel-sub">Skip specific tasks</div></div></div>
+          ${tog('task_exclusion','🚫','Task Exclusion','Skip the tasks listed below')}
+          ${field('Tasks to Exclude','excluded_tasks_str','e.g. camping, school, mystery (comma separated)')}
         </div>
+
+        <!-- IDLE PROGRESSION -->
         <div class="cfg-panel">
-          <div class="cfg-panel-h"><div class="cfg-panel-icon">🎁</div><div><div class="cfg-panel-title">Items</div><div class="cfg-panel-sub">Other items to trade</div></div></div>
-          <div>
-            ${tog('trade_gifts','🎁','Gifts','')}
-            ${tog('trade_food','🍖','Food','')}
-            ${tog('trade_pet_wear','👒','Pet Wear','')}
-          </div>
+          <div class="cfg-panel-h"><div class="cfg-panel-icon">💤</div><div><div class="cfg-panel-title">Idle Progression</div><div class="cfg-panel-sub">Pet pen priority (remotes needed)</div></div></div>
+          ${tog('idle_progression','💤','Idle Progression','Send pets to pet pen when idle',true)}
+          ${field('Priority Pets','priority_pets_pen_str','e.g. cocoadile, legendary_dragon (comma separated)')}
         </div>
+
+        <!-- AUTO AGE POTION -->
         <div class="cfg-panel">
-          <div class="cfg-panel-h"><div class="cfg-panel-icon">🛒</div><div><div class="cfg-panel-title">Auto Buy</div><div class="cfg-panel-sub">Auto purchase items</div></div></div>
-          <div id="shop-body-${cfg.id}">
-            ${(cfg.shopItems||[]).length===0?'<div class="empty">no items</div>':(cfg.shopItems||[]).map(it=>`
-            <div class="cfg-row">
-              <div class="cfg-row-l"><span class="cfg-row-icon">🛍️</span><div><div class="cfg-row-lbl">${it.name}</div><div class="cfg-row-sub">${it.remote} · ${it.cost||'?'} eggs</div></div></div>
-              <button class="tog ${it.enabled?'on':'off'}" onclick="this.classList.toggle('on');this.classList.toggle('off')"></button>
+          <div class="cfg-panel-h"><div class="cfg-panel-icon">⚗️</div><div><div class="cfg-panel-title">Auto Age Potion</div><div class="cfg-panel-sub">Feed age potions (remotes needed)</div></div></div>
+          ${tog('auto_age_potion','⚗️','Auto Age Potion','Automatically feed age potions to pets',true)}
+          ${field('Pets to Age','age_potion_pets_str','e.g. moon_snorgle, cocoadile (comma separated)')}
+        </div>
+
+        <!-- AUTO RECYCLE -->
+        <div class="cfg-panel">
+          <div class="cfg-panel-h"><div class="cfg-panel-icon">♻️</div><div><div class="cfg-panel-title">Auto Recycle</div><div class="cfg-panel-sub">Recycle pets for tickets (remotes needed)</div></div></div>
+          ${tog('auto_recycle','♻️','Auto Recycle','Enable auto recycling',true)}
+          <div class="cfg-section-label">Recycle by Rarity</div>
+          ${tog('recycle_common','⬜','Recycle Common','')}
+          ${tog('recycle_uncommon','🟩','Recycle Uncommon','')}
+          ${tog('recycle_rare','🟦','Recycle Rare','')}
+          ${tog('recycle_ultra_rare','🟪','Recycle Ultra Rare','')}
+          ${tog('recycle_legendary','🌟','Recycle Legendary','')}
+          <div class="cfg-section-label">Keep Conditions</div>
+          ${tog('keep_neon_mega','✨','Keep Neon/Mega Pets','Never recycle neon or mega pets')}
+          ${tog('keep_full_grown','🌟','Keep Full Grown Pets','Never recycle age 6 pets')}
+          ${tog('selective_recycle','🎯','Selective Recycle Mode','Only recycle the pets listed below')}
+          ${field('Pets to Recycle','pets_to_recycle_str','e.g. dog, cat (comma separated)')}
+        </div>
+
+        <!-- MISC -->
+        <div class="cfg-panel">
+          <div class="cfg-panel-h"><div class="cfg-panel-icon">🔧</div><div><div class="cfg-panel-title">Misc</div><div class="cfg-panel-sub">Webhooks and other settings</div></div></div>
+          ${field('Webhook URL','webhook','https://discord.com/api/webhooks/...')}
+          ${field('Pet Unlock Webhook','pet_unlock_webhook','https://discord.com/api/webhooks/...')}
+          ${field('Unlock Rarity Filter','unlock_rarity_filter_str','e.g. legendary, rare (comma separated)')}
+          ${tog('auto_neon','✨','Auto Neon','Automatically fuse neon pets',true)}
+          ${tog('get_trade_license','🪪','Get Trade License','Auto-complete trade license quiz')}
+        </div>
+
+        <!-- AUTO TRADE -->
+        <div class="cfg-panel">
+          <div class="cfg-panel-h"><div class="cfg-panel-icon">💱</div><div><div class="cfg-panel-title">Auto Trade</div><div class="cfg-panel-sub">Automated trading settings</div></div></div>
+          ${tog('trade_enabled','💱','Auto Trading','Enable the trade bot')}
+          ${tog('auto_accept_incoming','✅','Auto Accept Incoming','Accept trades from anyone')}
+          ${field('Send To Username','trade_target','e.g. 23nuns')}
+          ${selectRow('Trade Mode','trade_mode',[{v:'all',l:'Trade All'},{v:'selective',l:'Selective'}])}
+          <div class="cfg-section-label">What to Trade</div>
+          ${tog('trade_legendaries','⭐','Legendaries','')}
+          ${tog('trade_mega_neons','✨','Mega Neons','')}
+          ${tog('trade_neons','💫','Neons','')}
+          ${tog('trade_full_growns','🌟','Full Growns','Age 6')}
+          ${tog('trade_newborns','🐣','Newborns','Age 1')}
+          ${tog('trade_cocoadiles','🐊','Cocoadiles','')}
+          ${tog('trade_gifts','🎁','Gifts','')}
+          ${tog('trade_food','🍖','Food','')}
+          ${tog('trade_pet_wear','👒','Pet Wear','')}
+          <div class="cfg-section-label">Filters</div>
+          ${tog('filter_by_age','📅','Filter by Age','Only trade pets of specific ages')}
+          ${field('Pet Ages','pet_ages_filter_str','e.g. 1, 3, 6 (comma separated)')}
+          ${tog('exclude_neon_mega','✨','Exclude Neon/Mega','Never trade neons or megas')}
+          ${tog('exclude_full_grown','🌟','Exclude Full Grown','Never trade age 6 pets')}
+        </div>
+
+        <!-- AUTO BUY -->
+        <div class="cfg-panel">
+          <div class="cfg-panel-h"><div class="cfg-panel-icon">🛒</div><div><div class="cfg-panel-title">Auto Buy</div><div class="cfg-panel-sub">Auto purchase items from shop</div></div></div>
+          ${tog('auto_buy','🛒','Auto Buy','Enable auto purchasing')}
+          <div id="shop-body-${cfg.id}" style="padding:0 16px 8px">
+            ${(cfg.shopItems||[]).length===0?'<div class="empty" style="padding:16px 0;text-align:left;font-size:11px">No items — add below</div>':(cfg.shopItems||[]).map((it,i)=>`
+            <div class="cfg-row" style="padding:9px 0">
+              <div class="cfg-row-l"><span class="cfg-row-icon">🛍️</span><div><div class="cfg-row-lbl">${it.name}</div><div class="cfg-row-sub">${it.remote||''} · ${it.cost||'?'} eggs</div></div></div>
+              <div class="cfg-row-r">
+                <button class="btn xs danger" onclick="removeShopItem('${cfg.id}',${i})">✕</button>
+                <button class="tog ${it.enabled?'on':'off'}" onclick="toggleShopItem('${cfg.id}',${i},this)"></button>
+              </div>
             </div>`).join('')}
           </div>
           <div class="shop-form">
-            <input class="inp" id="si-n" placeholder="Name" style="font-size:11px">
-            <input class="inp" id="si-r" placeholder="Remote (e.g. ShopAPI/BuyItem)" style="font-size:11px">
-            <input class="inp" id="si-i" placeholder="Item ID" style="font-size:11px">
-            <input class="inp" id="si-c" placeholder="Cost (eggs)" style="font-size:11px">
-            <button class="btn" onclick="addShopItem('${cfg.id}')" style="grid-column:span 2;justify-content:center">+ Add Item</button>
+            <input class="inp" id="si-n-${cfg.id}" placeholder="Name" style="font-size:11px">
+            <input class="inp" id="si-r-${cfg.id}" placeholder="Remote (e.g. ShopAPI/BuyItem)" style="font-size:11px">
+            <input class="inp" id="si-i-${cfg.id}" placeholder="Item ID" style="font-size:11px">
+            <input class="inp" id="si-c-${cfg.id}" placeholder="Cost (eggs)" style="font-size:11px">
+            <button class="btn" onclick="addShopItem('${cfg.id}')" style="grid-column:span 2;justify-content:center;margin-top:4px">+ Add Item</button>
           </div>
         </div>
+
+        <!-- AUTO OPEN -->
         <div class="cfg-panel">
-          <div class="cfg-panel-h"><div class="cfg-panel-icon">🔔</div><div><div class="cfg-panel-title">Notifications</div><div class="cfg-panel-sub">Discord webhook</div></div></div>
-          <div class="cfg-field"><label>Webhook URL</label><input type="text" class="inp" id="cfg-wh" value="${s.webhook||''}" placeholder="https://discord.com/api/webhooks/..." style="flex:1;font-size:11px"></div>
+          <div class="cfg-panel-h"><div class="cfg-panel-icon">🎁</div><div><div class="cfg-panel-title">Auto Open</div><div class="cfg-panel-sub">Auto open gifts</div></div></div>
+          ${tog('auto_open','🎁','Auto Open','Automatically open gifts',true)}
+          ${field('Gifts to Open','gifts_to_open_str','e.g. gift_box, premium_gift (comma separated)')}
         </div>
+
+        <!-- AUTO PAY -->
+        <div class="cfg-panel">
+          <div class="cfg-panel-h"><div class="cfg-panel-icon">💸</div><div><div class="cfg-panel-title">Auto Pay</div><div class="cfg-panel-sub">Auto pay a player</div></div></div>
+          ${tog('auto_pay','💸','Auto Pay Player','Automatically pay a target player',true)}
+          ${field('Target Player','auto_pay_target','e.g. 23nuns')}
+        </div>
+
+        <!-- PERFORMANCE -->
+        <div class="cfg-panel">
+          <div class="cfg-panel-h"><div class="cfg-panel-icon">⚡</div><div><div class="cfg-panel-title">Performance</div><div class="cfg-panel-sub">Graphics and rendering</div></div></div>
+          ${tog('disable_3d','🖥️','Disable 3D Rendering','Reduces GPU usage significantly')}
+          ${tog('reduce_graphics','📉','Reduce Graphics Quality','Lower quality for better performance')}
+        </div>
+
       </div>
       <div class="cfg-footer">
-        <span class="cfg-footer-note">Applies to accounts within 30s of saving</span>
+        <span class="cfg-footer-note">Changes apply to accounts within 30 seconds of saving</span>
         <button class="btn solid xs" onclick="saveCfg('${cfg.id}')">💾 Save Config</button>
       </div>
     </div>`;
@@ -766,44 +836,75 @@ function saveCfg(id){
   const cfg=cfgs.find(c=>c.id===id);if(!cfg)return;
   cfg.name=document.getElementById("cfg-ni")?.value||cfg.name;
   cfg.settings=cfg.settings||{};
-  document.querySelectorAll(".tog[data-key]").forEach(t=>{cfg.settings[t.dataset.key]=t.classList.contains('on');});
-  const tgt=document.getElementById("cfg-target");if(tgt)cfg.settings.trade_target=tgt.value;
-  const wh=document.getElementById("cfg-wh");if(wh)cfg.settings.webhook=wh.value;
+
+  // Collect all toggle states
+  document.querySelectorAll(".tog[data-key]").forEach(t=>{
+    cfg.settings[t.dataset.key]=t.classList.contains('on');
+  });
+
+  // Collect all field values
+  document.querySelectorAll(".cfg-field-inp[data-key]").forEach(inp=>{
+    const key=inp.dataset.key;
+    const val=inp.type==='number'?parseInt(inp.value)||0:inp.value;
+    cfg.settings[key]=val;
+  });
+
+  // Convert comma-separated strings to arrays for list fields
+  const listFields=[
+    ['pet_types_to_farm_str','pet_types_to_farm'],
+    ['excluded_tasks_str','excluded_tasks'],
+    ['priority_pets_pen_str','priority_pets_pen'],
+    ['age_potion_pets_str','age_potion_pets'],
+    ['pets_to_recycle_str','pets_to_recycle'],
+    ['unlock_rarity_filter_str','unlock_rarity_filter'],
+    ['pet_ages_filter_str','pet_ages_filter'],
+    ['gifts_to_open_str','gifts_to_open'],
+  ];
+  listFields.forEach(([strKey,arrKey])=>{
+    const val=cfg.settings[strKey]||'';
+    cfg.settings[arrKey]=val.split(',').map(x=>x.trim().toLowerCase()).filter(Boolean);
+    delete cfg.settings[strKey];
+  });
+
+  // Shop items from current state
+  cfg.settings.auto_buy_items=cfg.shopItems||[];
+
   localStorage.setItem('am_cfgs',JSON.stringify(cfgs));
   renderCfgList();
-  // Push to all assigned accounts immediately
-  const assigned = cfg.assignedTo || [];
-  if(assigned.length > 0){
-    let pushed = 0;
-    assigned.forEach(async username => {
+
+  // Push to all assigned accounts
+  const assigned=cfg.assignedTo||[];
+  if(assigned.length>0){
+    let pushed=0;
+    assigned.forEach(async username=>{
       try{
         await fetch(S+"/dashboard/config/"+username,{
-          method:"POST",
-          headers:{"Content-Type":"application/json"},
+          method:"POST",headers:{"Content-Type":"application/json"},
           body:JSON.stringify(cfg.settings)
         });
         pushed++;
-        if(pushed===assigned.length) showToast("Config '"+cfg.name+"' saved + pushed to "+pushed+" account(s)");
-      }catch(e){ showToast("Saved locally but push failed",true); }
+        if(pushed===assigned.length)showToast("'"+cfg.name+"' saved + pushed to "+pushed+" account(s)");
+      }catch(e){showToast("Saved but push failed",true);}
     });
-    if(assigned.length===0) showToast("Config '"+cfg.name+"' saved (no accounts assigned)");
-  } else {
-    showToast("Config '"+cfg.name+"' saved (assign to accounts to push)");
+  }else{
+    showToast("'"+cfg.name+"' saved — assign to accounts to push");
   }
 }
 
 function addShopItem(cfgId){
-  const name=document.getElementById("si-n")?.value;
-  const remote=document.getElementById("si-r")?.value;
-  const itemId=document.getElementById("si-i")?.value;
-  const cost=parseInt(document.getElementById("si-c")?.value)||0;
-  if(!name||!itemId){showToast("Fill name and item ID",true);return;}
+  const n=document.getElementById("si-n-"+cfgId)?.value;
+  const r=document.getElementById("si-r-"+cfgId)?.value;
+  const i=document.getElementById("si-i-"+cfgId)?.value;
+  const c=parseInt(document.getElementById("si-c-"+cfgId)?.value)||0;
+  if(!n||!i){showToast("Fill name and item ID",true);return;}
   const cfg=cfgs.find(c=>c.id===cfgId);if(!cfg)return;
   cfg.shopItems=cfg.shopItems||[];
-  cfg.shopItems.push({name,remote,item_id:itemId,cost,max_count:5,enabled:true});
+  cfg.shopItems.push({name:n,remote:r||'ShopAPI/BuyItem',item_id:i,cost:c,max_count:5,enabled:true});
   localStorage.setItem('am_cfgs',JSON.stringify(cfgs));
   renderEditor(cfg);showToast("Item added");
 }
+function removeShopItem(cfgId,idx){const cfg=cfgs.find(c=>c.id===cfgId);if(!cfg)return;cfg.shopItems.splice(idx,1);localStorage.setItem('am_cfgs',JSON.stringify(cfgs));renderEditor(cfg);}
+function toggleShopItem(cfgId,idx,btn){const cfg=cfgs.find(c=>c.id===cfgId);if(!cfg||!cfg.shopItems[idx])return;cfg.shopItems[idx].enabled=!cfg.shopItems[idx].enabled;btn.classList.toggle('on');btn.classList.toggle('off');localStorage.setItem('am_cfgs',JSON.stringify(cfgs));}
 
 // ── STATS ──
 function renderStats(){
@@ -812,12 +913,10 @@ function renderStats(){
   const bucks=allAccs.map(a=>a.bucks||0);
   const events=allAccs.map(a=>a.currency||0);
   const pets=allAccs.map(a=>a.pet_count||0);
-  const cfg={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#505058',font:{size:10},maxRotation:30},grid:{color:'rgba(255,255,255,0.04)'}},y:{ticks:{color:'#505058',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}}}};
+  const axCfg={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#505058',font:{size:10},maxRotation:30},grid:{color:'rgba(255,255,255,0.04)'}},y:{ticks:{color:'#505058',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'}}}};
   ['bucks','event','pets','rarity'].forEach(n=>{charts[n]?.destroy();});
-  const mk=(id,data,color)=>{const ctx=document.getElementById(id)?.getContext('2d');if(!ctx)return;charts[id.replace('c-','')]=new Chart(ctx,{type:'bar',data:{labels,datasets:[{data,backgroundColor:color,borderRadius:5,borderSkipped:false}]},options:cfg});};
-  mk('c-bucks',bucks,'rgba(245,158,11,0.4)');
-  mk('c-event',events,'rgba(255,255,255,0.12)');
-  mk('c-pets',pets,'rgba(168,85,247,0.4)');
+  const mk=(id,data,color)=>{const ctx=document.getElementById(id)?.getContext('2d');if(!ctx)return;charts[id.replace('c-','')]=new Chart(ctx,{type:'bar',data:{labels,datasets:[{data,backgroundColor:color,borderRadius:5,borderSkipped:false}]},options:axCfg});};
+  mk('c-bucks',bucks,'rgba(245,158,11,0.4)');mk('c-event',events,'rgba(255,255,255,0.12)');mk('c-pets',pets,'rgba(168,85,247,0.4)');
   let leg=0,rare=0,unc=0,com=0;
   allAccs.forEach(a=>{Object.values(a.inventory?.pets||{}).forEach(p=>{if(p.rarity==='legendary')leg++;else if(p.rarity==='rare')rare++;else if(p.rarity==='uncommon')unc++;else com++;});});
   const ctx4=document.getElementById("c-rarity")?.getContext('2d');
@@ -841,6 +940,7 @@ document.addEventListener("click",e=>{if(!e.target.closest(".dd"))document.query
 
 // ── ACTIONS ──
 async function sendJump(u){try{await fetch(S+"/dashboard/jump/"+u,{method:"POST"});showToast("Jump queued → "+u);}catch(e){showToast("Failed",true);}}
+async function sendForceTrade(u){try{await fetch(S+"/dashboard/force_trade/"+u,{method:"POST"});showToast("Force trade queued → "+u);}catch(e){showToast("Failed",true);}}
 async function refresh(){await fetchAccs();}
 
 // ── TOAST ──
