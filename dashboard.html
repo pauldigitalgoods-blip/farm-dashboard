@@ -395,6 +395,138 @@ select.cfg-fi option{background:#131316}
   transition:opacity .25s;pointer-events:none;font-weight:500;
   backdrop-filter:blur(12px);
 }
+
+/* ── GROUPS ── */
+.grp-tag{
+  font-size:10px;padding:1px 7px;border-radius:3px;font-weight:600;
+  background:var(--c3);border:1px solid var(--b1);color:var(--t2);
+  cursor:default;display:inline-flex;align-items:center;gap:4px;
+}
+.grp-tag .grp-dot{width:5px;height:5px;border-radius:50%;background:var(--t3);flex-shrink:0}
+
+/* ── ACC ROWS (new clean style) ── */
+.acc-list{display:flex;flex-direction:column;gap:3px}
+.acc-row2{
+  background:var(--c1);border:1px solid var(--b1);
+  border-radius:var(--r);overflow:hidden;transition:border-color .12s;
+}
+.acc-row2:hover{border-color:var(--b2)}
+.acc-line{
+  display:flex;align-items:center;padding:10px 16px;gap:10px;cursor:pointer;
+}
+.acc-line-left{display:flex;align-items:center;gap:9px;flex:1;min-width:0}
+.acc-line-name{font-size:13px;font-weight:600;white-space:nowrap}
+.acc-line-tags{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.acc-status-pill{
+  font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600;
+  letter-spacing:.03em;white-space:nowrap;
+}
+.acc-status-pill.on{background:rgba(61,186,111,.12);color:var(--green);border:1px solid rgba(61,186,111,.2)}
+.acc-status-pill.off{background:var(--c3);color:var(--t3);border:1px solid var(--b1)}
+.acc-line-time{font-size:11px;color:var(--t3);white-space:nowrap}
+.acc-line-stats{display:flex;align-items:center;gap:0;flex-shrink:0}
+.acc-stat-box{
+  padding:0 14px;text-align:right;border-left:1px solid var(--b1);
+}
+.acc-stat-val{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.2}
+.acc-stat-lbl{font-size:10px;color:var(--t3);margin-top:1px}
+.acc-line-actions{display:flex;gap:5px;flex-shrink:0;margin-left:10px;border-left:1px solid var(--b1);padding-left:12px}
+.acc-expand{
+  background:var(--c1);border-top:1px solid var(--b1);display:none;
+}
+.acc-expand.on{display:block}
+.acc-exp-tabs{
+  display:flex;gap:1px;padding:0 16px;border-bottom:1px solid var(--b1);
+  background:var(--c2);
+}
+.aet{
+  font-size:11px;font-weight:500;padding:8px 12px;cursor:pointer;border:none;
+  background:none;color:var(--t3);font-family:'Inter',sans-serif;
+  border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .1s;
+}
+.aet:hover{color:var(--t2)}
+.aet.on{color:var(--t1);border-bottom-color:var(--t1)}
+.acc-exp-body{padding:14px 16px}
+
+/* pet mini grid in expand */
+.pet-mini-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:5px}
+.pet-mini{
+  background:var(--c2);border:1px solid var(--b1);border-radius:var(--rs);
+  padding:8px 10px;display:flex;align-items:center;gap:8px;
+}
+.pet-mini-av{
+  width:28px;height:28px;border-radius:5px;display:flex;align-items:center;
+  justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;
+}
+.pet-mini-name{font-size:11px;font-weight:600;line-height:1.3}
+.pet-mini-sub{font-size:9px;color:var(--t3);margin-top:1px}
+
+/* ── SESSIONS / HATCHES ── */
+.hatch-list{display:flex;flex-direction:column;gap:3px}
+.hatch-row{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 12px;background:var(--c2);border:1px solid var(--b1);
+  border-radius:var(--rs);
+}
+.hatch-av{
+  width:26px;height:26px;border-radius:5px;display:flex;
+  align-items:center;justify-content:center;font-size:10px;
+  font-weight:700;flex-shrink:0;
+}
+.hatch-name{font-size:12px;font-weight:600}
+.hatch-meta{font-size:10px;color:var(--t3);margin-top:1px}
+.hatch-time{font-size:10px;color:var(--t3);margin-left:auto;white-space:nowrap}
+
+/* ── SESSIONS VIEW ── */
+.sess-acc-card{
+  background:var(--c1);border:1px solid var(--b1);border-radius:var(--r);
+  overflow:hidden;margin-bottom:8px;
+}
+.sess-acc-h{
+  display:flex;align-items:center;gap:10px;padding:11px 16px;
+  border-bottom:1px solid var(--b1);
+}
+.sess-acc-name{font-size:13px;font-weight:600;flex:1}
+.sess-acc-stats{display:flex;gap:16px}
+.sess-acc-stat{text-align:right}
+.sess-acc-val{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.sess-acc-lbl{font-size:10px;color:var(--t3)}
+.sess-acc-hatches{padding:10px 16px}
+.sess-empty{font-size:11px;color:var(--t3);padding:8px 0}
+
+/* ── ACC TAB BAR ── */
+.acc-view-tabs{
+  display:flex;gap:1px;background:var(--c2);border:1px solid var(--b1);
+  border-radius:var(--rs);padding:2px;
+}
+.avt{
+  font-size:11px;font-weight:500;padding:4px 12px;border-radius:3px;
+  cursor:pointer;border:none;background:transparent;color:var(--t3);
+  font-family:'Inter',sans-serif;transition:all .1s;
+}
+.avt:hover{color:var(--t2)}
+.avt.on{background:var(--c4);color:var(--t1)}
+
+/* ── GROUPS PANEL ── */
+.grp-panel{
+  background:var(--c1);border:1px solid var(--b1);border-radius:var(--r);
+  overflow:hidden;margin-bottom:14px;
+}
+.grp-panel-h{
+  padding:10px 16px;border-bottom:1px solid var(--b1);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.grp-panel-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--t3)}
+.grp-list-inner{display:flex;flex-direction:column;gap:2px;padding:8px}
+.grp-item{
+  display:flex;align-items:center;gap:8px;padding:7px 10px;
+  border-radius:var(--rs);cursor:pointer;transition:background .1s;
+}
+.grp-item:hover{background:var(--c2)}
+.grp-item.on{background:var(--c3)}
+.grp-dot-lg{width:8px;height:8px;border-radius:50%;background:var(--t3);flex-shrink:0}
+.grp-item-name{font-size:12px;font-weight:600;flex:1}
+.grp-item-count{font-size:10px;color:var(--t3)}
 </style>
 </head>
 <body>
@@ -408,6 +540,7 @@ select.cfg-fi option{background:#131316}
     <button class="nt on" onclick="goNav('dashboard',this)">Dashboard</button>
     <button class="nt" onclick="goNav('accounts',this)">Accounts</button>
     <button class="nt" onclick="goNav('configs',this)">Configs</button>
+    <button class="nt" onclick="openGrpModal()">Groups</button>
     <button class="nt" onclick="goNav('stats',this)">Stats</button>
   </div>
   <div class="n-right">
@@ -559,56 +692,76 @@ select.cfg-fi option{background:#131316}
 <!-- ACCOUNTS -->
 <div class="view" id="v-accounts">
   <div class="sh">
-    <div class="sh-title">Manage Accounts</div>
+    <div class="sh-title">Accounts</div>
     <div class="sh-r">
-      <input class="inp" id="acc-search" placeholder="Search accounts..." oninput="renderAccounts()" style="width:185px">
+      <div class="acc-view-tabs">
+        <button class="avt on" onclick="setAccView('list',this)">Accounts</button>
+        <button class="avt" onclick="setAccView('sessions',this)">Sessions</button>
+      </div>
+      <input class="inp" id="acc-search" placeholder="Search accounts..." oninput="renderAccounts()" style="width:170px">
       <div class="dd" id="dd-af">
-        <button class="btn ghost sm" onclick="toggleDD('dd-af')">All Accounts ▾</button>
+        <button class="btn ghost sm" onclick="toggleDD('dd-af')"><span id="grp-filter-lbl">All Groups</span> ▾</button>
         <div class="ddm r" id="dd-af-menu">
-          <div class="ddi on" onclick="setAF('all',this)">All Accounts <span style="font-size:10px;color:var(--t1)">✓</span></div>
+          <div class="ddi on" onclick="setAF('all',this)">All Groups <span style="font-size:10px;color:var(--t1)">✓</span></div>
           <div class="ddi" onclick="setAF('online',this)">Online only</div>
           <div class="ddi" onclick="setAF('offline',this)">Offline only</div>
+          <div class="dd-sep"></div>
+          <div id="grp-filter-list"></div>
         </div>
       </div>
       <div class="dd" id="dd-asort">
         <button class="btn ghost sm" onclick="toggleDD('dd-asort')">Sort: <span id="asort-lbl">Name</span> ▾</button>
         <div class="ddm r" id="dd-asort-menu">
-          <div class="ddi on" onclick="setAccSort('name',this)">
-            <span class="ddi-icon"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 4h8M4 6h4M5 8h2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></span>
-            Name <span style="font-size:10px;color:var(--t1)">✓</span>
-          </div>
-          <div class="ddi" onclick="setAccSort('bucks',this)">
-            <span class="ddi-icon"><svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.2"/><path d="M6 3v6M4.5 4.5h2a1 1 0 010 2H5a1 1 0 000 2h2" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></span>
-            Bucks
-          </div>
-          <div class="ddi" onclick="setAccSort('pets',this)">
-            <span class="ddi-icon"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 1.5L1.5 4.5v6h9v-6L6 1.5z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg></span>
-            Pets
-          </div>
-          <div class="ddi" onclick="setAccSort('eggs',this)">
-            <span class="ddi-icon"><svg width="12" height="12" viewBox="0 0 12 12"><ellipse cx="6" cy="7" rx="3.5" ry="4" stroke="currentColor" stroke-width="1.2"/><path d="M6 3C6 3 4.5 2 6 0c0 0 1.5 2 0 3z" fill="currentColor"/></svg></span>
-            Eggs
-          </div>
-          <div class="ddi" onclick="setAccSort('potions',this)">
-            <span class="ddi-icon"><svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="7" r="3.5" stroke="currentColor" stroke-width="1.2"/><path d="M6 3.5V2M4 2h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></span>
-            Potions
-          </div>
+          <div class="ddi on" onclick="setAccSort('name',this)">Name <span style="font-size:10px;color:var(--t1)">✓</span></div>
+          <div class="ddi" onclick="setAccSort('bucks',this)">Bucks</div>
+          <div class="ddi" onclick="setAccSort('pets',this)">Pets</div>
+          <div class="ddi" onclick="setAccSort('potions',this)">Potions</div>
           <div class="dd-sep"></div>
           <div class="ddi" id="sort-dir-btn" onclick="toggleSortDir()">↑ Ascending</div>
         </div>
       </div>
     </div>
   </div>
-  <div class="bulk-bar" id="bulk-bar" style="display:none">
-    <span class="bulk-cnt" id="bulk-cnt">0 selected</span>
-    <button class="btn sm ghost" onclick="selAll()">Select all</button>
-    <button class="btn sm ghost" onclick="selNone()">Clear</button>
-    <div style="flex:1"></div>
-    <button class="btn sm solid" onclick="bulkTrade()">Force trade</button>
+
+  <!-- ACCOUNTS LIST VIEW -->
+  <div id="accv-list">
+    <div class="bulk-bar" id="bulk-bar" style="display:none">
+      <span class="bulk-cnt" id="bulk-cnt">0 selected</span>
+      <button class="btn sm ghost" onclick="selAll()">Select all</button>
+      <button class="btn sm ghost" onclick="selNone()">Clear</button>
+      <div style="flex:1"></div>
+      <div class="dd" id="dd-bulk-grp">
+        <button class="btn sm ghost" onclick="toggleDD('dd-bulk-grp')">Add to group ▾</button>
+        <div class="ddm r" id="dd-bulk-grp-menu"></div>
+      </div>
+      <button class="btn sm solid" onclick="bulkApplyCfg()">Apply config</button>
+      <button class="btn sm danger" onclick="bulkTrade()">Force trade</button>
+    </div>
+    <div class="acc-list" id="acc-list"><div class="empty">Loading...</div></div>
   </div>
-  <div class="acc-list" id="acc-list"><div class="empty">Loading...</div></div>
+
+  <!-- SESSIONS VIEW -->
+  <div id="accv-sessions" style="display:none">
+    <div id="sessions-list"><div class="empty">No session data yet</div></div>
+  </div>
 </div>
 
+<!-- GROUPS MODAL -->
+<div id="grp-modal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);align-items:center;justify-content:center">
+  <div style="background:var(--c1);border:1px solid var(--b2);border-radius:var(--r);width:420px;max-height:80vh;overflow:hidden;display:flex;flex-direction:column">
+    <div style="padding:14px 18px;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between">
+      <span style="font-size:13px;font-weight:600">Manage Groups</span>
+      <button class="btn ghost sm" onclick="closeGrpModal()">✕</button>
+    </div>
+    <div style="padding:14px 18px;overflow-y:auto;flex:1">
+      <div style="display:flex;gap:6px;margin-bottom:12px">
+        <input class="inp" id="new-grp-name" placeholder="Group name..." style="flex:1">
+        <button class="btn solid sm" onclick="createGroup()">Create</button>
+      </div>
+      <div id="grp-modal-list"></div>
+    </div>
+  </div>
+</div>
 <!-- CONFIGS -->
 <div class="view" id="v-configs">
   <div class="sh" style="margin-bottom:16px">
@@ -703,7 +856,7 @@ function renderAll(){
   document.getElementById("st-bucks").textContent="$"+fmtN(bucks);
   document.getElementById("st-farmed").textContent="+$"+fmtN(farmed);
   document.getElementById("st-pots").textContent=pots;
-  buildAccDDList();renderInv();renderAccounts();
+  buildAccDDList();renderInv();renderAccounts();renderGrpFilterList();
 }
 
 // ── INVENTORY ──
@@ -780,100 +933,403 @@ function renderInv(){
   }
 }
 
-// ── ACCOUNTS ──
+
+// ── GROUPS ──
+let groups = JSON.parse(localStorage.getItem('am_groups')||'[]');
+// groups: [{id, name, color, accountNames:[]}]
+
+const GRP_COLORS = ['#60a5fa','#a78bfa','#4ade80','#fb923c','#f472b6','#facc15','#34d399'];
+
+function saveGroups(){localStorage.setItem('am_groups',JSON.stringify(groups));}
+function getGroupsForAcc(u){return groups.filter(g=>g.accountNames?.includes(u));}
+function createGroup(){
+  const n=document.getElementById('new-grp-name')?.value?.trim();
+  if(!n)return;
+  const id='grp_'+Date.now();
+  const col=GRP_COLORS[groups.length%GRP_COLORS.length];
+  groups.push({id,name:n,color:col,accountNames:[]});
+  saveGroups();renderGrpModal();renderGrpFilterList();toast("Group '"+n+"' created");
+  document.getElementById('new-grp-name').value='';
+}
+function deleteGroup(id){
+  groups=groups.filter(g=>g.id!==id);saveGroups();renderGrpModal();renderGrpFilterList();
+}
+function toggleAccInGroup(gid,u){
+  const g=groups.find(x=>x.id===gid);if(!g)return;
+  if(g.accountNames.includes(u))g.accountNames=g.accountNames.filter(x=>x!==u);
+  else g.accountNames.push(u);
+  saveGroups();renderGrpModal();
+}
+function openGrpModal(){
+  document.getElementById('grp-modal').style.display='flex';
+  renderGrpModal();
+}
+function closeGrpModal(){document.getElementById('grp-modal').style.display='none';renderAccounts();}
+function renderGrpModal(){
+  const el=document.getElementById('grp-modal-list');
+  if(!groups.length){el.innerHTML='<div class="empty" style="padding:8px 0">No groups yet</div>';return;}
+  el.innerHTML=groups.map(g=>`
+    <div style="background:var(--c2);border:1px solid var(--b1);border-radius:var(--rs);margin-bottom:6px;overflow:hidden">
+      <div style="display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid var(--b1)">
+        <span style="width:8px;height:8px;border-radius:50%;background:${g.color};flex-shrink:0;display:inline-block"></span>
+        <span style="font-size:12px;font-weight:600;flex:1">${g.name}</span>
+        <span style="font-size:10px;color:var(--t3)">${(g.accountNames||[]).length} accounts</span>
+        <button class="btn sm danger" onclick="deleteGroup('${g.id}')">✕</button>
+      </div>
+      <div style="padding:6px 8px;display:flex;flex-direction:column;gap:2px;max-height:160px;overflow-y:auto">
+        ${allAccs.length?allAccs.map(a=>`
+          <label style="display:flex;align-items:center;gap:8px;padding:5px 6px;border-radius:4px;cursor:pointer;transition:background .1s"
+                 onmouseenter="this.style.background='var(--c3)'" onmouseleave="this.style.background=''">
+            <input type="checkbox" ${(g.accountNames||[]).includes(a.username)?'checked':''} 
+                   onchange="toggleAccInGroup('${g.id}','${a.username}')" style="accent-color:${g.color}">
+            <span style="font-size:11px;font-weight:500">${a.username}</span>
+            <span class="acc-dot ${a.online?'on':'off'}" style="margin-left:auto"></span>
+          </label>`).join(''):'<div class="empty" style="font-size:11px;padding:4px">No accounts loaded</div>'}
+      </div>
+    </div>`).join('');
+}
+function renderGrpFilterList(){
+  // update filter dropdown
+  const el=document.getElementById('grp-filter-list');
+  if(!el)return;
+  el.innerHTML=groups.map(g=>`
+    <div class="ddi" onclick="setAF('grp:${g.id}',this)">
+      <span style="width:7px;height:7px;border-radius:50%;background:${g.color};display:inline-block;margin-right:4px"></span>
+      ${g.name}
+    </div>`).join('');
+  // bulk group menu
+  const bm=document.getElementById('dd-bulk-grp-menu');
+  if(bm)bm.innerHTML=groups.map(g=>`
+    <div class="ddi" onclick="bulkAddToGroup('${g.id}')">
+      <span style="width:7px;height:7px;border-radius:50%;background:${g.color};display:inline-block;margin-right:4px"></span>
+      ${g.name}
+    </div>`).join('')+(groups.length?'':'<div class="empty" style="font-size:11px;padding:8px">No groups</div>');
+}
+function bulkAddToGroup(gid){
+  const g=groups.find(x=>x.id===gid);if(!g)return;
+  selected.forEach(u=>{if(!g.accountNames.includes(u))g.accountNames.push(u);});
+  saveGroups();toast("Added "+selected.size+" account(s) to "+g.name);
+  document.getElementById('dd-bulk-grp-menu')?.classList.remove('on');
+}
+async function bulkApplyCfg(){
+  if(!selected.size){toast("Select accounts first",true);return;}
+  // pick config from a quick prompt using cfgs
+  if(!cfgs.length){toast("No configs",true);return;}
+  const name=prompt("Config name to apply:
+"+cfgs.map(c=>c.name).join('\n'));
+  const c=cfgs.find(x=>x.name===name);if(!c){toast("Config not found",true);return;}
+  for(const u of selected){
+    cfgs.forEach(x=>{x.assignedTo=(x.assignedTo||[]).filter(a=>a!==u);});
+    c.assignedTo=c.assignedTo||[];if(!c.assignedTo.includes(u))c.assignedTo.push(u);
+    try{await fetch(S+"/dashboard/config/"+u,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(c.settings||{})});}catch(e){}
+  }
+  localStorage.setItem('am_cfgs',JSON.stringify(cfgs));
+  toast("'"+c.name+"' applied to "+selected.size+" account(s)");
+}
+
+// ── HATCHES TRACKING ──
+let hatchLog = JSON.parse(localStorage.getItem('am_hatches')||'[]');
+// hatchLog: [{username, petId, petKind, rarity, egg, ts}]
+let knownPets = JSON.parse(localStorage.getItem('am_known_pets')||'{}');
+// knownPets: {username: Set of unique IDs} — serialised as arrays
+
+function trackHatches(acc){
+  const u=acc.username;
+  const prev=new Set(knownPets[u]||[]);
+  const curr=new Set(Object.keys(acc.inventory?.pets||{}));
+  // new pets that weren't there before
+  curr.forEach(uid=>{
+    if(!prev.has(uid)){
+      const p=acc.inventory.pets[uid];
+      if(p&&p.hatched){
+        hatchLog.unshift({username:u,petId:uid,petKind:p.kind||p.id,rarity:p.rarity||'common',ts:Math.floor(Date.now()/1000)});
+      }
+    }
+  });
+  knownPets[u]=Array.from(curr);
+  if(hatchLog.length>200)hatchLog=hatchLog.slice(0,200);
+  localStorage.setItem('am_hatches',JSON.stringify(hatchLog));
+  localStorage.setItem('am_known_pets',JSON.stringify(knownPets));
+}
+
+function rarityColor(r){
+  if(r==='legendary')return{bg:'rgba(167,139,250,.15)',col:'#a78bfa',bd:'rgba(167,139,250,.2)'};
+  if(r==='ultra_rare')return{bg:'rgba(251,146,60,.12)',col:'#fb923c',bd:'rgba(251,146,60,.2)'};
+  if(r==='rare')return{bg:'rgba(96,165,250,.12)',col:'#60a5fa',bd:'rgba(96,165,250,.2)'};
+  if(r==='uncommon')return{bg:'rgba(74,222,128,.1)',col:'#4ade80',bd:'rgba(74,222,128,.2)'};
+  return{bg:'var(--c3)',col:'var(--t3)',bd:'var(--b1)'};
+}
+
+// ── ACC VIEW SWITCHING ──
+let accViewMode='list';
+function setAccView(v,btn){
+  accViewMode=v;
+  document.querySelectorAll('.avt').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('accv-list').style.display=v==='list'?'':'none';
+  document.getElementById('accv-sessions').style.display=v==='sessions'?'':'none';
+  if(v==='sessions')renderSessions();
+}
+
+// ── SESSIONS VIEW ──
+let sessionStart=JSON.parse(localStorage.getItem('am_sess_start')||'{}');
+// {username: timestamp}
+
+function ensureSessionStart(acc){
+  if(!sessionStart[acc.username]&&acc.online){
+    sessionStart[acc.username]=Math.floor(Date.now()/1000);
+    localStorage.setItem('am_sess_start',JSON.stringify(sessionStart));
+  }
+  if(!acc.online&&sessionStart[acc.username]){
+    delete sessionStart[acc.username];
+    localStorage.setItem('am_sess_start',JSON.stringify(sessionStart));
+  }
+}
+
+function fmtDur(secs){
+  if(!secs||secs<0)return'0m';
+  const h=Math.floor(secs/3600),m=Math.floor((secs%3600)/60);
+  return h>0?h+'h '+m+'m':m+'m';
+}
+
+function renderSessions(){
+  const el=document.getElementById('sessions-list');
+  if(!allAccs.length){el.innerHTML='<div class="empty">No accounts</div>';return;}
+  const q=(document.getElementById('acc-search')?.value||'').toLowerCase();
+  let list=allAccs.filter(a=>!q||a.username.toLowerCase().includes(q));
+  el.innerHTML=list.map(acc=>{
+    const st=sessionStart[acc.username];
+    const dur=st?(Math.floor(Date.now()/1000)-st):0;
+    const accHatches=hatchLog.filter(h=>h.username===acc.username).slice(0,10);
+    const rc=rarityColor;
+    return`<div class="sess-acc-card">
+      <div class="sess-acc-h">
+        <span class="acc-dot ${acc.online?'on':'off'}"></span>
+        <span class="sess-acc-name">${acc.username}</span>
+        ${getGroupsForAcc(acc.username).map(g=>`<span class="grp-tag"><span class="grp-dot" style="background:${g.color}"></span>${g.name}</span>`).join('')}
+        <div class="sess-acc-stats">
+          <div class="sess-acc-stat">
+            <div class="sess-acc-val">${acc.online?fmtDur(dur):'Offline'}</div>
+            <div class="sess-acc-lbl">Active</div>
+          </div>
+          <div class="sess-acc-stat">
+            <div class="sess-acc-val">$${fmtN(acc.bucks||0)}</div>
+            <div class="sess-acc-lbl">Bucks</div>
+          </div>
+          <div class="sess-acc-stat">
+            <div class="sess-acc-val">${fmtN(acc.currency||0)}</div>
+            <div class="sess-acc-lbl">Event</div>
+          </div>
+          <div class="sess-acc-stat">
+            <div class="sess-acc-val">${acc.pet_count||0}</div>
+            <div class="sess-acc-lbl">Pets</div>
+          </div>
+          <div class="sess-acc-stat">
+            <div class="sess-acc-val">${accHatches.length}</div>
+            <div class="sess-acc-lbl">Hatches</div>
+          </div>
+        </div>
+      </div>
+      <div class="sess-acc-hatches">
+        ${accHatches.length?`<div class="hatch-list">${accHatches.map(h=>{const rc2=rarityColor(h.rarity);return`
+          <div class="hatch-row">
+            <div class="hatch-av" style="background:${rc2.bg};color:${rc2.col};border:1px solid ${rc2.bd}">${fmtId(h.petKind).charAt(0)||'?'}</div>
+            <div>
+              <div class="hatch-name">${fmtId(h.petKind)}</div>
+              <div class="hatch-meta">${h.rarity||'common'}</div>
+            </div>
+            <div class="hatch-time">${tAgo(h.ts)}</div>
+          </div>`;}).join('')}</div>`
+        :`<div class="sess-empty">No hatches recorded this session</div>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── ACCOUNTS LIST (new clean rows) ──
+let accViewFilter='all', accExpanded=new Set(), accExpTab={};
+
 function setAF(v,el){
   accF=v;
-  document.querySelectorAll("#dd-af-menu .ddi").forEach(i=>{i.classList.remove('on');i.querySelector('span[style*="10px"]')?.remove();});
+  document.querySelectorAll('#dd-af-menu .ddi').forEach(i=>{i.classList.remove('on');i.querySelector('span[style*="10px"]')?.remove();});
   el.classList.add('on');el.insertAdjacentHTML('beforeend','<span style="font-size:10px;color:var(--t1)">✓</span>');
-  document.getElementById("dd-af-menu").classList.remove('on');renderAccounts();
-}
-function setAccSort(s,btn){
-  accSort=s;
-  document.getElementById("asort-lbl").textContent=btn.textContent.replace('✓','').trim().replace(/^[^\w]*(.+)$/,'$1').trim();
-  document.querySelectorAll("#dd-asort-menu .ddi:not(#sort-dir-btn)").forEach(i=>{i.classList.remove('on');i.querySelector('span[style*="10px"]')?.remove();});
-  btn.classList.add('on');btn.insertAdjacentHTML('beforeend','<span style="font-size:10px;color:var(--t1)">✓</span>');
+  // update label
+  let lbl='All Groups';
+  if(v==='online')lbl='Online only';
+  else if(v==='offline')lbl='Offline only';
+  else if(v.startsWith('grp:')){const g=groups.find(x=>x.id===v.replace('grp:',''));lbl=g?g.name:'Group';}
+  document.getElementById('grp-filter-lbl').textContent=lbl;
+  document.getElementById('dd-af-menu').classList.remove('on');
   renderAccounts();
 }
-function toggleSortDir(){accSortDir*=-1;document.getElementById("sort-dir-btn").textContent=accSortDir===1?'↑ Ascending':'↓ Descending';renderAccounts();}
 
 function renderAccounts(){
-  const q=(document.getElementById("acc-search")?.value||"").toLowerCase();
+  allAccs.forEach(a=>{ensureSessionStart(a);trackHatches(a);});
+  const q=(document.getElementById('acc-search')?.value||'').toLowerCase();
   let list=allAccs.filter(a=>{
     if(accF==='online'&&!a.online)return false;
     if(accF==='offline'&&a.online)return false;
+    if(accF.startsWith('grp:')){
+      const gid=accF.replace('grp:','');
+      const g=groups.find(x=>x.id===gid);
+      if(!g||!g.accountNames.includes(a.username))return false;
+    }
     if(q&&!a.username.toLowerCase().includes(q))return false;
     return true;
   });
-  const sortMap={name:a=>a.username.toLowerCase(),bucks:a=>a.bucks||0,pets:a=>a.pet_count||0,eggs:a=>a.currency||0,potions:a=>a.potions||0};
+  const sortMap={name:a=>a.username.toLowerCase(),bucks:a=>a.bucks||0,pets:a=>a.pet_count||0,potions:a=>a.potions||0};
   const fn=sortMap[accSort]||sortMap.name;
   list.sort((a,b)=>{const av=fn(a),bv=fn(b);return av<bv?-accSortDir:av>bv?accSortDir:0;});
-  const el=document.getElementById("acc-list");
+  const el=document.getElementById('acc-list');
   if(!list.length){el.innerHTML='<div class="empty">No accounts found</div>';return;}
-  el.innerHTML="";list.forEach(a=>el.appendChild(mkAccRow(a)));
+  el.innerHTML='';list.forEach(a=>el.appendChild(mkAccRow2(a)));
   updateBulk();
+  renderGrpFilterList();
+  if(accViewMode==='sessions')renderSessions();
 }
 
-function mkAccRow(acc){
-  const div=document.createElement("div");
-  div.className="acc-row";div.id="ar-"+acc.username;
+function mkAccRow2(acc){
+  const div=document.createElement('div');
+  div.className='acc-row2';div.id='ar2-'+acc.username;
   const ac=cfgs.find(c=>c.assignedTo?.includes(acc.username));
+  const grps=getGroupsForAcc(acc.username);
+  const st=sessionStart[acc.username];
+  const dur=st?(Math.floor(Date.now()/1000)-st):0;
+  const exp=accExpanded.has(acc.username);
+  const expTab=accExpTab[acc.username]||'pets';
+
   div.innerHTML=`
-    <div class="acc-main" onclick="toggleDrop('${acc.username}')">
+    <div class="acc-line" onclick="toggleRow('${acc.username}')">
+      <input type="checkbox" style="flex-shrink:0;accent-color:var(--t1)" 
+             ${selected.has(acc.username)?'checked':''} 
+             onclick="event.stopPropagation();toggleSel('${acc.username}',this)">
       <span class="acc-dot ${acc.online?'on':'off'}"></span>
-      <div class="acc-info">
-        <div class="acc-name">${acc.username}</div>
-        <div class="acc-sub">
-          <span class="status-badge ${acc.online?'on':'off'}">${acc.online?'Online':'Inactive'}</span>
-          <span style="color:var(--t3)">${acc.online?'Active now':'Updated '+tAgo(acc.last_ping)}</span>
-          ${acc.current_task&&acc.current_task!=='idle'&&acc.current_task!=='waiting for config'?`<span class="acc-task">${acc.current_task}</span>`:''}
-          ${acc.current_pet?`<span class="acc-chip">${fmtId(acc.current_pet)}</span>`:''}
-          <span class="acc-chip">${ac?ac.name:'No config'}</span>
+      <div class="acc-line-left">
+        <span class="acc-line-name">${acc.username}</span>
+        <div class="acc-line-tags">
+          <span class="acc-status-pill ${acc.online?'on':'off'}">${acc.online?'Online':'Offline'}</span>
+          ${grps.map(g=>`<span class="grp-tag"><span class="grp-dot" style="background:${g.color}"></span>${g.name}</span>`).join('')}
+          ${ac?`<span class="grp-tag">${ac.name}</span>`:''}
+          ${acc.current_task&&acc.current_task!=='idle'&&acc.current_task!=='waiting for config'?`<span class="acc-line-time">${acc.current_task}</span>`:''}
         </div>
       </div>
-      <div class="acc-nums">
-        <div class="acc-num"><div class="acc-nv">$${fmtN(acc.bucks||0)}</div><div class="acc-nl">Bucks</div></div>
-        <div class="acc-num"><div class="acc-nv">${fmtN(acc.currency||0)}</div><div class="acc-nl">Event</div></div>
-        <div class="acc-num"><div class="acc-nv">${acc.pet_count||0}</div><div class="acc-nl">Pets</div></div>
-        <div class="acc-num"><div class="acc-nv">${fmtN(acc.tickets||0)}</div><div class="acc-nl">Tickets</div></div>
-        <div class="acc-num"><div class="acc-nv">${acc.potions||0}</div><div class="acc-nl">Potions</div></div>
+      <div class="acc-line-stats">
+        ${acc.online?`<div class="acc-stat-box"><div class="acc-stat-val">${fmtDur(dur)}</div><div class="acc-stat-lbl">Active</div></div>`:''}
+        <div class="acc-stat-box"><div class="acc-stat-val">$${fmtN(acc.bucks||0)}</div><div class="acc-stat-lbl">Bucks</div></div>
+        <div class="acc-stat-box"><div class="acc-stat-val">${fmtN(acc.currency||0)}</div><div class="acc-stat-lbl">Event</div></div>
+        <div class="acc-stat-box"><div class="acc-stat-val">${acc.pet_count||0}</div><div class="acc-stat-lbl">Pets</div></div>
+        <div class="acc-stat-box"><div class="acc-stat-val">${acc.potions||0}</div><div class="acc-stat-lbl">Potions</div></div>
       </div>
-      <div class="acc-btns" onclick="event.stopPropagation()">
+      <div class="acc-line-actions" onclick="event.stopPropagation()">
         <button class="btn sm ghost" onclick="doJump('${acc.username}')">Jump</button>
         <button class="btn sm danger" onclick="doForceTrade('${acc.username}')">Trade</button>
       </div>
     </div>
-    <div class="acc-drop" id="adrop-${acc.username}">
-      <div class="drop-cols">
-        <div class="drop-box">
-          <div class="drop-box-h">Account Info</div>
-          <div class="drop-box-b">
-            <div class="drop-row"><span class="drop-k">Username</span><span class="drop-v">${acc.username}</span></div>
-            <div class="drop-row"><span class="drop-k">Status</span><span class="drop-v">${acc.online?'Online':'Offline'}</span></div>
-            <div class="drop-row"><span class="drop-k">Last ping</span><span class="drop-v">${fmtT(acc.last_ping)}</span></div>
-            <div class="drop-row"><span class="drop-k">Task</span><span class="drop-v">${acc.current_task||'idle'}</span></div>
-            <div class="drop-row"><span class="drop-k">Pet</span><span class="drop-v">${fmtId(acc.current_pet)||'—'}</span></div>
-            <div class="drop-row"><span class="drop-k">Potions</span><span class="drop-v">${acc.potions||0}</span></div>
-          </div>
-        </div>
-        <div class="drop-box">
-          <div class="drop-box-h">Assign Config</div>
-          <div class="drop-box-b">
-            <select class="inp" id="asgn-${acc.username}" style="margin-bottom:8px">
-              <option value="">— None —</option>
-              ${cfgs.map(c=>`<option value="${c.id}" ${ac?.id===c.id?'selected':''}>${c.name}</option>`).join('')}
-            </select>
-            <button class="btn solid sm" onclick="assignCfg('${acc.username}')" style="width:100%;justify-content:center">Apply</button>
-          </div>
-        </div>
+    <div class="acc-expand ${exp?'on':''}" id="aexp-${acc.username}">
+      <div class="acc-exp-tabs">
+        <button class="aet ${expTab==='pets'?'on':''}" onclick="setExpTab('${acc.username}','pets',this)">Pets</button>
+        <button class="aet ${expTab==='info'?'on':''}" onclick="setExpTab('${acc.username}','info',this)">Info</button>
+        <button class="aet ${expTab==='hatches'?'on':''}" onclick="setExpTab('${acc.username}','hatches',this)">Hatches</button>
+        <button class="aet ${expTab==='config'?'on':''}" onclick="setExpTab('${acc.username}','config',this)">Config</button>
+      </div>
+      <div class="acc-exp-body" id="aexpb-${acc.username}">
+        ${renderExpBody(acc, expTab)}
       </div>
     </div>`;
   return div;
 }
 
-function toggleDrop(u){document.getElementById("adrop-"+u)?.classList.toggle("on");}
+function renderExpBody(acc, tab){
+  if(tab==='pets'){
+    const pets=Object.values(acc.inventory?.pets||{}).filter(p=>p.hatched).slice(0,24);
+    if(!pets.length)return'<div class="empty">No pets</div>';
+    return`<div class="pet-mini-grid">${pets.map(p=>{
+      const rc=rarityColor(p.rarity);
+      return`<div class="pet-mini">
+        <div class="pet-mini-av" style="background:${rc.bg};color:${rc.col};border:1px solid ${rc.bd}">${fmtId(p.id||p.kind).charAt(0)||'?'}</div>
+        <div>
+          <div class="pet-mini-name">${fmtId(p.id||p.kind)}</div>
+          <div class="pet-mini-sub">${p.rarity||'common'} · age ${p.age||0}${p.is_neon?' · neon':''}${p.is_mega?' · mega':''}</div>
+        </div>
+      </div>`;}).join('')}</div>`;
+  }
+  if(tab==='info'){
+    const ac=cfgs.find(c=>c.assignedTo?.includes(acc.username));
+    const grps=getGroupsForAcc(acc.username);
+    return`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="drop-box">
+        <div class="drop-box-h">Account</div>
+        <div class="drop-box-b">
+          <div class="drop-row"><span class="drop-k">Status</span><span class="drop-v">${acc.online?'Online':'Offline'}</span></div>
+          <div class="drop-row"><span class="drop-k">Last ping</span><span class="drop-v">${fmtT(acc.last_ping)}</span></div>
+          <div class="drop-row"><span class="drop-k">Task</span><span class="drop-v">${acc.current_task||'idle'}</span></div>
+          <div class="drop-row"><span class="drop-k">Config</span><span class="drop-v">${ac?ac.name:'None'}</span></div>
+          <div class="drop-row"><span class="drop-k">Groups</span><span class="drop-v">${grps.length?grps.map(g=>g.name).join(', '):'—'}</span></div>
+          <div class="drop-row"><span class="drop-k">Potions</span><span class="drop-v">${acc.potions||0}</span></div>
+          <div class="drop-row"><span class="drop-k">Tickets</span><span class="drop-v">${fmtN(acc.tickets||0)}</span></div>
+        </div>
+      </div>
+      <div class="drop-box">
+        <div class="drop-box-h">Groups</div>
+        <div class="drop-box-b" style="display:flex;flex-direction:column;gap:4px">
+          ${groups.length?groups.map(g=>`
+            <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-size:11px;font-weight:500">
+              <input type="checkbox" ${g.accountNames?.includes(acc.username)?'checked':''} 
+                     onchange="toggleAccInGroup('${g.id}','${acc.username}');document.getElementById('aexpb-${acc.username}').innerHTML=renderExpBody(allAccs.find(a=>a.username==='${acc.username}'),'info')"
+                     style="accent-color:${g.color}">
+              <span style="width:7px;height:7px;border-radius:50%;background:${g.color};flex-shrink:0;display:inline-block"></span>
+              ${g.name}
+            </label>`).join(''):'<div class="empty" style="font-size:11px;padding:4px 0">No groups — <a onclick="openGrpModal()" style="color:var(--t2);cursor:pointer">create one</a></div>'}
+        </div>
+      </div>
+    </div>`;
+  }
+  if(tab==='hatches'){
+    const accHatches=hatchLog.filter(h=>h.username===acc.username).slice(0,20);
+    if(!accHatches.length)return'<div class="empty">No hatches recorded</div>';
+    return`<div class="hatch-list">${accHatches.map(h=>{
+      const rc=rarityColor(h.rarity);
+      return`<div class="hatch-row">
+        <div class="hatch-av" style="background:${rc.bg};color:${rc.col};border:1px solid ${rc.bd}">${fmtId(h.petKind).charAt(0)||'?'}</div>
+        <div><div class="hatch-name">${fmtId(h.petKind)}</div><div class="hatch-meta">${h.rarity||'common'}</div></div>
+        <div class="hatch-time">${tAgo(h.ts)}</div>
+      </div>`;}).join('')}</div>`;
+  }
+  if(tab==='config'){
+    const ac=cfgs.find(c=>c.assignedTo?.includes(acc.username));
+    return`<div class="drop-box-b">
+      <div class="drop-box-h" style="margin-bottom:8px">Assign Config</div>
+      <select class="inp" id="asgn2-${acc.username}" style="margin-bottom:8px">
+        <option value="">— None —</option>
+        ${cfgs.map(c=>`<option value="${c.id}" ${ac?.id===c.id?'selected':''}>${c.name}</option>`).join('')}
+      </select>
+      <button class="btn solid sm" onclick="assignCfg2('${acc.username}')" style="width:100%;justify-content:center">Apply config</button>
+    </div>`;
+  }
+  return '';
+}
 
-async function assignCfg(u){
-  const sel=document.getElementById("asgn-"+u)?.value;
+function toggleRow(u){
+  if(accExpanded.has(u))accExpanded.delete(u);else accExpanded.add(u);
+  const el=document.getElementById('aexp-'+u);
+  if(el)el.classList.toggle('on',accExpanded.has(u));
+}
+function setExpTab(u,tab,btn){
+  accExpTab[u]=tab;
+  const row=document.getElementById('ar2-'+u);
+  if(!row)return;
+  row.querySelectorAll('.aet').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  const acc=allAccs.find(a=>a.username===u);
+  if(acc){document.getElementById('aexpb-'+u).innerHTML=renderExpBody(acc,tab);}
+}
+function toggleSel(u,cb){
+  if(cb.checked)selected.add(u);else selected.delete(u);
+  updateBulk();
+}
+
+async function assignCfg2(u){
+  const sel=document.getElementById('asgn2-'+u)?.value;
   cfgs.forEach(c=>{c.assignedTo=(c.assignedTo||[]).filter(x=>x!==u);});
   if(sel){
     const c=cfgs.find(x=>x.id===sel);
@@ -883,14 +1339,7 @@ async function assignCfg(u){
       catch(e){toast("Push failed",true);}
     }
   }else{localStorage.setItem('am_cfgs',JSON.stringify(cfgs));toast("Config cleared for "+u);}
-  renderAccounts();
 }
-
-// bulk
-function selAll(){allAccs.forEach(a=>selected.add(a.username));updateBulk();}
-function selNone(){selected.clear();updateBulk();}
-function updateBulk(){const b=document.getElementById("bulk-bar");document.getElementById("bulk-cnt").textContent=selected.size+" selected";b.style.display=selected.size?"flex":"none";}
-async function bulkTrade(){if(!selected.size){toast("Select accounts first",true);return;}for(const u of selected){try{await fetch(S+"/dashboard/force_trade/"+u,{method:"POST"});}catch(e){}}toast("Force trade queued for "+selected.size+" accounts");}
 
 // ── CONFIGS ──
 function renderCfgList(){
