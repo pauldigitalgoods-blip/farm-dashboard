@@ -55,6 +55,16 @@ def init_db():
                 timestamp REAL
             )
         """)
+        db.execute("""
+            CREATE TABLE IF NOT EXISTS hatches (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT,
+                pet_kind TEXT,
+                rarity TEXT,
+                egg_source TEXT,
+                timestamp REAL
+            )
+        """)
         # Migrate: add any columns that may be missing from older schema
         existing = {row[1] for row in db.execute("PRAGMA table_info(accounts)")}
         for col, defn in [
@@ -261,6 +271,21 @@ def ping():
         ))
         db.commit()
 
+    # ── Hatch detection ──
+    incoming_pets = data.get("inventory", {}).get("pets", {})
+    new_hatches   = data.get("hatches", [])  # farm can send explicit hatch list
+
+    if new_hatches or incoming_pets:
+        with get_db() as db:
+            # Use explicit hatch list if farm sends it (preferred)
+            if new_hatches:
+                for h in new_hatches[:50]:  # safety cap
+                    db.execute(
+                        "INSERT INTO hatches (username,pet_kind,rarity,egg_source,timestamp) VALUES (?,?,?,?,?)",
+                        (username, h.get("kind",""), h.get("rarity","common"), h.get("egg",""), time.time())
+                    )
+            db.commit()
+
     return jsonify({"ok": True, "config": config})
 
 
@@ -372,6 +397,47 @@ def dashboard_logs(username):
             WHERE username=? ORDER BY timestamp DESC LIMIT 30
         """, (username,)).fetchall()
     return jsonify([{"message": r["message"], "timestamp": r["timestamp"]} for r in rows])
+
+
+@app.route("/dashboard/hatches", methods=["GET"])
+def dashboard_hatches():
+    if not is_authed():
+        return jsonify({"error": "unauthorized"}), 401
+    limit = int(request.args.get("limit", 200))
+    username = request.args.get("username", None)
+    with get_db() as db:
+        if username:
+            rows = db.execute(
+                "SELECT * FROM hatches WHERE username=? ORDER BY timestamp DESC LIMIT ?",
+                (username, limit)
+            ).fetchall()
+        else:
+            rows = db.execute(
+                "SELECT * FROM hatches ORDER BY timestamp DESC LIMIT ?",
+                (limit,)
+            ).fetchall()
+    return jsonify([{
+        "id":         r["id"],
+        "username":   r["username"],
+        "petKind":    r["pet_kind"],
+        "rarity":     r["rarity"],
+        "egg":        r["egg_source"],
+        "ts":         r["timestamp"],
+    } for r in rows])
+
+
+@app.route("/dashboard/hatches/clear", methods=["POST"])
+def dashboard_hatches_clear():
+    if not is_authed():
+        return jsonify({"error": "unauthorized"}), 401
+    username = (request.json or {}).get("username")
+    with get_db() as db:
+        if username:
+            db.execute("DELETE FROM hatches WHERE username=?", (username,))
+        else:
+            db.execute("DELETE FROM hatches")
+        db.commit()
+    return jsonify({"ok": True})
 
 
 @app.route("/dashboard/config/<username>", methods=["POST"])
