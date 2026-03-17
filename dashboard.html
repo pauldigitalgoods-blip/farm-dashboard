@@ -540,7 +540,7 @@ select.cfg-fi option{background:#131316}
     <button class="nt on" onclick="goNav('dashboard',this)">Dashboard</button>
     <button class="nt" onclick="goNav('accounts',this)">Accounts</button>
     <button class="nt" onclick="goNav('configs',this)">Configs</button>
-    <button class="nt" onclick="openGrpModal()">Groups</button>
+    <button class="nt" id="grp-nav-btn" onclick="openGrpModal()">Groups</button>
     <button class="nt" onclick="goNav('stats',this)">Stats</button>
   </div>
   <div class="n-right">
@@ -1015,8 +1015,7 @@ async function bulkApplyCfg(){
   if(!selected.size){toast("Select accounts first",true);return;}
   // pick config from a quick prompt using cfgs
   if(!cfgs.length){toast("No configs",true);return;}
-  const name=prompt("Config name to apply:
-"+cfgs.map(c=>c.name).join('\n'));
+  const name=prompt("Config to apply: "+cfgs.map(c=>c.name).join(", "));
   const c=cfgs.find(x=>x.name===name);if(!c){toast("Config not found",true);return;}
   for(const u of selected){
     cfgs.forEach(x=>{x.assignedTo=(x.assignedTo||[]).filter(a=>a!==u);});
@@ -1339,6 +1338,35 @@ async function assignCfg2(u){
       catch(e){toast("Push failed",true);}
     }
   }else{localStorage.setItem('am_cfgs',JSON.stringify(cfgs));toast("Config cleared for "+u);}
+}
+
+
+// ── BULK / SELECT (restored) ──
+function selAll(){allAccs.forEach(a=>selected.add(a.username));renderAccounts();}
+function selNone(){selected.clear();renderAccounts();}
+function updateBulk(){
+  const b=document.getElementById('bulk-bar');
+  if(!b)return;
+  document.getElementById('bulk-cnt').textContent=selected.size+' selected';
+  b.style.display=selected.size?'flex':'none';
+}
+async function bulkTrade(){
+  if(!selected.size){toast('Select accounts first',true);return;}
+  for(const u of selected){try{await fetch(S+'/dashboard/force_trade/'+u,{method:'POST'});}catch(e){}}
+  toast('Force trade queued for '+selected.size+' accounts');
+}
+async function assignCfg(u){
+  const sel=document.getElementById('asgn-'+u)?.value;
+  cfgs.forEach(c=>{c.assignedTo=(c.assignedTo||[]).filter(x=>x!==u);});
+  if(sel){
+    const c=cfgs.find(x=>x.id===sel);
+    if(c){c.assignedTo=c.assignedTo||[];if(!c.assignedTo.includes(u))c.assignedTo.push(u);
+      localStorage.setItem('am_cfgs',JSON.stringify(cfgs));
+      try{await fetch(S+'/dashboard/config/'+u,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(c.settings||{})});toast("'"+c.name+"' applied to "+u);}
+      catch(e){toast('Push failed',true);}
+    }
+  }else{localStorage.setItem('am_cfgs',JSON.stringify(cfgs));toast('Config cleared for '+u);}
+  renderAccounts();
 }
 
 // ── CONFIGS ──
